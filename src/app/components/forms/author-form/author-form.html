@@ -1,0 +1,8 @@
+<form
+  class="flex flex-col px-4 py-2 gap-6 items-center"
+  [formGroup]="formAuthor"
+  (ngSubmit)="onSubmit()"
+>
+  <app-form-input class="w-full" id="name" label="Nome do autor" formControlName="name" />
+  <p-button type="submit" [disabled]="formAuthor.invalid">Salvar autor</p-button>
+</form>

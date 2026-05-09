@@ -1,0 +1,12 @@
+export interface WorkModel {
+  name: string;
+  subtitle: string | null;
+  volume: number | null;
+  price: number | null;
+  mediaId: string;
+  languageId: string;
+  serieId: string | null;
+  isSpecialEdition: boolean;
+  authors: string[] | null;
+  illustrators: string[] | null;
+}

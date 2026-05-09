@@ -1,0 +1,134 @@
+<form class="grid grid-cols-2 gap-4 py-6 px-2" [formGroup]="formWork" (ngSubmit)="onSubmit()">
+  <app-form-input
+    class="col-span-2"
+    id="name"
+    label="Nome da obra"
+    [invalid]="isInvalid('name')"
+    formControlName="name"
+  />
+  <app-form-input class="col-span-2" id="subtitle" label="Sub-título" formControlName="subtitle" />
+
+  <div
+    class="grid grid-cols-1 col-span-2 sm:grid-cols-2 md:grid-cols-3 gap-4 items-center md:justify-items-center md:mx-auto"
+  >
+    <div class="flex flex-col">
+      <label class="mb-2 block font-bold" for="price">Preço</label>
+      <p-inputnumber
+        formControlName="price"
+        [showButtons]="true"
+        mode="currency"
+        currency="BRL"
+        inputStyleClass="w-40"
+      />
+    </div>
+    <div class="w-fit justify-self-center sm:justify-items-normal">
+      <label class="mb-2 block font-bold" for="volume">Volume</label>
+      <p-inputnumber
+        formControlName="volume"
+        [showButtons]="true"
+        buttonLayout="vertical"
+        inputId="volume"
+        [min]="0"
+        inputStyleClass="w-50 sm:w-20"
+      >
+        <ng-template #incrementbuttonicon>
+          <span class="pi pi-plus"></span>
+        </ng-template>
+        <ng-template #decrementbuttonicon>
+          <span class="pi pi-minus"></span>
+        </ng-template>
+      </p-inputnumber>
+    </div>
+    <div class="flex items-center gap-2">
+      <p-checkbox id="isSpecialEdition" formControlName="isSpecialEdition" [binary]="true" />
+      <label for="isSpecialEdition">Edição especial</label>
+    </div>
+  </div>
+
+  <p-select
+    formControlName="languageId"
+    [options]="languages()"
+    optionLabel="type"
+    optionValue="id"
+    placeholder="Idioma"
+    [invalid]="isInvalid('languageId')"
+  />
+  <p-select
+    formControlName="mediaId"
+    [options]="medias()"
+    optionLabel="type"
+    optionValue="id"
+    placeholder="Mídia"
+    [invalid]="isInvalid('mediaId')"
+  />
+
+  <p-select
+    class="col-span-2"
+    formControlName="serieId"
+    [options]="series()"
+    optionLabel="name"
+    optionValue="id"
+    [showClear]="true"
+    placeholder="Série"
+    [filter]="true"
+    appendTo="body"
+  />
+
+  <p-multiselect
+    class="col-span-2 sm:col-span-1"
+    formControlName="authors"
+    [options]="authors()"
+    optionLabel="name"
+    optionValue="id"
+    display="chip"
+    placeholder="Autores"
+    appendTo="body"
+  >
+    <ng-template #footer>
+      <div class="p-3">
+        <p-button
+          label="Add New"
+          fluid
+          severity="secondary"
+          text
+          size="small"
+          icon="pi pi-plus"
+          (click)="authorModal()"
+        />
+      </div>
+    </ng-template>
+  </p-multiselect>
+  <p-multiselect
+    class="col-span-2 sm:col-span-1"
+    formControlName="illustrators"
+    [options]="illustrators().data"
+    optionLabel="name"
+    optionValue="id"
+    display="chip"
+    placeholder="Ilustradores"
+    appendTo="body"
+    [loading]="illustrators().state === 'loading'"
+  >
+    <ng-template #footer>
+      <div class="p-3">
+        <p-button
+          label="Add New"
+          fluid
+          severity="secondary"
+          text
+          size="small"
+          icon="pi pi-plus"
+          (click)="onClick()"
+        />
+      </div>
+    </ng-template>
+  </p-multiselect>
+
+  <p-button
+    class="col-span-2"
+    type="submit"
+    label="Salvar obra"
+    [disabled]="formWork.invalid"
+    fluid
+  />
+</form>
