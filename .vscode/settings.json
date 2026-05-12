@@ -7,7 +7,7 @@
   "editor.glyphMargin": false,
   // "workbench.activityBar.location": "hidden",
   //"editor.lineNumbers": "off",
-  "files.eol": "\n", // Final de linha sempre será LF
+  "files.eol": "\n",
   "workbench.editor.labelFormat": "short",
   "editor.tabSize": 2,
   "explorer.compactFolders": false,
@@ -29,9 +29,7 @@
     "typescript": "clear ; npx tsx"
   },
 
-  "tailwindCSS.experimental.classRegex": [
-    ["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
-  ],
+  "tailwindCSS.experimental.classRegex": [["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]],
 
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"

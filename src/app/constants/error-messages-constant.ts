@@ -7,6 +7,10 @@ export const errorMessage = {
     submit: 'Erro ao salvar o autor',
     load: 'Erro ao carregar o autor',
   },
+  franchise: {
+    submit: 'Erro ao salvar a franquia',
+    load: 'Erro ao carregar a franquia',
+  },
   illustrator: {
     submit: 'Erro ao salvar o ilustrador',
     load: 'Erro ao carregar o ilustrador',

@@ -9,6 +9,7 @@ import { DialogService } from '../../../services/dialog-service';
 import { successMessage } from '../../../constants/success-message-constant';
 import { catchError, of, throwError } from 'rxjs';
 import { errorMessage } from '../../../constants/error-messages-constant';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-author-form',
@@ -19,6 +20,7 @@ export class AuthorForm {
   private readonly apiService = inject(ApiService);
   private readonly messageService = inject(ToastService);
   private readonly dialogService = inject(DialogService);
+  private readonly ref = inject(DynamicDialogRef, { optional: true });
 
   formAuthor = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -41,7 +43,7 @@ export class AuthorForm {
         next: (res) => {
           if (!res) return;
           this.messageService.showSuccess(successMessage.author);
-          return this.dialogService.close(res);
+          return this.ref?.close(res);
         },
         error: (err) => {
           this.messageService.showError(errorMessage.author.submit);

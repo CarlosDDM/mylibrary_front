@@ -9,6 +9,7 @@ import { successMessage } from '../../../constants/success-message-constant';
 import { DialogService } from '../../../services/dialog-service';
 import { Button } from 'primeng/button';
 import { FormInput } from '../components/form-input/form-input';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-illustrator-form',
@@ -19,6 +20,7 @@ export class IllustratorForm {
   private readonly apiService = inject(ApiService);
   private readonly messageService = inject(ToastService);
   private readonly dialogService = inject(DialogService);
+  private readonly ref = inject(DynamicDialogRef, { optional: true });
 
   formIllustrator = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -41,7 +43,7 @@ export class IllustratorForm {
         next: (res) => {
           if (!res) return;
           this.messageService.showSuccess(successMessage.illustrator);
-          return this.dialogService.close(res);
+          return this.ref?.close(res);
         },
         error: (err) => {
           this.messageService.showError(errorMessage.illustrator.submit);

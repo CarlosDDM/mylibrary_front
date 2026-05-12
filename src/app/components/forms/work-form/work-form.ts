@@ -24,6 +24,7 @@ import { errorMessage } from '../../../constants/error-messages-constant';
 import { successMessage } from '../../../constants/success-message-constant';
 import { IllustratorForm } from '../illustrator-form/illustrator-form';
 import { SeriesForm } from '../series-form/series-form';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-work-form',
@@ -44,6 +45,7 @@ export class WorkForm implements OnInit {
   private readonly messageService = inject(ToastService);
   private readonly dialogService = inject(DialogService);
   protected readonly loadState = LoadStateEnum;
+  private readonly ref = inject(DynamicDialogRef, { optional: true });
 
   languages = signal<AsyncResource<OptionModel[]>>(loadValue([]));
   medias = signal<AsyncResource<OptionModel[]>>(loadValue([]));
@@ -189,7 +191,7 @@ export class WorkForm implements OnInit {
         next: (res) => {
           if (!res) return;
           this.messageService.showSuccess(successMessage.work);
-          return this.dialogService.close(res);
+          return this.ref?.close(res);
         },
         error: (err) => {
           this.messageService.showError(errorMessage.work.submit);

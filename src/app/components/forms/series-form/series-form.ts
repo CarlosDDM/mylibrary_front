@@ -19,6 +19,8 @@ import { TranslatePipe } from '../../../pipes/translate-pipe';
 import { SerieModel } from '../../../models/serie-model';
 import { DialogService } from '../../../services/dialog-service';
 import { successMessage } from '../../../constants/success-message-constant';
+import { FranchiseForm } from '../franchise-form/franchise-form';
+import { DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-series-form',
@@ -29,6 +31,7 @@ export class SeriesForm implements OnInit {
   private readonly apiRequest = inject(ApiService);
   private readonly messageService = inject(ToastService);
   private readonly dialogService = inject(DialogService);
+  private readonly ref = inject(DynamicDialogRef, { optional: true });
   private readonly destroyRef = inject(DestroyRef);
   protected readonly loadState = LoadStateEnum;
   protected readonly serieTranslation = serieTranslation;
@@ -72,6 +75,19 @@ export class SeriesForm implements OnInit {
       });
   }
 
+  franchiseModal() {
+    const ref = this.dialogService.show(FranchiseForm, {
+      header: 'Criar franquia',
+    });
+
+    ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((franchise: FranchiseModel) => {
+      if (franchise) {
+        this.franchise.update((current) => ({ ...current, data: [...current.data, franchise] }));
+        this.formSeries.get('franchiseId')?.setValue(franchise.id);
+      }
+    });
+  }
+
   onSubmit() {
     console.log(this.formSeries.value);
     if (this.formSeries.invalid) return;
@@ -93,7 +109,7 @@ export class SeriesForm implements OnInit {
         next: (res) => {
           if (!res) return;
           this.messageService.showSuccess(successMessage.serie);
-          return this.dialogService.close(res);
+          return this.ref?.close(res);
         },
         error: (err) => {
           this.messageService.showError(errorMessage.serie.submit);
