@@ -1,0 +1,104 @@
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { catchError, forkJoin, of, throwError } from 'rxjs';
+import { FormInput } from '../components/form-input/form-input';
+import { ApiService } from '../../../services/api-service';
+import { OptionModel, OptionsModel } from '../../../models/option-model';
+import { AsyncResource } from '../../../models/async-resource';
+import { loadValue } from '../../../utils/initial-state.utils';
+import { ToastService } from '../../../services/toast-service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { errorMessage } from '../../../constants/error-messages-constant';
+import { Select } from 'primeng/select';
+import { LoadStateEnum } from '../../../enums/load-state-enum';
+import { InputNumber } from 'primeng/inputnumber';
+import { FranchiseModel } from '../../../models/franchise-model';
+import { Button } from 'primeng/button';
+import { serieTranslation } from '../../../constants/serie-translation-constant';
+import { TranslatePipe } from '../../../pipes/translate-pipe';
+import { SerieModel } from '../../../models/serie-model';
+import { DialogService } from '../../../services/dialog-service';
+import { successMessage } from '../../../constants/success-message-constant';
+
+@Component({
+  selector: 'app-series-form',
+  imports: [ReactiveFormsModule, FormInput, Select, InputNumber, Button, TranslatePipe],
+  templateUrl: './series-form.html',
+})
+export class SeriesForm implements OnInit {
+  private readonly apiRequest = inject(ApiService);
+  private readonly messageService = inject(ToastService);
+  private readonly dialogService = inject(DialogService);
+  private readonly destroyRef = inject(DestroyRef);
+  protected readonly loadState = LoadStateEnum;
+  protected readonly serieTranslation = serieTranslation;
+
+  status = signal<AsyncResource<OptionModel[]>>(loadValue([]));
+  franchise = signal<AsyncResource<FranchiseModel[]>>(loadValue([]));
+
+  formSeries = new FormGroup({
+    name: new FormControl<string>('', Validators.required),
+    statusId: new FormControl<string | null>(null, Validators.required),
+    serieVolumes: new FormControl<number | null>(1, Validators.min(1)),
+    franchiseId: new FormControl<string | null>(null),
+  });
+
+  ngOnInit() {
+    forkJoin({
+      options: this.apiRequest.get<OptionsModel>('/options'),
+      franchise: this.apiRequest.get<FranchiseModel[]>('/franchises'),
+    })
+      .pipe(
+        catchError((err) => {
+          this.status.set(loadValue([], 'error'));
+          this.franchise.set(loadValue([], 'error'));
+
+          this.messageService.showError(errorMessage.config.load);
+          return of(null);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((result) => {
+        if (!result) return;
+        const {
+          options: { status },
+          franchise,
+        } = result;
+
+        this.status.set(loadValue(status, 'success'));
+        this.franchise.set(loadValue(franchise, 'success'));
+
+        this.formSeries.get('statusId')?.setValue(status[0].id);
+      });
+  }
+
+  onSubmit() {
+    console.log(this.formSeries.value);
+    if (this.formSeries.invalid) return;
+
+    const data = this.formSeries.value as SerieModel;
+
+    this.apiRequest
+      .post<SerieModel>('/series', data)
+      .pipe(
+        catchError((err) => {
+          if (err instanceof TypeError || err.status === 0) {
+            this.messageService.showError(errorMessage.network);
+            return of(null);
+          }
+          return throwError(() => err);
+        }),
+      )
+      .subscribe({
+        next: (res) => {
+          if (!res) return;
+          this.messageService.showSuccess(successMessage.serie);
+          return this.dialogService.close(res);
+        },
+        error: (err) => {
+          this.messageService.showError(errorMessage.serie.submit);
+          console.log(err);
+        },
+      });
+  }
+}

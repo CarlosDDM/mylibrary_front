@@ -13,11 +13,17 @@ import { SerieModel } from '../../../models/serie-model';
 import { AuthorModel } from '../../../models/author-model';
 import { IllustratorModel } from '../../../models/illustrator-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, of, throwError } from 'rxjs';
 import { ToastService } from '../../../services/toast-service';
 import { DialogService } from '../../../services/dialog-service';
 import { AuthorForm } from '../author-form/author-form';
 import { AsyncResource } from '../../../models/async-resource';
+import { LoadStateEnum } from '../../../enums/load-state-enum';
+import { loadValue } from '../../../utils/initial-state.utils';
+import { errorMessage } from '../../../constants/error-messages-constant';
+import { successMessage } from '../../../constants/success-message-constant';
+import { IllustratorForm } from '../illustrator-form/illustrator-form';
+import { SeriesForm } from '../series-form/series-form';
 
 @Component({
   selector: 'app-work-form',
@@ -37,16 +43,13 @@ export class WorkForm implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly messageService = inject(ToastService);
   private readonly dialogService = inject(DialogService);
+  protected readonly loadState = LoadStateEnum;
 
-  languages = signal<OptionModel[]>([]);
-  medias = signal<OptionModel[]>([]);
-  series = signal<SerieModel[]>([]);
-  authors = signal<AuthorModel[]>([]);
-  illustrators = signal<AsyncResource<IllustratorModel[]>>({
-    data: [],
-    state: 'loading',
-    error: null,
-  });
+  languages = signal<AsyncResource<OptionModel[]>>(loadValue([]));
+  medias = signal<AsyncResource<OptionModel[]>>(loadValue([]));
+  series = signal<AsyncResource<SerieModel[]>>(loadValue([]));
+  authors = signal<AsyncResource<AuthorModel[]>>(loadValue([]));
+  illustrators = signal<AsyncResource<IllustratorModel[]>>(loadValue([]));
 
   formWork = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -73,13 +76,34 @@ export class WorkForm implements OnInit {
       authors: this.apiRequest.get<AuthorModel[]>('/authors'),
       illustrators: this.apiRequest.get<IllustratorModel[]>('/illustrators'),
     })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ authors, illustrators, options: { languages, medias }, series }) => {
-        this.languages.set(languages);
-        this.medias.set(medias);
-        this.series.set(series);
-        this.authors.set(authors);
-        this.illustrators.set({ state: 'success', data: illustrators, error: null });
+      .pipe(
+        catchError((err) => {
+          this.languages.set(loadValue([], 'error', err));
+          this.medias.set(loadValue([], 'error', err));
+          this.series.set(loadValue([], 'error', err));
+          this.authors.set(loadValue([], 'error', err));
+          this.illustrators.set(loadValue([], 'error', err));
+
+          this.messageService.showError(errorMessage.config.load);
+          return of(null);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((result) => {
+        if (!result) return;
+
+        const {
+          authors,
+          illustrators,
+          options: { languages, medias },
+          series,
+        } = result;
+
+        this.languages.set(loadValue(languages, 'success'));
+        this.medias.set(loadValue(medias, 'success'));
+        this.series.set(loadValue(series, 'success'));
+        this.authors.set(loadValue(authors, 'success'));
+        this.illustrators.set(loadValue(illustrators, 'success'));
       });
 
     this.formWork
@@ -87,14 +111,10 @@ export class WorkForm implements OnInit {
       ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((serieId) => {
         const nameControl = this.formWork.get('name');
-        const serie = this.series().find((s) => s.id === serieId);
+        const serie = this.series().data.find((s) => s.id === serieId);
 
         if (serie) nameControl?.setValue(serie.name);
       });
-  }
-
-  onClick() {
-    console.log('faz o L');
   }
 
   authorModal() {
@@ -102,12 +122,49 @@ export class WorkForm implements OnInit {
       header: 'Criar autor',
     });
 
-    ref.onClose.subscribe((author: AuthorModel) => {
+    ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((author: AuthorModel) => {
       if (author) {
-        this.authors.update((list) => [...list, author]);
+        this.authors.update((current) => ({
+          ...current,
+          data: [...current.data, author],
+        }));
         this.formWork
           .get('authors')
           ?.setValue([...(this.formWork.get('authors')?.value ?? []), author.id]);
+      }
+    });
+  }
+
+  illustratorModal() {
+    const ref = this.dialogService.show(IllustratorForm, {
+      header: 'Criar ilustrador',
+    });
+
+    ref.onClose
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((illustrator: IllustratorModel) => {
+        if (illustrator) {
+          this.illustrators.update((current) => ({
+            ...current,
+            data: [...current.data, illustrator],
+          }));
+          this.formWork
+            .get('illustrators')
+            ?.setValue([...(this.formWork.get('illustrators')?.value ?? []), illustrator.id]);
+        }
+      });
+  }
+
+  seriesModal() {
+    const ref = this.dialogService.show(SeriesForm, {
+      header: 'Criar serie',
+    });
+
+    ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((serie: SerieModel) => {
+      if (serie) {
+        this.series.update((current) => ({ ...current, data: [...current.data, serie] }));
+
+        this.formWork.get('serieId')?.setValue(serie.id);
       }
     });
   }
@@ -117,13 +174,26 @@ export class WorkForm implements OnInit {
 
     const data = this.formWork.value as WorkModel;
 
-    this.apiRequest.post<WorkModel>('/works', data).subscribe({
-      next: () => {
-        this.messageService.showSuccess('Obra criada com sucesso');
-        this.dialogService.close();
-        return this.formWork.reset();
-      },
-      error: (err) => this.messageService.showError('Deu ruim'),
-    });
+    this.apiRequest
+      .post<WorkModel>('/works', data)
+      .pipe(
+        catchError((err) => {
+          if (err instanceof TypeError || err.status === 0) {
+            this.messageService.showError(errorMessage.network);
+            return of(null);
+          }
+          return throwError(() => err);
+        }),
+      )
+      .subscribe({
+        next: (res) => {
+          if (!res) return;
+          this.messageService.showSuccess(successMessage.work);
+          return this.dialogService.close(res);
+        },
+        error: (err) => {
+          this.messageService.showError(errorMessage.work.submit);
+        },
+      });
   }
 }

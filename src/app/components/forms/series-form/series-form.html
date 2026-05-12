@@ -1,0 +1,54 @@
+<form [formGroup]="formSeries" class="flex flex-col px-2 py-4 gap-5 w-full" (ngSubmit)="onSubmit()">
+  <app-form-input id="name" label="Nome da série" formControlName="name" />
+
+  <div class="flex gap-4 items-end">
+    <div class="flex-1">
+      <label for="statusId" class="block text-sm font-medium mb-1.5">Status</label>
+      <p-select
+        formControlName="statusId"
+        [options]="status().data"
+        optionValue="id"
+        placeholder="Status"
+        [loading]="status().state === loadState.Loading"
+        appendTo="body"
+        fluid
+      >
+        <ng-template #selectedItem let-selected>
+          {{ selected.type | translatePipe: serieTranslation }}
+        </ng-template>
+        <ng-template #item let-option>
+          {{ option.type | translatePipe: serieTranslation }}
+        </ng-template>
+      </p-select>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-sm font-medium" for="serieVolumes">qtd. Volumes</label>
+      <p-inputnumber
+        inputId="serieVolumes"
+        formControlName="serieVolumes"
+        [showButtons]="true"
+        buttonLayout="horizontal"
+        [min]="1"
+        inputStyleClass="w-16 text-center"
+      >
+        <ng-template #incrementbuttonicon><span class="pi pi-plus"></span></ng-template>
+        <ng-template #decrementbuttonicon><span class="pi pi-minus"></span></ng-template>
+      </p-inputnumber>
+    </div>
+  </div>
+
+  <p-select
+    formControlName="franchiseId"
+    [options]="franchise().data"
+    optionLabel="name"
+    optionValue="id"
+    placeholder="Franquia"
+    [loading]="franchise().state === loadState.Loading"
+    [disabled]="!!franchise().error"
+    appendTo="body"
+    fluid
+  />
+
+  <p-button type="submit" fluid label="Salvar série" />
+</form>

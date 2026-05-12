@@ -1,33 +1,33 @@
 import { Component, inject } from '@angular/core';
-import { FormInput } from '../components/form-input/form-input';
-import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ApiService } from '../../../services/api-service';
-import { AuthorModel } from '../../../models/author-model';
-import { Button } from 'primeng/button';
 import { ToastService } from '../../../services/toast-service';
-import { DialogService } from '../../../services/dialog-service';
-import { successMessage } from '../../../constants/success-message-constant';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { IllustratorModel } from '../../../models/illustrator-model';
 import { catchError, of, throwError } from 'rxjs';
 import { errorMessage } from '../../../constants/error-messages-constant';
+import { successMessage } from '../../../constants/success-message-constant';
+import { DialogService } from '../../../services/dialog-service';
+import { Button } from 'primeng/button';
+import { FormInput } from '../components/form-input/form-input';
 
 @Component({
-  selector: 'app-author-form',
+  selector: 'app-illustrator-form',
   imports: [FormInput, ReactiveFormsModule, Button],
-  templateUrl: './author-form.html',
+  templateUrl: './illustrator-form.html',
 })
-export class AuthorForm {
+export class IllustratorForm {
   private readonly apiService = inject(ApiService);
   private readonly messageService = inject(ToastService);
   private readonly dialogService = inject(DialogService);
 
-  formAuthor = new FormGroup({
+  formIllustrator = new FormGroup({
     name: new FormControl('', Validators.required),
   });
 
   onSubmit() {
-    const data = this.formAuthor.value as AuthorModel;
+    const data = this.formIllustrator.value as IllustratorModel;
     return this.apiService
-      .post('/authors', data)
+      .post('/illustrators', data)
       .pipe(
         catchError((err) => {
           if (err instanceof TypeError || err.status === 0) {
@@ -40,11 +40,11 @@ export class AuthorForm {
       .subscribe({
         next: (res) => {
           if (!res) return;
-          this.messageService.showSuccess(successMessage.author);
+          this.messageService.showSuccess(successMessage.illustrator);
           return this.dialogService.close(res);
         },
         error: (err) => {
-          this.messageService.showError(errorMessage.author.submit);
+          this.messageService.showError(errorMessage.illustrator.submit);
         },
       });
   }
