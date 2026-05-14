@@ -4,11 +4,11 @@ import { FormInput } from '../components/form-input/form-input';
 import { Button } from 'primeng/button';
 import { ApiService } from '../../../services/api-service';
 import { ToastService } from '../../../services/toast-service';
-import { DialogService } from '../../../services/dialog-service';
 import { FranchiseModel } from '../../../models/franchise-model';
 import { successMessage } from '../../../constants/success-message-constant';
 import { errorMessage } from '../../../constants/error-messages-constant';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { catchError, of, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-franchise-form',
@@ -18,7 +18,6 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
 export class FranchiseForm {
   private readonly apiRequest = inject(ApiService);
   private readonly messageService = inject(ToastService);
-  private readonly dialogService = inject(DialogService);
   private readonly ref = inject(DynamicDialogRef, { optional: true });
 
   formFranchise = new FormGroup({
@@ -32,7 +31,15 @@ export class FranchiseForm {
 
     this.apiRequest
       .post<FranchiseModel>('/franchises', data)
-      .pipe()
+      .pipe(
+        catchError((err) => {
+          if (err.status === 0) {
+            this.messageService.showError(errorMessage.network);
+            return of(null);
+          }
+          return throwError(() => err);
+        }),
+      )
       .subscribe({
         next: (res) => {
           if (!res) return;

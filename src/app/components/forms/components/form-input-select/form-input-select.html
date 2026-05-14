@@ -1,0 +1,41 @@
+<div>
+  <p-floatlabel variant="on">
+    <p-select
+      [inputId]="id()"
+      [options]="options()"
+      [optionLabel]="optionLabel()"
+      [optionValue]="optionValue()"
+      [invalid]="invalid()"
+      [loading]="loading()"
+      [disabled]="isDisabled()"
+      [ngModel]="value()"
+      (onBlur)="onTouched()"
+      (ngModelChange)="onValueChange($event)"
+      fluid
+      appendTo="body"
+    >
+      <ng-template #selectedItem let-selected>
+        {{ selected[optionLabel()] | translatePipe: translateKey() }}
+      </ng-template>
+      <ng-template #item let-option>
+        {{ option[optionLabel()] | translatePipe: translateKey() }}
+      </ng-template>
+      @if (buttonLabel()) {
+        <ng-template #footer>
+          <div class="p-3">
+            <p-button
+              [label]="buttonLabel()"
+              fluid
+              severity="secondary"
+              text
+              size="small"
+              icon="pi pi-plus"
+              (click)="handleOnclick.emit()"
+            />
+          </div>
+        </ng-template>
+      }
+    </p-select>
+    <label [for]="id()">{{ label() }}</label>
+  </p-floatlabel>
+</div>

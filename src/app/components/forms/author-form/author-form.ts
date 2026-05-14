@@ -32,7 +32,7 @@ export class AuthorForm {
       .post('/authors', data)
       .pipe(
         catchError((err) => {
-          if (err instanceof TypeError || err.status === 0) {
+          if (err.status === 0) {
             this.messageService.showError(errorMessage.network);
             return of(null);
           }

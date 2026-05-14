@@ -14,7 +14,7 @@ import { LoadStateEnum } from '../../../enums/load-state-enum';
 import { InputNumber } from 'primeng/inputnumber';
 import { FranchiseModel } from '../../../models/franchise-model';
 import { Button } from 'primeng/button';
-import { serieTranslation } from '../../../constants/serie-translation-constant';
+import { statusTranslation } from '../../../constants/status-translation-constant';
 import { TranslatePipe } from '../../../pipes/translate-pipe';
 import { SerieModel } from '../../../models/serie-model';
 import { DialogService } from '../../../services/dialog-service';
@@ -34,7 +34,7 @@ export class SeriesForm implements OnInit {
   private readonly ref = inject(DynamicDialogRef, { optional: true });
   private readonly destroyRef = inject(DestroyRef);
   protected readonly loadState = LoadStateEnum;
-  protected readonly serieTranslation = serieTranslation;
+  protected readonly serieTranslation = statusTranslation;
 
   status = signal<AsyncResource<OptionModel[]>>(loadValue([]));
   franchise = signal<AsyncResource<FranchiseModel[]>>(loadValue([]));
@@ -98,7 +98,7 @@ export class SeriesForm implements OnInit {
       .post<SerieModel>('/series', data)
       .pipe(
         catchError((err) => {
-          if (err instanceof TypeError || err.status === 0) {
+          if (err.status === 0) {
             this.messageService.showError(errorMessage.network);
             return of(null);
           }

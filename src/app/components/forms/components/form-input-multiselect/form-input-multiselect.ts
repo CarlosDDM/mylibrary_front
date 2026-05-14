@@ -1,0 +1,58 @@
+import { Component, forwardRef, input, output, signal } from '@angular/core';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { FloatLabel } from 'primeng/floatlabel';
+import { MultiSelect } from 'primeng/multiselect';
+import { Button } from 'primeng/button';
+
+@Component({
+  selector: 'app-form-input-multiselect',
+  imports: [FloatLabel, MultiSelect, FormsModule, Button],
+  templateUrl: './form-input-multiselect.html',
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => FormInputMultiselect),
+      multi: true,
+    },
+  ],
+})
+export class FormInputMultiselect implements ControlValueAccessor {
+  label = input.required<string>();
+  id = input.required<string>();
+  translateKey = input<Record<string, string>>({} as Record<string, string>);
+  optionLabel = input.required<string>();
+  options = input<unknown[]>([]);
+  invalid = input<boolean>(false);
+  optionValue = input.required<string>();
+  loading = input<boolean>(false);
+  buttonLabel = input<string>();
+  handleOnclick = output<void>();
+
+  value = signal<unknown>(null);
+  isDisabled = signal(false);
+
+  private onChange: (value: unknown) => void = () => {};
+  protected onTouched: () => void = () => {};
+
+  writeValue(obj: unknown): void {
+    this.value.set(obj);
+  }
+
+  registerOnChange(fn: (value: unknown) => void): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.isDisabled.set(isDisabled);
+  }
+
+  onValueChange(value: unknown): void {
+    this.value.set(value);
+    this.onChange(value);
+    this.onTouched();
+  }
+}

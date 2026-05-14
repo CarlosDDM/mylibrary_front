@@ -19,12 +19,14 @@ import { DialogService } from '../../../services/dialog-service';
 import { AuthorForm } from '../author-form/author-form';
 import { AsyncResource } from '../../../models/async-resource';
 import { LoadStateEnum } from '../../../enums/load-state-enum';
-import { loadValue } from '../../../utils/initial-state.utils';
 import { errorMessage } from '../../../constants/error-messages-constant';
 import { successMessage } from '../../../constants/success-message-constant';
 import { IllustratorForm } from '../illustrator-form/illustrator-form';
 import { SeriesForm } from '../series-form/series-form';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { mediaTranslation } from '../../../constants/media-translation-constant';
+import { FormInputSelect } from '../components/form-input-select/form-input-select';
+import { FormInputMultiselect } from '../components/form-input-multiselect/form-input-multiselect';
 
 @Component({
   selector: 'app-work-form',
@@ -36,6 +38,8 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
     SelectModule,
     ButtonModule,
     MultiSelectModule,
+    FormInputSelect,
+    FormInputMultiselect,
   ],
   templateUrl: './work-form.html',
 })
@@ -44,14 +48,15 @@ export class WorkForm implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly messageService = inject(ToastService);
   private readonly dialogService = inject(DialogService);
+  protected readonly workMediaTranslation = mediaTranslation;
   protected readonly loadState = LoadStateEnum;
   private readonly ref = inject(DynamicDialogRef, { optional: true });
 
-  languages = signal<AsyncResource<OptionModel[]>>(loadValue([]));
-  medias = signal<AsyncResource<OptionModel[]>>(loadValue([]));
-  series = signal<AsyncResource<SerieModel[]>>(loadValue([]));
-  authors = signal<AsyncResource<AuthorModel[]>>(loadValue([]));
-  illustrators = signal<AsyncResource<IllustratorModel[]>>(loadValue([]));
+  languages = signal<AsyncResource<OptionModel[]>>(AsyncResource.loading([]));
+  medias = signal<AsyncResource<OptionModel[]>>(AsyncResource.loading([]));
+  series = signal<AsyncResource<SerieModel[]>>(AsyncResource.loading([]));
+  authors = signal<AsyncResource<AuthorModel[]>>(AsyncResource.loading([]));
+  illustrators = signal<AsyncResource<IllustratorModel[]>>(AsyncResource.loading([]));
 
   formWork = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -68,7 +73,7 @@ export class WorkForm implements OnInit {
 
   isInvalid(field: string): boolean {
     const control = this.formWork.get(field);
-    return !!control?.invalid && !!control?.touched;
+    return !!control?.invalid && (!!control?.touched || !!control?.dirty);
   }
 
   ngOnInit() {
@@ -80,11 +85,13 @@ export class WorkForm implements OnInit {
     })
       .pipe(
         catchError((err) => {
-          this.languages.set(loadValue([], 'error', err));
-          this.medias.set(loadValue([], 'error', err));
-          this.series.set(loadValue([], 'error', err));
-          this.authors.set(loadValue([], 'error', err));
-          this.illustrators.set(loadValue([], 'error', err));
+          this.languages.update((s) => AsyncResource.error(s, err));
+          this.medias.update((s) => AsyncResource.error(s, err));
+          this.series.update((s) => AsyncResource.error(s, err));
+          this.authors.update((s) => AsyncResource.error(s, err));
+          this.illustrators.update((s) => AsyncResource.error(s, err));
+
+          this.formWork.disable();
 
           this.messageService.showError(errorMessage.config.load);
           return of(null);
@@ -101,11 +108,11 @@ export class WorkForm implements OnInit {
           series,
         } = result;
 
-        this.languages.set(loadValue(languages, 'success'));
-        this.medias.set(loadValue(medias, 'success'));
-        this.series.set(loadValue(series, 'success'));
-        this.authors.set(loadValue(authors, 'success'));
-        this.illustrators.set(loadValue(illustrators, 'success'));
+        this.languages.update((s) => AsyncResource.success(s.data.concat(languages)));
+        this.medias.update((s) => AsyncResource.success(s.data.concat(medias)));
+        this.series.update((s) => AsyncResource.success(s.data.concat(series)));
+        this.authors.update((s) => AsyncResource.success(s.data.concat(authors)));
+        this.illustrators.update((s) => AsyncResource.success(s.data.concat(illustrators)));
       });
 
     this.formWork
