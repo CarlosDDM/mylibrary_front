@@ -1,0 +1,23 @@
+<div class="flex items-center gap-3">
+  <label class="font-bold" [for]="id()">{{ label() }}</label>
+  <p-inputnumber
+    [ngModel]="value()"
+    (ngModelChange)="onValueChange($event)"
+    [showButtons]="true"
+    buttonLayout="horizontal"
+    [inputId]="id()"
+    [min]="min()"
+    [max]="max()"
+    [step]="step()"
+    [invalid]="invalid()"
+    [disabled]="isDisabled()"
+    inputStyleClass="w-16 text-center"
+  >
+    <ng-template #incrementbuttonicon>
+      <span class="pi pi-plus"></span>
+    </ng-template>
+    <ng-template #decrementbuttonicon>
+      <span class="pi pi-minus"></span>
+    </ng-template>
+  </p-inputnumber>
+</div>

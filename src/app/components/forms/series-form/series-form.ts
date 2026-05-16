@@ -9,22 +9,21 @@ import { loadValue } from '../../../utils/initial-state.utils';
 import { ToastService } from '../../../services/toast-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { errorMessage } from '../../../constants/error-messages-constant';
-import { Select } from 'primeng/select';
 import { LoadStateEnum } from '../../../enums/load-state-enum';
-import { InputNumber } from 'primeng/inputnumber';
 import { FranchiseModel } from '../../../models/franchise-model';
-import { Button } from 'primeng/button';
 import { statusTranslation } from '../../../constants/status-translation-constant';
-import { TranslatePipe } from '../../../pipes/translate-pipe';
 import { SerieModel } from '../../../models/serie-model';
 import { DialogService } from '../../../services/dialog-service';
 import { successMessage } from '../../../constants/success-message-constant';
 import { FranchiseForm } from '../franchise-form/franchise-form';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { FormInputSelect } from '../components/form-input-select/form-input-select';
+import { FormInputCounter } from '../components/form-input-counter/form-input-counter';
+import { FormButton } from '../components/form-button/form-button';
 
 @Component({
   selector: 'app-series-form',
-  imports: [ReactiveFormsModule, FormInput, Select, InputNumber, Button, TranslatePipe],
+  imports: [ReactiveFormsModule, FormInput, FormInputSelect, FormInputCounter, FormButton],
   templateUrl: './series-form.html',
 })
 export class SeriesForm implements OnInit {

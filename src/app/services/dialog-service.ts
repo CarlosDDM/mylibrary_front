@@ -15,7 +15,7 @@ export class DialogService {
       modal: true,
       closable: true,
       contentStyle: { overflow: 'auto' },
-      styleClass: config?.styleClass ?? 'w-[90vw] md:w-[50vw]',
+      styleClass: config?.styleClass ?? 'w-[90vw] md:w-[60vw] lg:w-[45vw]',
       ...config,
     }) as DynamicDialogRef;
   }

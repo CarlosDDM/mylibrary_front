@@ -4,5 +4,10 @@
   (ngSubmit)="onSubmit()"
 >
   <app-form-input class="w-full" id="name" label="Nome do ilustrador" formControlName="name" />
-  <p-button type="submit" [disabled]="formIllustrator.invalid">Salvar ilustrador</p-button>
+  <app-form-button
+    type="submit"
+    [disabled]="formIllustrator.invalid"
+    label="Salvar ilustrador"
+    size="large"
+  />
 </form>

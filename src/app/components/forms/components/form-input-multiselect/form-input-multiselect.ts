@@ -2,11 +2,11 @@ import { Component, forwardRef, input, output, signal } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FloatLabel } from 'primeng/floatlabel';
 import { MultiSelect } from 'primeng/multiselect';
-import { Button } from 'primeng/button';
+import { FormButton } from '../form-button/form-button';
 
 @Component({
   selector: 'app-form-input-multiselect',
-  imports: [FloatLabel, MultiSelect, FormsModule, Button],
+  imports: [FloatLabel, MultiSelect, FormsModule, FormButton],
   templateUrl: './form-input-multiselect.html',
   providers: [
     {

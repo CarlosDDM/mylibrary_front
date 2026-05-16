@@ -1,14 +1,16 @@
-<p-floatlabel class="w-full" variant="on">
-  <input
-    pInputText
-    class="w-full"
-    [id]="id()"
-    [value]="value"
-    [invalid]="invalid()"
-    [disabled]="disabled"
-    (input)="onInput($event)"
-    (blur)="onTouched()"
-    autocomplete="off"
-  />
-  <label [for]="id()">{{ label() }}</label>
-</p-floatlabel>
+<div>
+  <p-floatlabel variant="on">
+    <input
+      pInputText
+      [id]="id()"
+      [value]="value"
+      [invalid]="invalid()"
+      [disabled]="disabled"
+      (input)="onInput($event)"
+      (blur)="onTouched()"
+      autocomplete="off"
+      fluid
+    />
+    <label [for]="id()">{{ label() }}</label>
+  </p-floatlabel>
+</div>

@@ -1,7 +1,7 @@
 <div>
   <p-floatlabel variant="on">
     <p-multiselect
-      [id]="id()"
+      [inputId]="id()"
       [options]="options()"
       [optionLabel]="optionLabel()"
       [optionValue]="optionValue()"
@@ -19,14 +19,13 @@
       @if (buttonLabel()) {
         <ng-template #footer>
           <div class="p-3">
-            <p-button
-              [label]="buttonLabel()"
-              fluid
+            <app-form-button
               severity="secondary"
-              text
-              size="small"
+              [label]="buttonLabel()!"
               icon="pi pi-plus"
-              (click)="handleOnclick.emit()"
+              size="small"
+              [text]="true"
+              (handleClick)="handleOnclick.emit()"
             />
           </div>
         </ng-template>

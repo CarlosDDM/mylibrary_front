@@ -4,5 +4,10 @@
   (ngSubmit)="onSubmit()"
 >
   <app-form-input class="w-full" id="name" label="Nome do autor" formControlName="name" />
-  <p-button type="submit" [disabled]="formAuthor.invalid">Salvar autor</p-button>
+  <app-form-button
+    type="submit"
+    label="Salvar autor"
+    size="large"
+    [disabled]="formAuthor.invalid"
+  />
 </form>

@@ -1,0 +1,10 @@
+<div>
+  <p-card
+    [style]="{ width: '15rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }"
+  >
+    <p class="text-center">{{ qtd() }}</p>
+    <ng-template #footer>
+      <p class="text-center">{{ label() }}</p>
+    </ng-template>
+  </p-card>
+</div>

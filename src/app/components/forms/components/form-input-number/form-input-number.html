@@ -1,0 +1,20 @@
+<div>
+  <p-floatlabel variant="on">
+    <p-inputnumber
+      [mode]="mode()"
+      [showButtons]="showButtons()"
+      [inputId]="id()"
+      [min]="min()"
+      [max]="max()"
+      [step]="step()"
+      [invalid]="invalid()"
+      [buttonLayout]="buttonLayout()"
+      [currency]="mode() === 'currency' ? currency() : undefined"
+      [ngModel]="value()"
+      (ngModelChange)="onValueChange($event)"
+      [disabled]="isDisabled()"
+      fluid
+    />
+    <label [for]="id()">{{ label() }}</label>
+  </p-floatlabel>
+</div>

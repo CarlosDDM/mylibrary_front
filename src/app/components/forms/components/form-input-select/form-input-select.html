@@ -13,6 +13,7 @@
       (ngModelChange)="onValueChange($event)"
       fluid
       appendTo="body"
+      panelStyleClass="text-sm/tight sm:text-md/tight"
     >
       <ng-template #selectedItem let-selected>
         {{ selected[optionLabel()] | translatePipe: translateKey() }}
@@ -23,14 +24,12 @@
       @if (buttonLabel()) {
         <ng-template #footer>
           <div class="p-3">
-            <p-button
-              [label]="buttonLabel()"
-              fluid
+            <app-form-button
+              [label]="buttonLabel()!"
               severity="secondary"
-              text
-              size="small"
+              [text]="true"
               icon="pi pi-plus"
-              (click)="handleOnclick.emit()"
+              (handleClick)="handleOnclick.emit()"
             />
           </div>
         </ng-template>

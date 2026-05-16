@@ -1,1 +1,3 @@
-<p-button (click)="createWork()">open dialog</p-button>
+<app-header />
+<app-stat-card [qtd]="15" label="livros" />
+<app-form-button label="open dialog" (handleClick)="createWork()" [fluid]="false" size="large" />

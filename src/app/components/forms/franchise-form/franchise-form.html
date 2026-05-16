@@ -1,4 +1,9 @@
 <form class="flex flex-col p-2 gap-6" [formGroup]="formFranchise" (ngSubmit)="onSubmit()">
   <app-form-input id="name" label="Nome" formControlName="name" />
-  <p-button type="submit" label="Salvar franquia" fluid [disabled]="formFranchise.invalid" />
+  <app-form-button
+    type="submit"
+    label="Salvar franquia"
+    [disabled]="formFranchise.invalid"
+    size="large"
+  />
 </form>

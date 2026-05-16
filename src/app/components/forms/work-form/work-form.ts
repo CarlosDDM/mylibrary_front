@@ -3,11 +3,6 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ApiService } from '../../../services/api-service';
 import { WorkModel } from '../../../models/work-model';
 import { FormInput } from '../components/form-input/form-input';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { CheckboxModule } from 'primeng/checkbox';
-import { SelectModule } from 'primeng/select';
-import { ButtonModule } from 'primeng/button';
-import { MultiSelectModule } from 'primeng/multiselect';
 import { OptionModel, OptionsModel } from '../../../models/option-model';
 import { SerieModel } from '../../../models/serie-model';
 import { AuthorModel } from '../../../models/author-model';
@@ -27,19 +22,22 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { mediaTranslation } from '../../../constants/media-translation-constant';
 import { FormInputSelect } from '../components/form-input-select/form-input-select';
 import { FormInputMultiselect } from '../components/form-input-multiselect/form-input-multiselect';
+import { FormInputNumber } from '../components/form-input-number/form-input-number';
+import { FormInputCounter } from '../components/form-input-counter/form-input-counter';
+import { FormButton } from '../components/form-button/form-button';
+import { FormInputCheckbox } from '../components/form-input-checkbox/form-input-checkbox';
 
 @Component({
   selector: 'app-work-form',
   imports: [
     ReactiveFormsModule,
     FormInput,
-    InputNumberModule,
-    CheckboxModule,
-    SelectModule,
-    ButtonModule,
-    MultiSelectModule,
     FormInputSelect,
     FormInputMultiselect,
+    FormInputNumber,
+    FormInputCounter,
+    FormButton,
+    FormInputCheckbox,
   ],
   templateUrl: './work-form.html',
 })

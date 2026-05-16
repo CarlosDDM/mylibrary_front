@@ -29,12 +29,15 @@ export class FormInput implements ControlValueAccessor {
   writeValue(value: any) {
     this.value = value ?? '';
   }
+
   registerOnChange(fn: any) {
     this.onChange = fn;
   }
+
   registerOnTouched(fn: any) {
     this.onTouched = fn;
   }
+
   setDisabledState(disabled: boolean) {
     this.disabled = disabled;
   }

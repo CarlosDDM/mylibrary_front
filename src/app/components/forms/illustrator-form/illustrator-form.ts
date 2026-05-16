@@ -7,13 +7,13 @@ import { catchError, of, throwError } from 'rxjs';
 import { errorMessage } from '../../../constants/error-messages-constant';
 import { successMessage } from '../../../constants/success-message-constant';
 import { DialogService } from '../../../services/dialog-service';
-import { Button } from 'primeng/button';
 import { FormInput } from '../components/form-input/form-input';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { FormButton } from '../components/form-button/form-button';
 
 @Component({
   selector: 'app-illustrator-form',
-  imports: [FormInput, ReactiveFormsModule, Button],
+  imports: [FormInput, ReactiveFormsModule, FormButton],
   templateUrl: './illustrator-form.html',
 })
 export class IllustratorForm {

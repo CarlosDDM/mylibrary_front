@@ -1,4 +1,17 @@
 <form class="grid grid-cols-2 gap-4 py-6 px-2" [formGroup]="formWork" (ngSubmit)="onSubmit()">
+  <app-form-input-select
+    class="col-span-2"
+    id="serieId"
+    label="Série"
+    formControlName="serieId"
+    [options]="series().data"
+    optionLabel="name"
+    optionValue="id"
+    [loading]="series().state === loadState.Loading"
+    buttonLabel="Criar nova série"
+    (handleOnclick)="seriesModal()"
+  />
+
   <app-form-input
     class="col-span-2"
     id="name"
@@ -8,40 +21,22 @@
   />
   <app-form-input class="col-span-2" id="subtitle" label="Sub-título" formControlName="subtitle" />
 
-  <div class="grid grid-cols-1 col-span-2 md:grid-cols-2 gap-4 items-center">
-    <div class="flex flex-col">
-      <label class="mb-2 block font-bold" for="price">Preço</label>
-      <p-inputnumber
-        formControlName="price"
-        [showButtons]="true"
-        mode="currency"
-        currency="BRL"
-        inputStyleClass="w-40"
-        [min]="0"
+  <div class="col-span-2 flex flex-col gap-4">
+    <app-form-input-number
+      id="price"
+      label="Preço"
+      formControlName="price"
+      mode="currency"
+      currency="BRL"
+      [min]="0"
+    />
+    <div class="flex items-center justify-between flex-wrap gap-x-2 gap-y-3">
+      <app-form-input-counter id="volume" label="Volume" [min]="0" formControlName="volume" />
+      <app-form-input-checkbox
+        id="isSpecialEdition"
+        label="Edição especial"
+        formControlName="isSpecialEdition"
       />
-    </div>
-    <div class="w-fit justify-self-center sm:justify-items-normal">
-      <label class="mb-2 block font-bold" for="volume">Volume</label>
-      <p-inputnumber
-        formControlName="volume"
-        [showButtons]="true"
-        buttonLayout="horizontal"
-        inputId="volume"
-        [min]="0"
-        inputStyleClass="w-16 text-center"
-      >
-        <ng-template #incrementbuttonicon>
-          <span class="pi pi-plus"></span>
-        </ng-template>
-        <ng-template #decrementbuttonicon>
-          <span class="pi pi-minus"></span>
-        </ng-template>
-      </p-inputnumber>
-    </div>
-
-    <div class="flex items-center gap-2">
-      <p-checkbox id="isSpecialEdition" formControlName="isSpecialEdition" [binary]="true" />
-      <label for="isSpecialEdition">Edição especial</label>
     </div>
   </div>
 
@@ -66,19 +61,6 @@
     [translateKey]="workMediaTranslation"
     [invalid]="isInvalid('mediaId')"
     [loading]="medias().state === loadState.Loading"
-  />
-
-  <app-form-input-select
-    class="col-span-2"
-    id="serieId"
-    label="Série"
-    formControlName="serieId"
-    [options]="series().data"
-    optionLabel="name"
-    optionValue="id"
-    [loading]="series().state === loadState.Loading"
-    buttonLabel="Criar nova série"
-    (handleOnclick)="seriesModal()"
   />
 
   <app-form-input-multiselect
@@ -108,11 +90,11 @@
     (handleOnclick)="illustratorModal()"
   />
 
-  <p-button
+  <app-form-button
     class="col-span-2"
     type="submit"
-    label="Salvar obra"
     [disabled]="formWork.invalid"
-    fluid
+    label="Salvar obra"
+    size="large"
   />
 </form>

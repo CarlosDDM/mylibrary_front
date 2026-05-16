@@ -3,11 +3,11 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
 import { FloatLabel } from 'primeng/floatlabel';
 import { Select } from 'primeng/select';
 import { TranslatePipe } from '../../../../pipes/translate-pipe';
-import { Button } from 'primeng/button';
+import { FormButton } from '../form-button/form-button';
 
 @Component({
   selector: 'app-form-input-select',
-  imports: [FloatLabel, Select, TranslatePipe, FormsModule, Button],
+  imports: [FloatLabel, Select, TranslatePipe, FormsModule, FormButton],
   templateUrl: './form-input-select.html',
   providers: [
     {

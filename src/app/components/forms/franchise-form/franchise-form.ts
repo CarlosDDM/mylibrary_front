@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormInput } from '../components/form-input/form-input';
-import { Button } from 'primeng/button';
 import { ApiService } from '../../../services/api-service';
 import { ToastService } from '../../../services/toast-service';
 import { FranchiseModel } from '../../../models/franchise-model';
@@ -9,10 +8,11 @@ import { successMessage } from '../../../constants/success-message-constant';
 import { errorMessage } from '../../../constants/error-messages-constant';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { catchError, of, throwError } from 'rxjs';
+import { FormButton } from '../components/form-button/form-button';
 
 @Component({
   selector: 'app-franchise-form',
-  imports: [ReactiveFormsModule, FormInput, Button],
+  imports: [ReactiveFormsModule, FormInput, FormButton],
   templateUrl: './franchise-form.html',
 })
 export class FranchiseForm {
