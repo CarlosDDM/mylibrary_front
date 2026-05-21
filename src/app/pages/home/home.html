@@ -1,3 +1,16 @@
 <app-header />
-<app-stat-card [qtd]="15" label="livros" />
+<div class="mt-4 mb-16">
+  <app-wrapper-stats />
+  <div class="flex flex-col gap-6 mt-4">
+    <app-bookshelf
+      typeCard="serie"
+      titleSection="Série"
+      [data]="serieData().data"
+      (cardClick)="handleClickSerie($event)"
+    />
+    <app-bookshelf typeCard="franchise" titleSection="Franquia" [data]="franchiseData().data" />
+    <app-bookshelf typeCard="work" titleSection="Obras" [data]="workData().data" />
+  </div>
+</div>
+
 <app-form-button label="open dialog" (handleClick)="createWork()" [fluid]="false" size="large" />

@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ApiService } from '../../../services/api-service';
+import { ApiService } from '../../../services/api/api-service';
 import { WorkModel } from '../../../models/work-model';
 import { FormInput } from '../components/form-input/form-input';
 import { OptionModel, OptionsModel } from '../../../models/option-model';
@@ -10,7 +10,7 @@ import { IllustratorModel } from '../../../models/illustrator-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, forkJoin, of, throwError } from 'rxjs';
 import { ToastService } from '../../../services/toast-service';
-import { DialogService } from '../../../services/dialog-service';
+import { DialogService } from '../../../services/dialog/dialog-service';
 import { AuthorForm } from '../author-form/author-form';
 import { AsyncResource } from '../../../models/async-resource';
 import { LoadStateEnum } from '../../../enums/load-state-enum';
@@ -26,6 +26,12 @@ import { FormInputNumber } from '../components/form-input-number/form-input-numb
 import { FormInputCounter } from '../components/form-input-counter/form-input-counter';
 import { FormButton } from '../components/form-button/form-button';
 import { FormInputCheckbox } from '../components/form-input-checkbox/form-input-checkbox';
+import { SerieService } from '../../../services/serie/serie-service';
+import { OptionService } from '../../../services/options/option-service';
+import { FranchiseService } from '../../../services/franchises/franchise-service';
+import { AuthorService } from '../../../services/authors/author-service';
+import { IllustratorService } from '../../../services/illustrators/illustrator-service';
+import { WorkService } from '../../../services/works/work-service';
 
 @Component({
   selector: 'app-work-form',
@@ -42,7 +48,11 @@ import { FormInputCheckbox } from '../components/form-input-checkbox/form-input-
   templateUrl: './work-form.html',
 })
 export class WorkForm implements OnInit {
-  private readonly apiRequest = inject(ApiService);
+  private readonly serieService = inject(SerieService);
+  private readonly optionService = inject(OptionService);
+  private readonly authorsService = inject(AuthorService);
+  private readonly illustratorService = inject(IllustratorService);
+  private readonly workService = inject(WorkService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly messageService = inject(ToastService);
   private readonly dialogService = inject(DialogService);
@@ -76,10 +86,10 @@ export class WorkForm implements OnInit {
 
   ngOnInit() {
     forkJoin({
-      options: this.apiRequest.get<OptionsModel>('/options'),
-      series: this.apiRequest.get<SerieModel[]>('/series'),
-      authors: this.apiRequest.get<AuthorModel[]>('/authors'),
-      illustrators: this.apiRequest.get<IllustratorModel[]>('/illustrators'),
+      options: this.optionService.getOptions(),
+      series: this.serieService.getAll(),
+      authors: this.authorsService.getAll(),
+      illustrators: this.illustratorService.getAll(),
     })
       .pipe(
         catchError((err) => {
@@ -181,8 +191,8 @@ export class WorkForm implements OnInit {
 
     const data = this.formWork.value as WorkModel;
 
-    this.apiRequest
-      .post<WorkModel>('/works', data)
+    this.workService
+      .create(data)
       .pipe(
         catchError((err) => {
           if (err instanceof TypeError || err.status === 0) {

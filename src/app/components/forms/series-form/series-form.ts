@@ -2,8 +2,7 @@ import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { catchError, forkJoin, of, throwError } from 'rxjs';
 import { FormInput } from '../components/form-input/form-input';
-import { ApiService } from '../../../services/api-service';
-import { OptionModel, OptionsModel } from '../../../models/option-model';
+import { OptionModel } from '../../../models/option-model';
 import { AsyncResource } from '../../../models/async-resource';
 import { loadValue } from '../../../utils/initial-state.utils';
 import { ToastService } from '../../../services/toast-service';
@@ -13,13 +12,16 @@ import { LoadStateEnum } from '../../../enums/load-state-enum';
 import { FranchiseModel } from '../../../models/franchise-model';
 import { statusTranslation } from '../../../constants/status-translation-constant';
 import { SerieModel } from '../../../models/serie-model';
-import { DialogService } from '../../../services/dialog-service';
+import { DialogService } from '../../../services/dialog/dialog-service';
 import { successMessage } from '../../../constants/success-message-constant';
 import { FranchiseForm } from '../franchise-form/franchise-form';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { FormInputSelect } from '../components/form-input-select/form-input-select';
 import { FormInputCounter } from '../components/form-input-counter/form-input-counter';
 import { FormButton } from '../components/form-button/form-button';
+import { SerieService } from '../../../services/serie/serie-service';
+import { OptionService } from '../../../services/options/option-service';
+import { FranchiseService } from '../../../services/franchises/franchise-service';
 
 @Component({
   selector: 'app-series-form',
@@ -27,7 +29,9 @@ import { FormButton } from '../components/form-button/form-button';
   templateUrl: './series-form.html',
 })
 export class SeriesForm implements OnInit {
-  private readonly apiRequest = inject(ApiService);
+  private readonly serieService = inject(SerieService);
+  private readonly franchiseService = inject(FranchiseService);
+  private readonly optionService = inject(OptionService);
   private readonly messageService = inject(ToastService);
   private readonly dialogService = inject(DialogService);
   private readonly ref = inject(DynamicDialogRef, { optional: true });
@@ -47,8 +51,8 @@ export class SeriesForm implements OnInit {
 
   ngOnInit() {
     forkJoin({
-      options: this.apiRequest.get<OptionsModel>('/options'),
-      franchise: this.apiRequest.get<FranchiseModel[]>('/franchises'),
+      options: this.optionService.getOptions(),
+      franchise: this.franchiseService.getAll(),
     })
       .pipe(
         catchError((err) => {
@@ -93,8 +97,8 @@ export class SeriesForm implements OnInit {
 
     const data = this.formSeries.value as SerieModel;
 
-    this.apiRequest
-      .post<SerieModel>('/series', data)
+    this.serieService
+      .create(data)
       .pipe(
         catchError((err) => {
           if (err.status === 0) {
@@ -103,6 +107,7 @@ export class SeriesForm implements OnInit {
           }
           return throwError(() => err);
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (res) => {

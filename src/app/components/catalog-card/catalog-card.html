@@ -1,0 +1,70 @@
+<div
+  [title]="cardData()?.name"
+  class="transition-all duration-200 hover:scale-105 hover:shadow-lg cursor-pointer w-40 h-60"
+>
+  <p-card
+    class="overflow-hidden w-full h-full relative"
+    [pt]="cardPt"
+    (click)="handleClick.emit(cardData()?.id!)"
+  >
+    <ng-template #header>
+      <div [class]="'relative flex items-center justify-center h-28 ' + coverColor().bg">
+        <i
+          [class]="'pi ' + coverIcon() + ' ' + coverColor().icon"
+          [style]="{ 'font-size': '3rem' }"
+        ></i>
+        @if (cardData()?.status) {
+          <div class="px-3 pt-2 absolute right-0 bottom-2">
+            <span
+              [class]="statusClass()"
+              class="text-[9px] font-medium border rounded-full px-2 py-0.5"
+            >
+              {{ cardData()?.status?.type | translatePipe: statusDictionary }}
+            </span>
+          </div>
+        }
+      </div>
+    </ng-template>
+    <ng-template #title>
+      <span class="line-clamp-2 text-sm/tight">{{ cardData()?.name }}</span>
+    </ng-template>
+    @if (cardData()?.subtitle) {
+      <ng-template #subtitle>{{ cardData()?.subtitle }}</ng-template>
+    }
+    <ng-template #footer>
+      <div class="flex items-end justify-between mt-auto w-full">
+        <div class="flex-1 min-w-0 pr-2">
+          @switch (cardType()) {
+            @case ('serie') {
+              <div class="flex flex-col gap-0.5">
+                <span class="text-xs text-zinc-600 dark:text-zinc-400">
+                  <strong class="text-zinc-800 dark:text-zinc-200">{{
+                    cardData()?.serieVolumes
+                  }}</strong>
+                  volumes
+                </span>
+                <span class="text-[10px] text-zinc-500 dark:text-zinc-500 truncate block">
+                  Franquia: {{ cardData()?.franchise?.name ?? 'Sem franquia' }}
+                </span>
+              </div>
+            }
+            @case ('franchise') {
+              <span class="text-xs text-zinc-400">
+                <strong class="text-zinc-200">{{ cardData()?.series?.length ?? 0 }}</strong> séries
+              </span>
+            }
+            @case ('work') {
+              <div class="flex flex-col gap-0.5">
+                <span class="text-xs text-zinc-400">
+                  Vol. <strong class="text-zinc-200">{{ cardData()?.volume }}</strong>
+                </span>
+              </div>
+            }
+          }
+        </div>
+
+        <i class="pi pi-angle-right text-zinc-500 text-sm shrink-0 mb-1"></i>
+      </div>
+    </ng-template>
+  </p-card>
+</div>

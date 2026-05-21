@@ -1,15 +1,14 @@
 import { Component, inject } from '@angular/core';
-import { ApiService } from '../../../services/api-service';
 import { ToastService } from '../../../services/toast-service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IllustratorModel } from '../../../models/illustrator-model';
 import { catchError, of, throwError } from 'rxjs';
 import { errorMessage } from '../../../constants/error-messages-constant';
 import { successMessage } from '../../../constants/success-message-constant';
-import { DialogService } from '../../../services/dialog-service';
 import { FormInput } from '../components/form-input/form-input';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { FormButton } from '../components/form-button/form-button';
+import { IllustratorService } from '../../../services/illustrators/illustrator-service';
 
 @Component({
   selector: 'app-illustrator-form',
@@ -17,9 +16,8 @@ import { FormButton } from '../components/form-button/form-button';
   templateUrl: './illustrator-form.html',
 })
 export class IllustratorForm {
-  private readonly apiService = inject(ApiService);
+  private readonly illustratorService = inject(IllustratorService);
   private readonly messageService = inject(ToastService);
-  private readonly dialogService = inject(DialogService);
   private readonly ref = inject(DynamicDialogRef, { optional: true });
 
   formIllustrator = new FormGroup({
@@ -28,8 +26,8 @@ export class IllustratorForm {
 
   onSubmit() {
     const data = this.formIllustrator.value as IllustratorModel;
-    return this.apiService
-      .post('/illustrators', data)
+    return this.illustratorService
+      .create(data)
       .pipe(
         catchError((err) => {
           if (err.status === 0) {

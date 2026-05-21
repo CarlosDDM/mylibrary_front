@@ -1,1 +1,22 @@
-<p>wrapper-stats works!</p>
+<div class="block md:hidden px-4">
+  <p-carousel
+    [value]="status()"
+    [numVisible]="1"
+    [numScroll]="1"
+    [circular]="true"
+    [showNavigators]="false"
+    [responsiveOptions]="responsiveOptions"
+  >
+    <ng-template #item let-item>
+      <app-stat-card [qtd]="item.value" [label]="item.name" />
+    </ng-template>
+  </p-carousel>
+</div>
+
+<div class="hidden md:flex md:flex-col gap-6 mx-auto">
+  <div class="w-full flex items-center justify-center gap-6">
+    @for (item of status(); track item.name) {
+      <app-stat-card [qtd]="item.value" [label]="item.name" />
+    }
+  </div>
+</div>

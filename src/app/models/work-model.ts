@@ -1,4 +1,5 @@
 export interface WorkModel {
+  id: string;
   name: string;
   subtitle: string | null;
   volume: number | null;

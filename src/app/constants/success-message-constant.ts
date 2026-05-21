@@ -3,5 +3,5 @@ export const successMessage = {
   illustrator: 'Sucesso na criação do ilustrador',
   work: 'Sucesso na criação da obra',
   serie: 'Sucesso na criação da série',
-  farnchise: 'Sucesso na criação da franquia',
+  franchise: 'Sucesso na criação da franquia',
 };

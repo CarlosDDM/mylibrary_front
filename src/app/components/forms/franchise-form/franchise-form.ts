@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormInput } from '../components/form-input/form-input';
-import { ApiService } from '../../../services/api-service';
 import { ToastService } from '../../../services/toast-service';
 import { FranchiseModel } from '../../../models/franchise-model';
 import { successMessage } from '../../../constants/success-message-constant';
@@ -9,6 +8,7 @@ import { errorMessage } from '../../../constants/error-messages-constant';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { catchError, of, throwError } from 'rxjs';
 import { FormButton } from '../components/form-button/form-button';
+import { FranchiseService } from '../../../services/franchises/franchise-service';
 
 @Component({
   selector: 'app-franchise-form',
@@ -16,7 +16,7 @@ import { FormButton } from '../components/form-button/form-button';
   templateUrl: './franchise-form.html',
 })
 export class FranchiseForm {
-  private readonly apiRequest = inject(ApiService);
+  private readonly franchiseService = inject(FranchiseService);
   private readonly messageService = inject(ToastService);
   private readonly ref = inject(DynamicDialogRef, { optional: true });
 
@@ -29,8 +29,8 @@ export class FranchiseForm {
 
     const data = this.formFranchise.value as FranchiseModel;
 
-    this.apiRequest
-      .post<FranchiseModel>('/franchises', data)
+    this.franchiseService
+      .create(data)
       .pipe(
         catchError((err) => {
           if (err.status === 0) {
@@ -44,7 +44,7 @@ export class FranchiseForm {
         next: (res) => {
           if (!res) return;
 
-          this.messageService.showSuccess(successMessage.farnchise);
+          this.messageService.showSuccess(successMessage.franchise);
 
           return this.ref?.close(res);
         },

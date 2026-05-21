@@ -2,13 +2,14 @@ import { Component, inject } from '@angular/core';
 import { catchError, of, throwError } from 'rxjs';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormInput } from '../components/form-input/form-input';
-import { ApiService } from '../../../services/api-service';
+import { ApiService } from '../../../services/api/api-service';
 import { AuthorModel } from '../../../models/author-model';
 import { ToastService } from '../../../services/toast-service';
 import { successMessage } from '../../../constants/success-message-constant';
 import { errorMessage } from '../../../constants/error-messages-constant';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { FormButton } from '../components/form-button/form-button';
+import { AuthorService } from '../../../services/authors/author-service';
 
 @Component({
   selector: 'app-author-form',
@@ -16,7 +17,7 @@ import { FormButton } from '../components/form-button/form-button';
   templateUrl: './author-form.html',
 })
 export class AuthorForm {
-  private readonly apiService = inject(ApiService);
+  private readonly authorService = inject(AuthorService);
   private readonly messageService = inject(ToastService);
   private readonly ref = inject(DynamicDialogRef, { optional: true });
 
@@ -26,8 +27,8 @@ export class AuthorForm {
 
   onSubmit() {
     const data = this.formAuthor.value as AuthorModel;
-    return this.apiService
-      .post('/authors', data)
+    return this.authorService
+      .create(data)
       .pipe(
         catchError((err) => {
           if (err.status === 0) {

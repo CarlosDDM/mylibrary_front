@@ -3,3 +3,10 @@
 @import 'tailwindcss';
 @import "tailwindcss-primeui";
 @import "primeicons/primeicons.css";
+
+@layer base {
+  body {
+    /* Fundo slate-950 para o modo escuro e texto slate-200 */
+    @apply bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 antialiased;
+  }
+}

@@ -15,4 +15,8 @@ export class ApiService {
   get<T>(path: string): Observable<T> {
     return this.http.get<T>(`http://localhost:3000${path}`);
   }
+
+  delete<T>(path: string): Observable<T> {
+    return this.http.delete<T>(`http://localhost:3000${path}`);
+  }
 }
