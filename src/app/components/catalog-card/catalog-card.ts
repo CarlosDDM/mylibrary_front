@@ -2,14 +2,16 @@ import { Component, computed, input, output } from '@angular/core';
 import { CatalogCardModel } from '../../models/catalog-card-model';
 import { TranslatePipe } from '../../pipes/translate-pipe';
 import { statusTranslation } from '../../constants/status-translation-constant';
-import { CardModule } from 'primeng/card';
 import clsx from 'clsx';
+import { SerieModel } from '../../models/serie-model';
+import { FranchiseModel } from '../../models/franchise-model';
+import { WorkModel } from '../../models/work-model';
 
 export type CatalogCardType = 'franchise' | 'work' | 'serie';
 
 @Component({
   selector: 'app-catalog-card',
-  imports: [TranslatePipe, CardModule],
+  imports: [TranslatePipe],
   templateUrl: './catalog-card.html',
 })
 export class CatalogCard {
@@ -32,6 +34,45 @@ export class CatalogCard {
     { bg: 'bg-pink-200', icon: 'text-pink-400' },
     { bg: 'bg-orange-200', icon: 'text-orange-400' },
   ];
+
+  protected normalized = computed<CatalogCardModel | undefined>(() => {
+    const data = this.cardData();
+    if (!data) return undefined;
+
+    switch (this.cardType()) {
+      case 'franchise': {
+        const f = data as FranchiseModel;
+        return {
+          id: f.id,
+          name: f.name,
+          series: f.series,
+        };
+      }
+      case 'serie': {
+        const s = data as SerieModel;
+        return {
+          id: s.id,
+          name: s.name,
+          serieVolumes: s.serieVolumes,
+          status: s.status,
+          franchise: s.franchise,
+          works: s.works,
+        };
+      }
+      case 'work': {
+        const w = data as WorkModel;
+        return {
+          id: w.id,
+          name: w.name,
+          subtitle: w.subtitle,
+          volume: w.volume,
+          isSpecialEdition: w.isSpecialEdition,
+        };
+      }
+      default:
+        return data as CatalogCardModel;
+    }
+  });
 
   coverColor = computed(() => {
     const index = (this.cardData()?.name?.charCodeAt(0) ?? 0) % this.colorPalette.length;

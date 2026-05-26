@@ -1,0 +1,12 @@
+<div class="w-75">
+  <div class="flex items-center gap-2 w-full px-2 py-1.5">
+    <p-skeleton width="5rem" height="6.5rem" borderRadius="6px" />
+    <div class="flex flex-col gap-2 flex-1">
+      <p-skeleton width="8rem" height="14px" />
+      <p-skeleton width="5rem" height="12px" />
+      @if (hasBadge()) {
+        <p-skeleton width="4rem" height="10px" borderRadius="20px" />
+      }
+    </div>
+  </div>
+</div>

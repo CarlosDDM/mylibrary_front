@@ -1,15 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { catchError, of, throwError } from 'rxjs';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { FormInput } from '../components/form-input/form-input';
-import { ApiService } from '../../../services/api/api-service';
 import { AuthorModel } from '../../../models/author-model';
-import { ToastService } from '../../../services/toast-service';
 import { successMessage } from '../../../constants/success-message-constant';
 import { errorMessage } from '../../../constants/error-messages-constant';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
-import { FormButton } from '../components/form-button/form-button';
 import { AuthorService } from '../../../services/authors/author-service';
+import { ToastService } from '../../../services/toast/toast-service';
+import { FormInput } from '../../../shared/components/forms/form-input/form-input';
+import { FormButton } from '../../../shared/components/forms/form-button/form-button';
 
 @Component({
   selector: 'app-author-form',

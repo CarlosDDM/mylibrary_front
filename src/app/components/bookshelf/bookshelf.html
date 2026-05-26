@@ -1,15 +1,23 @@
 <section class="px-4 md:px-8">
   <div class="flex items-center justify-between mb-3">
     <h2 class="text-xl/tight font-medium">{{ titleSection() }}</h2>
-    <p-button variant="text" label="Veja todos" (click)="seeAllClicked.emit()" />
+    @if (showButtons()) {
+      <p-button variant="text" label="Veja todos" (click)="seeAllClicked.emit()" />
+    }
   </div>
-  <div class="flex flex-wrap gap-3 mt-4 justify-center md:justify-start">
+  <div class="flex flex-wrap gap-3 mt-4 md:justify-start">
     @for (card of data(); track card.id) {
       <app-catalog-card
+        class="w-full md:w-auto"
         [cardType]="typeCard()"
         [cardData]="card"
         (handleClick)="cardClick.emit($event)"
       />
+    }
+    @if (loading()) {
+      @for (i of skeletonItems(); track i) {
+        <app-skeleton-item class="w-full md:w-auto" [hasBadge]="typeCard() === 'serie'" />
+      }
     }
   </div>
 </section>

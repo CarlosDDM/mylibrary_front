@@ -1,5 +1,4 @@
-import { inject, Injectable } from '@angular/core';
-import { ApiService } from '../api/api-service';
+import { Injectable } from '@angular/core';
 import { SerieModel } from '../../models/serie-model';
 import { BaseService } from '../base/base-service';
 

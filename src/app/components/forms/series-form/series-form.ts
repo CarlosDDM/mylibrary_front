@@ -1,11 +1,8 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { catchError, forkJoin, of, throwError } from 'rxjs';
-import { FormInput } from '../components/form-input/form-input';
 import { OptionModel } from '../../../models/option-model';
 import { AsyncResource } from '../../../models/async-resource';
-import { loadValue } from '../../../utils/initial-state.utils';
-import { ToastService } from '../../../services/toast-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { errorMessage } from '../../../constants/error-messages-constant';
 import { LoadStateEnum } from '../../../enums/load-state-enum';
@@ -16,16 +13,19 @@ import { DialogService } from '../../../services/dialog/dialog-service';
 import { successMessage } from '../../../constants/success-message-constant';
 import { FranchiseForm } from '../franchise-form/franchise-form';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
-import { FormInputSelect } from '../components/form-input-select/form-input-select';
-import { FormInputCounter } from '../components/form-input-counter/form-input-counter';
-import { FormButton } from '../components/form-button/form-button';
 import { SerieService } from '../../../services/serie/serie-service';
 import { OptionService } from '../../../services/options/option-service';
 import { FranchiseService } from '../../../services/franchises/franchise-service';
+import { ToastService } from '../../../services/toast/toast-service';
+import { FormButton } from '../../../shared/components/forms/form-button/form-button';
+import { FormInputCounter } from '../../../shared/components/forms/form-input-counter/form-input-counter';
+import { FormInputSelect } from '../../../shared/components/forms/form-input-select/form-input-select';
+import { FormInput } from '../../../shared/components/forms/form-input/form-input';
 
 @Component({
   selector: 'app-series-form',
   imports: [ReactiveFormsModule, FormInput, FormInputSelect, FormInputCounter, FormButton],
+
   templateUrl: './series-form.html',
 })
 export class SeriesForm implements OnInit {
@@ -39,8 +39,8 @@ export class SeriesForm implements OnInit {
   protected readonly loadState = LoadStateEnum;
   protected readonly serieTranslation = statusTranslation;
 
-  status = signal<AsyncResource<OptionModel[]>>(loadValue([]));
-  franchise = signal<AsyncResource<FranchiseModel[]>>(loadValue([]));
+  status = signal<AsyncResource<OptionModel[]>>(AsyncResource.loading([]));
+  franchise = signal<AsyncResource<FranchiseModel[]>>(AsyncResource.loading([]));
 
   formSeries = new FormGroup({
     name: new FormControl<string>('', Validators.required),
@@ -56,8 +56,8 @@ export class SeriesForm implements OnInit {
     })
       .pipe(
         catchError((err) => {
-          this.status.set(loadValue([], 'error'));
-          this.franchise.set(loadValue([], 'error'));
+          this.status.update((s) => AsyncResource.error(s, err));
+          this.franchise.update((s) => AsyncResource.error(s, err));
 
           this.messageService.showError(errorMessage.config.load);
           return of(null);
@@ -71,8 +71,8 @@ export class SeriesForm implements OnInit {
           franchise,
         } = result;
 
-        this.status.set(loadValue(status, 'success'));
-        this.franchise.set(loadValue(franchise, 'success'));
+        this.status.update((s) => AsyncResource.success(s.data.concat(status)));
+        this.franchise.update((s) => AsyncResource.success(s.data.concat(franchise)));
 
         this.formSeries.get('statusId')?.setValue(status[0].id);
       });

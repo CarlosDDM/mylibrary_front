@@ -1,16 +1,12 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ApiService } from '../../../services/api/api-service';
 import { WorkModel } from '../../../models/work-model';
-import { FormInput } from '../components/form-input/form-input';
-import { OptionModel, OptionsModel } from '../../../models/option-model';
+import { OptionModel } from '../../../models/option-model';
 import { SerieModel } from '../../../models/serie-model';
 import { AuthorModel } from '../../../models/author-model';
 import { IllustratorModel } from '../../../models/illustrator-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, forkJoin, of, throwError } from 'rxjs';
-import { ToastService } from '../../../services/toast-service';
-import { DialogService } from '../../../services/dialog/dialog-service';
 import { AuthorForm } from '../author-form/author-form';
 import { AsyncResource } from '../../../models/async-resource';
 import { LoadStateEnum } from '../../../enums/load-state-enum';
@@ -20,29 +16,32 @@ import { IllustratorForm } from '../illustrator-form/illustrator-form';
 import { SeriesForm } from '../series-form/series-form';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { mediaTranslation } from '../../../constants/media-translation-constant';
-import { FormInputSelect } from '../components/form-input-select/form-input-select';
-import { FormInputMultiselect } from '../components/form-input-multiselect/form-input-multiselect';
-import { FormInputNumber } from '../components/form-input-number/form-input-number';
-import { FormInputCounter } from '../components/form-input-counter/form-input-counter';
-import { FormButton } from '../components/form-button/form-button';
-import { FormInputCheckbox } from '../components/form-input-checkbox/form-input-checkbox';
 import { SerieService } from '../../../services/serie/serie-service';
 import { OptionService } from '../../../services/options/option-service';
-import { FranchiseService } from '../../../services/franchises/franchise-service';
 import { AuthorService } from '../../../services/authors/author-service';
 import { IllustratorService } from '../../../services/illustrators/illustrator-service';
 import { WorkService } from '../../../services/works/work-service';
+import { ToastService } from '../../../services/toast/toast-service';
+import { DialogService } from '../../../services/dialog/dialog-service';
+import { FormInputCheckbox } from '../../../shared/components/forms/form-input-checkbox/form-input-checkbox';
+import { FormInputSelect } from '../../../shared/components/forms/form-input-select/form-input-select';
+import { FormInputMultiselect } from '../../../shared/components/forms/form-input-multiselect/form-input-multiselect';
+import { FormInputNumber } from '../../../shared/components/forms/form-input-number/form-input-number';
+import { FormInputCounter } from '../../../shared/components/forms/form-input-counter/form-input-counter';
+import { FormButton } from '../../../shared/components/forms/form-button/form-button';
+import { FormInput } from '../../../shared/components/forms/form-input/form-input';
 
 @Component({
   selector: 'app-work-form',
   imports: [
     ReactiveFormsModule,
-    FormInput,
+    FormInputCheckbox,
     FormInputSelect,
     FormInputMultiselect,
     FormInputNumber,
     FormInputCounter,
     FormButton,
+    FormInput,
     FormInputCheckbox,
   ],
   templateUrl: './work-form.html',
@@ -54,8 +53,8 @@ export class WorkForm implements OnInit {
   private readonly illustratorService = inject(IllustratorService);
   private readonly workService = inject(WorkService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly messageService = inject(ToastService);
   private readonly dialogService = inject(DialogService);
+  private readonly messageService = inject(ToastService);
   protected readonly workMediaTranslation = mediaTranslation;
   protected readonly loadState = LoadStateEnum;
   private readonly ref = inject(DynamicDialogRef, { optional: true });

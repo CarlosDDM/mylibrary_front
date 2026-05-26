@@ -1,14 +1,14 @@
 import { Component, inject } from '@angular/core';
-import { ToastService } from '../../../services/toast-service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IllustratorModel } from '../../../models/illustrator-model';
 import { catchError, of, throwError } from 'rxjs';
 import { errorMessage } from '../../../constants/error-messages-constant';
 import { successMessage } from '../../../constants/success-message-constant';
-import { FormInput } from '../components/form-input/form-input';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
-import { FormButton } from '../components/form-button/form-button';
 import { IllustratorService } from '../../../services/illustrators/illustrator-service';
+import { ToastService } from '../../../services/toast/toast-service';
+import { FormInput } from '../../../shared/components/forms/form-input/form-input';
+import { FormButton } from '../../../shared/components/forms/form-button/form-button';
 
 @Component({
   selector: 'app-illustrator-form',

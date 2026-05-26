@@ -1,14 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FormInput } from '../components/form-input/form-input';
-import { ToastService } from '../../../services/toast-service';
 import { FranchiseModel } from '../../../models/franchise-model';
 import { successMessage } from '../../../constants/success-message-constant';
 import { errorMessage } from '../../../constants/error-messages-constant';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { catchError, of, throwError } from 'rxjs';
-import { FormButton } from '../components/form-button/form-button';
 import { FranchiseService } from '../../../services/franchises/franchise-service';
+import { ToastService } from '../../../services/toast/toast-service';
+import { FormInput } from '../../../shared/components/forms/form-input/form-input';
+import { FormButton } from '../../../shared/components/forms/form-button/form-button';
 
 @Component({
   selector: 'app-franchise-form',
