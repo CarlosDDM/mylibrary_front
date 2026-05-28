@@ -30,4 +30,8 @@ export class AsyncResource<T> {
   static error<T>(current: AsyncResource<T>, error: string): AsyncResource<T> {
     return new AsyncResource(current.data, 'error', error);
   }
+
+  mapData<U>(fn: (data: T) => U): AsyncResource<U> {
+    return new AsyncResource(fn(this.data), this.state, this.error);
+  }
 }

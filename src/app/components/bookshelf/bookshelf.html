@@ -6,17 +6,47 @@
     }
   </div>
   <div class="flex flex-wrap gap-3 mt-4 md:justify-start">
-    @for (card of data(); track card.id) {
-      <app-catalog-card
-        class="w-full md:w-auto"
-        [cardType]="typeCard()"
-        [cardData]="card"
-        (handleClick)="cardClick.emit($event)"
-      />
-    }
-    @if (loading()) {
-      @for (i of skeletonItems(); track i) {
-        <app-skeleton-item class="w-full md:w-auto" [hasBadge]="typeCard() === 'serie'" />
+    @switch (resource().state) {
+      @case (loadStateEnum.Loading) {
+        @for (i of skeletonItems(); track i) {
+          <app-skeleton-item class="w-full md:w-auto" [hasBadge]="typeCard() === 'serie'" />
+        }
+      }
+      @case (loadStateEnum.Error) {
+        <div
+          class="flex items-center justify-between gap-3 border border-red-400/40 bg-red-500/5 rounded-xl p-4 w-full"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="w-9 h-9 rounded-full bg-red-500/10 flex items-center justify-center shrink-0"
+            >
+              <i class="pi pi-wifi text-red-400 text-lg"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium m-0">Não foi possível carregar</p>
+              <p class="text-xs text-color-secondary m-0">
+                Verifique sua conexão e tente novamente
+              </p>
+            </div>
+          </div>
+          <app-form-button
+            label="Tentar novamente"
+            icon="pi pi-refresh"
+            severity="danger"
+            outlined
+            size="small"
+          />
+        </div>
+      }
+      @default {
+        @for (card of resource().data; track card.id) {
+          <app-catalog-card
+            class="w-full md:w-auto"
+            [cardType]="typeCard()"
+            [cardData]="card"
+            (handleClick)="cardClick.emit($event)"
+          />
+        }
       }
     }
   </div>

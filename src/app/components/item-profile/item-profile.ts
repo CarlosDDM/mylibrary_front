@@ -26,7 +26,6 @@ export class ItemProfile implements OnInit {
   private readonly config = inject<DynamicDialogConfig<ItemProfileData>>(DynamicDialogConfig);
   private readonly fetchDataFn = this.config.data!.fetchData as () => Observable<ItemProfileResult>;
   protected readonly statusDictionary = statusTranslation;
-
   protected readonly typeCard = this.config.data!.type;
   protected readonly showButtons = this.config.data!.showButtons;
 
@@ -36,11 +35,15 @@ export class ItemProfile implements OnInit {
 
   protected profileTitle = computed(() => (this.profileData().data as any)?.name ?? '');
 
-  protected franchiseSeries = computed(
-    () => (this.profileData().data as FranchiseModel)?.series ?? [],
+  protected serieWorksResource = computed(() =>
+    this.profileData().mapData((data) => (data as SerieModel)?.works ?? []),
   );
 
-  protected serieWorks = computed(() => (this.profileData().data as SerieModel)?.works ?? []);
+  protected franchiseSeriesResource = computed(() =>
+    this.profileData().mapData((data) => (data as FranchiseModel)?.series ?? []),
+  );
+
+  protected serieWorks = computed(() => this.serieWorksResource().data);
 
   protected serieVolumes = computed(
     () => (this.profileData().data as SerieModel)?.serieVolumes ?? 0,
@@ -75,6 +78,9 @@ export class ItemProfile implements OnInit {
       next: (result) => {
         if (!result) return;
         this.profileData.set(AsyncResource.success(result));
+      },
+      error: (err) => {
+        this.profileData.update((s) => AsyncResource.error(s, err));
       },
     });
   }

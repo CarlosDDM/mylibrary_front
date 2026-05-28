@@ -93,7 +93,7 @@
   <app-form-button
     class="col-span-2"
     type="submit"
-    [disabled]="formWork.invalid"
+    [disabled]="formWork.invalid || formWork.disabled"
     label="Salvar obra"
     size="large"
   />

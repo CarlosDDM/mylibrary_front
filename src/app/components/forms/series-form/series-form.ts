@@ -85,7 +85,7 @@ export class SeriesForm implements OnInit {
 
     ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((franchise: FranchiseModel) => {
       if (franchise) {
-        this.franchise.update((current) => ({ ...current, data: [...current.data, franchise] }));
+        this.franchise.update((current) => current.mapData((data) => [...data, franchise]));
         this.formSeries.get('franchiseId')?.setValue(franchise.id);
       }
     });

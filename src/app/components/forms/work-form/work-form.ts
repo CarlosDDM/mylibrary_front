@@ -140,10 +140,7 @@ export class WorkForm implements OnInit {
 
     ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((author: AuthorModel) => {
       if (author) {
-        this.authors.update((current) => ({
-          ...current,
-          data: [...current.data, author],
-        }));
+        this.authors.update((current) => current.mapData((data) => [...data, author]));
         this.formWork
           .get('authors')
           ?.setValue([...(this.formWork.get('authors')?.value ?? []), author.id]);
@@ -160,10 +157,7 @@ export class WorkForm implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((illustrator: IllustratorModel) => {
         if (illustrator) {
-          this.illustrators.update((current) => ({
-            ...current,
-            data: [...current.data, illustrator],
-          }));
+          this.illustrators.update((current) => current.mapData((data) => [...data, illustrator]));
           this.formWork
             .get('illustrators')
             ?.setValue([...(this.formWork.get('illustrators')?.value ?? []), illustrator.id]);
@@ -178,8 +172,7 @@ export class WorkForm implements OnInit {
 
     ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((serie: SerieModel) => {
       if (serie) {
-        this.series.update((current) => ({ ...current, data: [...current.data, serie] }));
-
+        this.series.update((current) => current.mapData((data) => [...data, serie]));
         this.formWork.get('serieId')?.setValue(serie.id);
       }
     });

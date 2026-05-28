@@ -41,14 +41,18 @@
         </div>
       </div>
 
-      <app-bookshelf [typeCard]="'work'" [data]="serieWorks()" [showButtons]="showButtons" />
+      <app-bookshelf
+        [typeCard]="'work'"
+        [resource]="serieWorksResource()"
+        [showButtons]="showButtons"
+      />
     }
 
     @case ('franchise') {
       <app-bookshelf
         [typeCard]="'serie'"
         [titleSection]="profileTitle()"
-        [data]="franchiseSeries()"
+        [resource]="franchiseSeriesResource()"
         [showButtons]="showButtons"
       />
     }

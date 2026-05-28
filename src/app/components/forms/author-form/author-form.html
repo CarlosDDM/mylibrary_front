@@ -8,6 +8,6 @@
     type="submit"
     label="Salvar autor"
     size="large"
-    [disabled]="formAuthor.invalid"
+    [disabled]="formAuthor.invalid || formAuthor.disabled"
   />
 </form>

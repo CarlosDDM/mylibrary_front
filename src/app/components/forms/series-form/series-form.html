@@ -40,7 +40,7 @@
   <app-form-button
     type="submit"
     label="Salvar série"
-    [disabled]="formSeries.invalid"
+    [disabled]="formSeries.invalid || formSeries.disabled"
     size="large"
   />
 </form>

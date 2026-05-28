@@ -65,14 +65,21 @@ export class Home implements OnInit {
       series: this.serieService.getAll(),
       franchises: this.franchiseService.getAll(),
       works: this.workService.getAll(),
-    }).subscribe((result) => {
-      if (!result) return;
+    }).subscribe({
+      next: (result) => {
+        if (!result) return;
 
-      const { series, franchises, works } = result;
+        const { series, franchises, works } = result;
 
-      this.serieData.update((s) => AsyncResource.success(s.data.concat(series)));
-      this.franchiseData.update((s) => AsyncResource.success(s.data.concat(franchises)));
-      this.workData.update((s) => AsyncResource.success(s.data.concat(works)));
+        this.serieData.update((s) => AsyncResource.success(s.data.concat(series)));
+        this.franchiseData.update((s) => AsyncResource.success(s.data.concat(franchises)));
+        this.workData.update((s) => AsyncResource.success(s.data.concat(works)));
+      },
+      error: (err) => {
+        this.serieData.update((s) => AsyncResource.error(s, err));
+        this.franchiseData.update((s) => AsyncResource.error(s, err));
+        this.workData.update((s) => AsyncResource.error(s, err));
+      },
     });
   }
 }

@@ -6,7 +6,7 @@
   <app-form-input class="w-full" id="name" label="Nome do ilustrador" formControlName="name" />
   <app-form-button
     type="submit"
-    [disabled]="formIllustrator.invalid"
+    [disabled]="formIllustrator.invalid || formIllustrator.disabled"
     label="Salvar ilustrador"
     size="large"
   />

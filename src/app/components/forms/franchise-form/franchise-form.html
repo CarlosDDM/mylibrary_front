@@ -3,7 +3,7 @@
   <app-form-button
     type="submit"
     label="Salvar franquia"
-    [disabled]="formFranchise.invalid"
+    [disabled]="formFranchise.invalid || formFranchise.disabled"
     size="large"
   />
 </form>
