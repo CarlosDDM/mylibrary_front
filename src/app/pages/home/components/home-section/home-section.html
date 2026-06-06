@@ -1,0 +1,12 @@
+<app-section-header
+  [titleSection]="title()"
+  [showButtons]="true"
+  buttonName="Veja todos"
+  [path]="'/' + typeCard()"
+/>
+<app-bookshelf
+  [typeCard]="typeCard()"
+  [resource]="resource()"
+  (retry)="retry.emit($event)"
+  (cardClick)="clickCard.emit($event)"
+/>

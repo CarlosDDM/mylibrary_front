@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { WorkModel } from '../../../models/work-model';
+import { WorkRequestModel } from '../../../models/work/work-request-model';
 import { OptionModel } from '../../../models/option-model';
 import { SerieModel } from '../../../models/serie-model';
 import { AuthorModel } from '../../../models/author-model';
@@ -10,12 +10,12 @@ import { catchError, forkJoin, of, throwError } from 'rxjs';
 import { AuthorForm } from '../author-form/author-form';
 import { AsyncResource } from '../../../models/async-resource';
 import { LoadStateEnum } from '../../../enums/load-state-enum';
-import { errorMessage } from '../../../constants/error-messages-constant';
-import { successMessage } from '../../../constants/success-message-constant';
+import { ERROR_MESSAGE } from '../../../constants/error-messages-constant';
+import { SUCCESS_MESSAGE } from '../../../constants/success-message-constant';
 import { IllustratorForm } from '../illustrator-form/illustrator-form';
 import { SeriesForm } from '../series-form/series-form';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
-import { mediaTranslation } from '../../../constants/media-translation-constant';
+import { MEDIA_TRANSLATION } from '../../../constants/media-translation-constant';
 import { SerieService } from '../../../services/serie/serie-service';
 import { OptionService } from '../../../services/options/option-service';
 import { AuthorService } from '../../../services/authors/author-service';
@@ -55,7 +55,7 @@ export class WorkForm implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly dialogService = inject(DialogService);
   private readonly messageService = inject(ToastService);
-  protected readonly workMediaTranslation = mediaTranslation;
+  protected readonly workMediaTranslation = MEDIA_TRANSLATION;
   protected readonly loadState = LoadStateEnum;
   private readonly ref = inject(DynamicDialogRef, { optional: true });
 
@@ -100,7 +100,7 @@ export class WorkForm implements OnInit {
 
           this.formWork.disable();
 
-          this.messageService.showError(errorMessage.config.load);
+          this.messageService.showError(ERROR_MESSAGE.config.load);
           return of(null);
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -117,9 +117,9 @@ export class WorkForm implements OnInit {
 
         this.languages.update((s) => AsyncResource.success(s.data.concat(languages)));
         this.medias.update((s) => AsyncResource.success(s.data.concat(medias)));
-        this.series.update((s) => AsyncResource.success(s.data.concat(series)));
-        this.authors.update((s) => AsyncResource.success(s.data.concat(authors)));
-        this.illustrators.update((s) => AsyncResource.success(s.data.concat(illustrators)));
+        this.series.update((s) => AsyncResource.success(s.data.concat(series.data)));
+        this.authors.update((s) => AsyncResource.success(s.data.concat(authors.data)));
+        this.illustrators.update((s) => AsyncResource.success(s.data.concat(illustrators.data)));
       });
 
     this.formWork
@@ -181,14 +181,14 @@ export class WorkForm implements OnInit {
   onSubmit() {
     if (this.formWork.invalid) return;
 
-    const data = this.formWork.value as WorkModel;
+    const data = this.formWork.value as WorkRequestModel;
 
     this.workService
       .create(data)
       .pipe(
         catchError((err) => {
           if (err instanceof TypeError || err.status === 0) {
-            this.messageService.showError(errorMessage.network);
+            this.messageService.showError(ERROR_MESSAGE.network);
             return of(null);
           }
           return throwError(() => err);
@@ -197,11 +197,11 @@ export class WorkForm implements OnInit {
       .subscribe({
         next: (res) => {
           if (!res) return;
-          this.messageService.showSuccess(successMessage.work);
+          this.messageService.showSuccess(SUCCESS_MESSAGE.work);
           return this.ref?.close(res);
         },
         error: (err) => {
-          this.messageService.showError(errorMessage.work.submit);
+          this.messageService.showError(ERROR_MESSAGE.works.submit);
         },
       });
   }

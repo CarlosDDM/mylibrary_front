@@ -1,26 +1,26 @@
-<app-header />
 <div class="mt-4 mb-16 flex flex-col justify-center md:items-center">
   <app-wrapper-stats />
-  <div class="flex flex-col gap-6 mt-4 max-w-300 justify-center">
-    <app-bookshelf
-      typeCard="serie"
-      titleSection="Séries"
+  <div class="flex flex-col gap-12 mt-8 justify-center w-full max-w-7xl">
+    <app-home-section
+      title="Séries"
+      typeCard="series"
       [resource]="serieData()"
-      [skeletonCount]="5"
-      (cardClick)="handleClickSerie($event)"
+      (clickCard)="handleClickSerie($event)"
+      (retry)="loadAll()"
     />
-    <app-bookshelf
-      typeCard="franchise"
-      titleSection="Franquias"
+    <app-home-section
+      title="Franquias"
+      typeCard="franchises"
       [resource]="franchiseData()"
-      [skeletonCount]="3"
-      (cardClick)="handleClickFranchise($event)"
+      (clickCard)="handleClickFranchise($event)"
+      (retry)="loadAll()"
     />
-    <app-bookshelf
-      typeCard="work"
-      titleSection="Obras"
-      [resource]="workData()"
-      [skeletonCount]="4"
+    <app-home-section
+      title="Obras"
+      typeCard="works"
+      [resource]="workCatalog()"
+      (clickCard)="handleClickWork($event)"
+      (retry)="loadAll()"
     />
   </div>
 </div>

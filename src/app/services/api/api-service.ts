@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class ApiService {
   private http = inject(HttpClient);
 
-  post<T>(path: string, data: T): Observable<T> {
+  post<T>(path: string, data: unknown): Observable<T> {
     return this.http.post<T>(`http://localhost:3000${path}`, data);
   }
 

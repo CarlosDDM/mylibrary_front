@@ -1,30 +1,29 @@
 import { Component, computed, input, output } from '@angular/core';
 import { CatalogCardModel } from '../../models/catalog-card-model';
 import { TranslatePipe } from '../../pipes/translate-pipe';
-import { statusTranslation } from '../../constants/status-translation-constant';
+import { STATUS_TRANSLATION } from '../../constants/status-translation-constant';
 import clsx from 'clsx';
-import { SerieModel } from '../../models/serie-model';
-import { FranchiseModel } from '../../models/franchise-model';
-import { WorkModel } from '../../models/work-model';
+import { Chip } from '../../shared/components/chip/chip';
+import { STATUS_VARIANT } from '../../constants/status-variant-constant';
 
-export type CatalogCardType = 'franchise' | 'work' | 'serie';
+export type CatalogCardType = 'franchises' | 'works' | 'series';
 
 @Component({
   selector: 'app-catalog-card',
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, Chip],
   templateUrl: './catalog-card.html',
 })
 export class CatalogCard {
   cardData = input<CatalogCardModel>();
   cardType = input.required<CatalogCardType>();
   handleClick = output<string>();
+  protected readonly statusVariantMap = STATUS_VARIANT;
+  protected readonly statusDictionary = STATUS_TRANSLATION;
 
   cardPt = {
     body: { class: 'p-4! flex! flex-col! h-32! dark:bg-zinc-800! dark:border-zinc-700!' },
     content: { class: 'flex-1!' },
   };
-
-  protected readonly statusDictionary = statusTranslation;
 
   readonly colorPalette = [
     { bg: 'bg-violet-200', icon: 'text-violet-400' },
@@ -37,40 +36,33 @@ export class CatalogCard {
 
   protected normalized = computed<CatalogCardModel | undefined>(() => {
     const data = this.cardData();
-    if (!data) return undefined;
+    if (!data) return;
 
     switch (this.cardType()) {
-      case 'franchise': {
-        const f = data as FranchiseModel;
+      case 'franchises':
+        return { id: data.id, name: data.name, series: data.series };
+
+      case 'series':
         return {
-          id: f.id,
-          name: f.name,
-          series: f.series,
+          id: data.id,
+          name: data.name,
+          serieVolumes: data.serieVolumes,
+          status: data.status,
+          franchise: data.franchise,
+          works: data.works,
         };
-      }
-      case 'serie': {
-        const s = data as SerieModel;
+
+      case 'works':
         return {
-          id: s.id,
-          name: s.name,
-          serieVolumes: s.serieVolumes,
-          status: s.status,
-          franchise: s.franchise,
-          works: s.works,
+          id: data.id,
+          name: data.name,
+          subtitle: data.subtitle,
+          volume: data.volume,
+          isSpecialEdition: data.isSpecialEdition,
         };
-      }
-      case 'work': {
-        const w = data as WorkModel;
-        return {
-          id: w.id,
-          name: w.name,
-          subtitle: w.subtitle,
-          volume: w.volume,
-          isSpecialEdition: w.isSpecialEdition,
-        };
-      }
+
       default:
-        return data as CatalogCardModel;
+        return data;
     }
   });
 
@@ -81,21 +73,20 @@ export class CatalogCard {
 
   coverIcon = computed(() => {
     switch (this.cardType()) {
-      case 'franchise':
+      case 'franchises':
         return 'pi-star';
-      case 'work':
+      case 'works':
         return 'pi-bookmark';
       default:
         return 'pi-book';
     }
   });
 
-  statusClass = computed(() =>
-    clsx({
-      'bg-blue-100 text-blue-800 border-blue-300': this.cardData()?.status?.type === 'ongoing',
-      'bg-green-100 text-green-800 border-green-300': this.cardData()?.status?.type === 'completed',
-      'bg-yellow-100 text-yellow-800 border-yellow-300': this.cardData()?.status?.type === 'hiatus',
-      'bg-red-100 text-red-800 border-red-300': this.cardData()?.status?.type === 'cancelled',
+  volumesClass = computed(() =>
+    clsx('text-xs truncate', {
+      'text-emerald-500': this.normalized()?.works?.length === this.normalized()?.serieVolumes,
+      'text-zinc-400 dark:text-zinc-500':
+        this.normalized()?.works?.length !== this.normalized()?.serieVolumes,
     }),
   );
 }

@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FranchiseModel } from '../../../models/franchise-model';
-import { successMessage } from '../../../constants/success-message-constant';
-import { errorMessage } from '../../../constants/error-messages-constant';
+import { SUCCESS_MESSAGE } from '../../../constants/success-message-constant';
+import { ERROR_MESSAGE } from '../../../constants/error-messages-constant';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { catchError, of, throwError } from 'rxjs';
 import { FranchiseService } from '../../../services/franchises/franchise-service';
@@ -34,7 +34,7 @@ export class FranchiseForm {
       .pipe(
         catchError((err) => {
           if (err.status === 0) {
-            this.messageService.showError(errorMessage.network);
+            this.messageService.showError(ERROR_MESSAGE.network);
             return of(null);
           }
           return throwError(() => err);
@@ -44,12 +44,12 @@ export class FranchiseForm {
         next: (res) => {
           if (!res) return;
 
-          this.messageService.showSuccess(successMessage.franchise);
+          this.messageService.showSuccess(SUCCESS_MESSAGE.franchise);
 
           return this.ref?.close(res);
         },
         error: () => {
-          this.messageService.showError(errorMessage.franchise.submit);
+          this.messageService.showError(ERROR_MESSAGE.franchises.submit);
         },
       });
   }

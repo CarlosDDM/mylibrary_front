@@ -1,4 +1,4 @@
-export interface WorkModel {
+export interface WorkRequestModel {
   id: string;
   name: string;
   subtitle: string | null;

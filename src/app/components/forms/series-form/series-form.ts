@@ -4,13 +4,13 @@ import { catchError, forkJoin, of, throwError } from 'rxjs';
 import { OptionModel } from '../../../models/option-model';
 import { AsyncResource } from '../../../models/async-resource';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { errorMessage } from '../../../constants/error-messages-constant';
+import { ERROR_MESSAGE } from '../../../constants/error-messages-constant';
 import { LoadStateEnum } from '../../../enums/load-state-enum';
 import { FranchiseModel } from '../../../models/franchise-model';
-import { statusTranslation } from '../../../constants/status-translation-constant';
+import { STATUS_TRANSLATION } from '../../../constants/status-translation-constant';
 import { SerieModel } from '../../../models/serie-model';
 import { DialogService } from '../../../services/dialog/dialog-service';
-import { successMessage } from '../../../constants/success-message-constant';
+import { SUCCESS_MESSAGE } from '../../../constants/success-message-constant';
 import { FranchiseForm } from '../franchise-form/franchise-form';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { SerieService } from '../../../services/serie/serie-service';
@@ -37,7 +37,7 @@ export class SeriesForm implements OnInit {
   private readonly ref = inject(DynamicDialogRef, { optional: true });
   private readonly destroyRef = inject(DestroyRef);
   protected readonly loadState = LoadStateEnum;
-  protected readonly serieTranslation = statusTranslation;
+  protected readonly serieTranslation = STATUS_TRANSLATION;
 
   status = signal<AsyncResource<OptionModel[]>>(AsyncResource.loading([]));
   franchise = signal<AsyncResource<FranchiseModel[]>>(AsyncResource.loading([]));
@@ -59,7 +59,7 @@ export class SeriesForm implements OnInit {
           this.status.update((s) => AsyncResource.error(s, err));
           this.franchise.update((s) => AsyncResource.error(s, err));
 
-          this.messageService.showError(errorMessage.config.load);
+          this.messageService.showError(ERROR_MESSAGE.config.load);
           return of(null);
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -72,7 +72,7 @@ export class SeriesForm implements OnInit {
         } = result;
 
         this.status.update((s) => AsyncResource.success(s.data.concat(status)));
-        this.franchise.update((s) => AsyncResource.success(s.data.concat(franchise)));
+        this.franchise.update((s) => AsyncResource.success(s.data.concat(franchise.data)));
 
         this.formSeries.get('statusId')?.setValue(status[0].id);
       });
@@ -92,7 +92,6 @@ export class SeriesForm implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.formSeries.value);
     if (this.formSeries.invalid) return;
 
     const data = this.formSeries.value as SerieModel;
@@ -102,7 +101,7 @@ export class SeriesForm implements OnInit {
       .pipe(
         catchError((err) => {
           if (err.status === 0) {
-            this.messageService.showError(errorMessage.network);
+            this.messageService.showError(ERROR_MESSAGE.network);
             return of(null);
           }
           return throwError(() => err);
@@ -112,11 +111,11 @@ export class SeriesForm implements OnInit {
       .subscribe({
         next: (res) => {
           if (!res) return;
-          this.messageService.showSuccess(successMessage.serie);
+          this.messageService.showSuccess(SUCCESS_MESSAGE.serie);
           return this.ref?.close(res);
         },
         error: (err) => {
-          this.messageService.showError(errorMessage.serie.submit);
+          this.messageService.showError(ERROR_MESSAGE.series.submit);
           console.log(err);
         },
       });

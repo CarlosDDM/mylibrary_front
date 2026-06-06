@@ -2,22 +2,23 @@
 import { inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../api/api-service';
+import { PaginatedResponse } from '../../models/pagination-model';
 
-export abstract class BaseService<T> {
+export abstract class BaseService<T, U = T> {
   protected readonly apiRequest = inject(ApiService);
 
   protected abstract path: string;
 
-  getAll(): Observable<T[]> {
-    return this.apiRequest.get<T[]>(this.path);
+  getAll(): Observable<PaginatedResponse<U>> {
+    return this.apiRequest.get<PaginatedResponse<U>>(this.path);
   }
 
-  getById(id: string): Observable<T> {
-    return this.apiRequest.get<T>(`${this.path}/${id}`);
+  getById(id: string): Observable<U> {
+    return this.apiRequest.get<U>(`${this.path}/${id}`);
   }
 
-  create(item: T): Observable<T> {
-    return this.apiRequest.post<T>(this.path, item);
+  create(item: T): Observable<U> {
+    return this.apiRequest.post<U>(this.path, item);
   }
 
   delete(id: string): Observable<void> {

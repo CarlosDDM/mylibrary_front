@@ -1,7 +1,7 @@
-<div>
+<div class="w-full">
   <button
     [title]="normalized()?.name"
-    class="flex items-center gap-2 w-full md:w-75 text-left cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/30 rounded-md px-2 py-1.5 hover:bg-zinc-100 dark:hover:bg-white/5 transition-colors duration-150"
+    class="flex items-center gap-2 w-full text-left cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/30 rounded-md px-2 py-1.5 hover:bg-zinc-200 dark:hover:bg-white/5 transition-colors duration-150"
     (click)="handleClick.emit(normalized()?.id!)"
     (keydown.enter)="handleClick.emit(normalized()?.id!)"
     (keydown.space)="handleClick.emit(normalized()?.id!)"
@@ -25,7 +25,7 @@
 
       <div class="flex items-center gap-1">
         @switch (cardType()) {
-          @case ('serie') {
+          @case ('series') {
             <span class="text-xs text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
               <strong class="text-zinc-700 dark:text-zinc-200">{{
                 normalized()?.serieVolumes
@@ -33,11 +33,11 @@
               vol.
             </span>
             <span class="text-zinc-400 dark:text-zinc-600 text-xs">·</span>
-            <span class="text-xs text-zinc-400 dark:text-zinc-500 truncate">
-              {{ normalized()?.franchise?.name ?? 'Sem franquia' }}
+            <span [class]="volumesClass()">
+              {{ normalized()?.works?.length ?? 0 }} / {{ normalized()?.serieVolumes }} vol.
             </span>
           }
-          @case ('franchise') {
+          @case ('franchises') {
             <span class="text-xs text-zinc-500 dark:text-zinc-400">
               <strong class="text-zinc-700 dark:text-zinc-200">{{
                 normalized()?.series?.length ?? 0
@@ -45,7 +45,7 @@
               séries
             </span>
           }
-          @case ('work') {
+          @case ('works') {
             <span class="text-xs text-zinc-500 dark:text-zinc-400">
               Vol.
               <strong class="text-zinc-700 dark:text-zinc-200">{{ normalized()?.volume }}</strong>
@@ -55,16 +55,15 @@
       </div>
 
       @if (normalized()?.status) {
-        <span
-          [class]="statusClass()"
-          class="text-[10px] font-medium border rounded-full px-1.5 py-px w-fit"
-        >
-          {{ normalized()?.status?.type | translatePipe: statusDictionary }}
-        </span>
+        <app-chip
+          size="sm"
+          class="w-fit mt-0.5"
+          [variant]="statusVariantMap[normalized()!.status!.type]"
+          [label]="normalized()?.status?.type | translatePipe: statusDictionary"
+        />
       }
     </div>
 
     <i class="pi pi-angle-right text-zinc-400 dark:text-zinc-600 text-sm shrink-0"></i>
   </button>
-  <div></div>
 </div>

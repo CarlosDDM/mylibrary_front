@@ -1,0 +1,19 @@
+<div
+  class="bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-transparent rounded-lg p-3 flex flex-col gap-1 h-20"
+>
+  <span class="text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-300">
+    {{ label() }}
+  </span>
+
+  <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+    {{ collected() }}
+    <span class="text-xs font-normal text-zinc-400 dark:text-zinc-500">/ {{ total() }}</span>
+  </span>
+
+  <div class="mt-1 h-0.5 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden">
+    <div
+      class="h-full bg-blue-500 rounded-full transition-all duration-300"
+      [style.width.%]="progressWidth()"
+    ></div>
+  </div>
+</div>

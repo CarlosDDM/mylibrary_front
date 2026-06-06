@@ -1,0 +1,8 @@
+<div class="flex items-center justify-between mb-3">
+  <h2 class="text-xl/tight font-medium">{{ titleSection() }}</h2>
+  @if (showButtons()) {
+    <a [routerLink]="path()" class="text-sm font-medium text-blue-500 hover:text-blue-700">
+      {{ buttonName() }}
+    </a>
+  }
+</div>

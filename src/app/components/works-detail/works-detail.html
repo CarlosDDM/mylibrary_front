@@ -1,0 +1,60 @@
+@switch (resource().state) {
+  @case (loadStateEnum.Loading) {
+    <!-- skeleton -->
+  }
+  @case (loadStateEnum.Success) {
+    <div class="flex flex-col px-6">
+      <div class="pb-3">
+        @if (work().isSpecialEdition) {
+          <span
+            class="text-[11px] font-medium px-2.5 py-1 rounded-md bg-amber-100 text-amber-800 uppercase tracking-widest"
+          >
+            Edição Especial
+          </span>
+        }
+        <h2 class="text-xl font-semibold text-zinc-700 dark:text-zinc-100 leading-snug mt-2 mb-1">
+          {{ work().name }}
+        </h2>
+        @if (work().subtitle) {
+          <p class="text-sm text-zinc-400">{{ work().subtitle }}</p>
+        }
+      </div>
+      <hr class="border-zinc-700 mb-4" />
+      <div class="flex gap-2 flex-wrap mb-4">
+        <app-chip [label]="work().media.type" />
+        @if (work().volume !== null) {
+          <app-chip [label]="'Vol. ' + work().volume" />
+        }
+        <app-chip [label]="work().language.type" />
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4">
+        <app-info-badge label="Série" [value]="work().serie.name" />
+        <app-info-badge
+          label="Preço"
+          [value]="work().price | currency: 'BRL' : 'symbol' : '1.2-2'"
+        />
+      </div>
+      <hr class="border-zinc-700 mb-4" />
+      @if (work().authors.length) {
+        <div class="mb-3.5">
+          <p class="text-[11px] text-zinc-400 uppercase tracking-widest mb-2">Autores</p>
+          <div class="flex gap-1.5 flex-wrap">
+            @for (author of work().authors; track author.id) {
+              <app-chip [label]="author.name" variant="info" />
+            }
+          </div>
+        </div>
+      }
+      @if (work().illustrators?.length) {
+        <div class="pb-5">
+          <p class="text-[11px] text-zinc-400 uppercase tracking-widest mb-2">Ilustradores</p>
+          <div class="flex gap-1.5 flex-wrap">
+            @for (illus of work().illustrators!; track illus.id) {
+              <app-chip [label]="illus.name" />
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+}

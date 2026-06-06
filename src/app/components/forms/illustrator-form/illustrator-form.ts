@@ -2,8 +2,8 @@ import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IllustratorModel } from '../../../models/illustrator-model';
 import { catchError, of, throwError } from 'rxjs';
-import { errorMessage } from '../../../constants/error-messages-constant';
-import { successMessage } from '../../../constants/success-message-constant';
+import { ERROR_MESSAGE } from '../../../constants/error-messages-constant';
+import { SUCCESS_MESSAGE } from '../../../constants/success-message-constant';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { IllustratorService } from '../../../services/illustrators/illustrator-service';
 import { ToastService } from '../../../services/toast/toast-service';
@@ -31,7 +31,7 @@ export class IllustratorForm {
       .pipe(
         catchError((err) => {
           if (err.status === 0) {
-            this.messageService.showError(errorMessage.network);
+            this.messageService.showError(ERROR_MESSAGE.network);
             return of(null);
           }
           return throwError(() => err);
@@ -40,11 +40,11 @@ export class IllustratorForm {
       .subscribe({
         next: (res) => {
           if (!res) return;
-          this.messageService.showSuccess(successMessage.illustrator);
+          this.messageService.showSuccess(SUCCESS_MESSAGE.illustrator);
           return this.ref?.close(res);
         },
         error: (err) => {
-          this.messageService.showError(errorMessage.illustrator.submit);
+          this.messageService.showError(ERROR_MESSAGE.illustrators.submit);
         },
       });
   }

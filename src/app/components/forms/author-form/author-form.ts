@@ -2,8 +2,8 @@ import { Component, inject } from '@angular/core';
 import { catchError, of, throwError } from 'rxjs';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthorModel } from '../../../models/author-model';
-import { successMessage } from '../../../constants/success-message-constant';
-import { errorMessage } from '../../../constants/error-messages-constant';
+import { SUCCESS_MESSAGE } from '../../../constants/success-message-constant';
+import { ERROR_MESSAGE } from '../../../constants/error-messages-constant';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AuthorService } from '../../../services/authors/author-service';
 import { ToastService } from '../../../services/toast/toast-service';
@@ -31,7 +31,7 @@ export class AuthorForm {
       .pipe(
         catchError((err) => {
           if (err.status === 0) {
-            this.messageService.showError(errorMessage.network);
+            this.messageService.showError(ERROR_MESSAGE.network);
             return of(null);
           }
           return throwError(() => err);
@@ -40,11 +40,11 @@ export class AuthorForm {
       .subscribe({
         next: (res) => {
           if (!res) return;
-          this.messageService.showSuccess(successMessage.author);
+          this.messageService.showSuccess(SUCCESS_MESSAGE.author);
           return this.ref?.close(res);
         },
         error: (err) => {
-          this.messageService.showError(errorMessage.author.submit);
+          this.messageService.showError(ERROR_MESSAGE.authors.submit);
         },
       });
   }

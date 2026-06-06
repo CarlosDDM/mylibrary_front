@@ -1,24 +1,29 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { WorkForm } from '../../components/forms/work-form/work-form';
 import { DialogService } from '../../services/dialog/dialog-service';
-import { Header } from '../../components/header/header';
 import { WrapperStats } from '../../components/wrapper-stats/wrapper-stats';
-import { Bookshelf } from '../../components/bookshelf/bookshelf';
 import { AsyncResource } from '../../models/async-resource';
 import { SerieModel } from '../../models/serie-model';
 import { FranchiseModel } from '../../models/franchise-model';
-import { WorkModel } from '../../models/work-model';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 import { SerieService } from '../../services/serie/serie-service';
 import { WorkService } from '../../services/works/work-service';
 import { FranchiseService } from '../../services/franchises/franchise-service';
 import { ItemProfile } from '../../components/item-profile/item-profile';
 import { FormButton } from '../../shared/components/forms/form-button/form-button';
 import { LoadStateEnum } from '../../enums/load-state-enum';
+import { WorksDetail } from '../../components/works-detail/works-detail';
+import { WorkModel } from '../../models/work/work-model';
+import { CatalogCardModel } from '../../models/catalog-card-model';
+import { CatalogCardType } from '../../components/catalog-card/catalog-card';
+import { parseHttpError } from '../../utils/parse-http-error.utils';
+import { ERROR_MESSAGE } from '../../constants/error-messages-constant';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HomeSection } from './components/home-section/home-section';
 
 @Component({
   selector: 'app-home',
-  imports: [FormButton, Header, WrapperStats, Bookshelf],
+  imports: [FormButton, WrapperStats, HomeSection],
   templateUrl: './home.html',
 })
 export class Home implements OnInit {
@@ -26,60 +31,122 @@ export class Home implements OnInit {
   private readonly serieService = inject(SerieService);
   private readonly workService = inject(WorkService);
   private readonly franchiseService = inject(FranchiseService);
+  private readonly destroyRef = inject(DestroyRef);
   protected readonly loadStateEnum = LoadStateEnum;
 
   serieData = signal<AsyncResource<SerieModel[]>>(AsyncResource.loading([]));
   franchiseData = signal<AsyncResource<FranchiseModel[]>>(AsyncResource.loading([]));
   workData = signal<AsyncResource<WorkModel[]>>(AsyncResource.loading([]));
 
-  createWork() {
+  protected readonly workCatalog = computed(() =>
+    this.workData().mapData((works) =>
+      works.map(
+        (work) =>
+          ({
+            id: work.id,
+            name: work.name,
+            subtitle: work.subtitle,
+            volume: work.volume,
+            language: work.language,
+            isSpecialEdition: work.isSpecialEdition,
+          }) satisfies CatalogCardModel,
+      ),
+    ),
+  );
+
+  createWork(): void {
     this.dialogService.show(WorkForm, {
       header: 'Nova Obra',
     });
   }
 
-  handleClickSerie(id: string) {
+  handleClickSerie(id: string): void {
     this.dialogService.show(ItemProfile, {
-      header: 'Obras',
+      header: 'Série',
+      duplicate: true,
       data: {
         fetchData: () => this.serieService.getById(id),
-        type: 'serie',
+        openModal: (relatedId: string, type: CatalogCardType = 'works') =>
+          this.handleRelatedClick(relatedId, type),
+        type: 'series',
         showButtons: false,
       },
     });
   }
 
-  handleClickFranchise(id: string) {
+  handleClickFranchise(id: string): void {
     this.dialogService.show(ItemProfile, {
       header: 'Franquia',
       data: {
         fetchData: () => this.franchiseService.getById(id),
-        type: 'franchise',
+        openModal: (relatedId: string, type: CatalogCardType = 'works') =>
+          this.handleRelatedClick(relatedId, type),
+        type: 'franchises',
         showButtons: false,
       },
     });
   }
 
-  ngOnInit() {
+  handleRelatedClick(id: string, type: CatalogCardType): void {
+    switch (type) {
+      case 'works':
+        this.handleClickWork(id);
+        break;
+      case 'series':
+        this.handleClickSerie(id);
+        break;
+      case 'franchises':
+        this.handleClickFranchise(id);
+        break;
+    }
+  }
+
+  handleClickWork(id: string): void {
+    this.dialogService.show(WorksDetail, {
+      header: 'Detalhes',
+      styleClass: 'w-[90vw] md:w-[60vw]',
+      data: {
+        fetchData: () => this.workService.getById(id),
+      },
+    });
+  }
+
+  loadAll(): void {
+    this.serieData.update((s) => AsyncResource.loading(s.data));
+    this.franchiseData.update((s) => AsyncResource.loading(s.data));
+    this.workData.update((s) => AsyncResource.loading(s.data));
+
     forkJoin({
       series: this.serieService.getAll(),
       franchises: this.franchiseService.getAll(),
       works: this.workService.getAll(),
-    }).subscribe({
-      next: (result) => {
+    })
+      .pipe(
+        catchError((err) => {
+          const errors = parseHttpError(err, ERROR_MESSAGE.network);
+          this.serieData.update((s) => AsyncResource.error(s, errors));
+          this.franchiseData.update((s) => AsyncResource.error(s, errors));
+          this.workData.update((s) => AsyncResource.error(s, errors));
+          return of(null);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((result) => {
         if (!result) return;
-
         const { series, franchises, works } = result;
+        this.serieData.set(
+          series.data.length ? AsyncResource.success(series.data) : AsyncResource.empty([]),
+        );
+        this.franchiseData.set(
+          franchises.data.length ? AsyncResource.success(franchises.data) : AsyncResource.empty([]),
+        );
+        this.workData.set(
+          works.data.length ? AsyncResource.success(works.data) : AsyncResource.empty([]),
+        );
+      });
+  }
 
-        this.serieData.update((s) => AsyncResource.success(s.data.concat(series)));
-        this.franchiseData.update((s) => AsyncResource.success(s.data.concat(franchises)));
-        this.workData.update((s) => AsyncResource.success(s.data.concat(works)));
-      },
-      error: (err) => {
-        this.serieData.update((s) => AsyncResource.error(s, err));
-        this.franchiseData.update((s) => AsyncResource.error(s, err));
-        this.workData.update((s) => AsyncResource.error(s, err));
-      },
-    });
+  ngOnInit(): void {
+    this.loadAll();
   }
 }

@@ -1,23 +1,23 @@
-export const errorMessage = {
-  work: {
+export const ERROR_MESSAGE = {
+  works: {
     submit: 'Erro ao salvar a obra',
     load: 'Erro ao carregar as obras',
   },
-  author: {
+  authors: {
     submit: 'Erro ao salvar o autor',
     load: 'Erro ao carregar o autor',
   },
-  franchise: {
+  franchises: {
     submit: 'Erro ao salvar a franquia',
     load: 'Erro ao carregar a franquia',
   },
-  illustrator: {
+  illustrators: {
     submit: 'Erro ao salvar o ilustrador',
     load: 'Erro ao carregar o ilustrador',
   },
-  serie: {
-    submit: 'Erro ao salvar a serie',
-    load: 'Erro ao carregar a serie',
+  series: {
+    submit: 'Erro ao salvar a série',
+    load: 'Erro ao carregar a série',
   },
   config: {
     load: 'Erro ao tentar buscar as opções, verifique sua conexão',

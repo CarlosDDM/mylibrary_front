@@ -1,7 +1,7 @@
 import { FranchiseModel } from './franchise-model';
 import { OptionModel } from './option-model';
 import { SerieModel } from './serie-model';
-import { WorkModel } from './work-model';
+import { WorkRequestModel } from './work/work-request-model';
 
 export interface CatalogCardModel {
   id: string;
@@ -11,10 +11,10 @@ export interface CatalogCardModel {
   status?: OptionModel | null;
   franchise?: FranchiseModel | null;
   series?: SerieModel[] | null;
-  works?: WorkModel[] | null;
+  works?: WorkRequestModel[] | null;
   // work
   subtitle?: string | null;
   volume?: number | null;
-  language?: string | null;
+  language?: OptionModel | null;
   isSpecialEdition?: boolean | null;
 }

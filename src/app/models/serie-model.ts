@@ -1,12 +1,12 @@
 import { FranchiseModel } from './franchise-model';
 import { OptionModel } from './option-model';
-import { WorkModel } from './work-model';
+import { WorkRequestModel } from './work/work-request-model';
 
 export interface SerieModel {
   id: string;
   name: string;
   serieVolumes: number;
-  works: WorkModel[];
+  works: WorkRequestModel[];
   status: OptionModel;
   franchise: FranchiseModel;
 }
