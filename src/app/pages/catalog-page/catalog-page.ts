@@ -3,8 +3,8 @@ import { FranchiseModel } from '../../models/franchise-model';
 import { WorkModel } from '../../models/work/work-model';
 import { SerieModel } from '../../models/serie-model';
 import { AsyncResource } from '../../models/async-resource';
+import { CatalogCardModel } from '../../models/catalog-card-model';
 import { catchError, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ItemProfile } from '../../components/item-profile/item-profile';
 import { SerieService } from '../../services/serie/serie-service';
@@ -15,14 +15,15 @@ import { DialogService } from '../../services/dialog/dialog-service';
 import { ERROR_MESSAGE } from '../../constants/error-messages-constant';
 import { parseHttpError } from '../../utils/parse-http-error.utils';
 import { WorksDetail } from '../../components/works-detail/works-detail';
-import { Bookshelf } from '../../components/bookshelf/bookshelf';
 import { CatalogCardType } from '../../components/catalog-card/catalog-card';
+import { Library } from './components/library/library';
+import { PaginatedResponse, PaginationParams } from '../../models/pagination-model';
 
 type CatalogItem = SerieModel | WorkModel | FranchiseModel;
 
 @Component({
   selector: 'app-catalog-page',
-  imports: [Bookshelf],
+  imports: [Library],
   templateUrl: './catalog-page.html',
 })
 export class CatalogPage implements OnInit {
@@ -34,7 +35,9 @@ export class CatalogPage implements OnInit {
   private readonly franchiseService = inject(FranchiseService);
 
   protected readonly type = this.route.snapshot.data['type'] as CatalogCardType;
-  protected readonly data = signal<AsyncResource<CatalogItem[]>>(AsyncResource.loading([]));
+  protected readonly data = signal<AsyncResource<CatalogCardModel[]>>(AsyncResource.loading([]));
+  protected readonly totalPages = signal<number>(0);
+  protected readonly params = signal<PaginationParams>({ take: 40, skip: 0 });
 
   protected readonly title = computed(() => {
     const titles: Record<CatalogCardType, string> = {
@@ -64,11 +67,19 @@ export class CatalogPage implements OnInit {
       )
       .subscribe((result) => {
         if (!result) return;
-        console.log(result);
-        this.data.set(
-          result.length === 0 ? AsyncResource.empty([]) : AsyncResource.success(result),
-        );
+        this.totalPages.set(result.pages);
+        const items = result.data as unknown as CatalogCardModel[];
+        this.data.set(items.length === 0 ? AsyncResource.empty([]) : AsyncResource.success(items));
       });
+  }
+
+  onPageChange(params: PaginationParams): void {
+    const currentParams = this.params();
+
+    if (params.skip !== currentParams.skip) {
+      this.params.set(params);
+      this.loadAll();
+    }
   }
 
   handleCardClick(id: string): void {
@@ -121,14 +132,15 @@ export class CatalogPage implements OnInit {
     }
   }
 
-  private getServiceCall(): Observable<CatalogItem[]> {
+  private getServiceCall(): Observable<PaginatedResponse<any>> {
+    const params = this.params();
     switch (this.type) {
       case 'series':
-        return this.serieService.getAll().pipe(map((res) => res.data));
+        return this.serieService.getAll(params);
       case 'works':
-        return this.workService.getAll().pipe(map((res) => res.data));
+        return this.workService.getAll(params);
       case 'franchises':
-        return this.franchiseService.getAll().pipe(map((res) => res.data));
+        return this.franchiseService.getAll(params);
       default:
         throw new Error(`Tipo de catálogo desconhecido: ${this.type}`);
     }

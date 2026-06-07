@@ -19,7 +19,7 @@ export class Bookshelf {
   showButtons = input<boolean>(true);
   typeCard = input.required<CatalogCardType>();
   resource = input.required<AsyncResource<CatalogCardModel[]>>();
-  skeletonCount = input<number>(5);
+  skeletonCount = input<number>(8);
   cols = input<number>(3);
   retry = output<void>();
 

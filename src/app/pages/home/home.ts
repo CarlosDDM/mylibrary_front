@@ -20,6 +20,8 @@ import { parseHttpError } from '../../utils/parse-http-error.utils';
 import { ERROR_MESSAGE } from '../../constants/error-messages-constant';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HomeSection } from './components/home-section/home-section';
+import { DashboardService } from '../../services/dashboard/dashboard-service';
+import { DashboardStatsModel } from '../../models/dashboard/dashboard-stats-model';
 
 @Component({
   selector: 'app-home',
@@ -30,10 +32,14 @@ export class Home implements OnInit {
   private readonly dialogService = inject(DialogService);
   private readonly serieService = inject(SerieService);
   private readonly workService = inject(WorkService);
+  private readonly dashboardService = inject(DashboardService);
   private readonly franchiseService = inject(FranchiseService);
   private readonly destroyRef = inject(DestroyRef);
   protected readonly loadStateEnum = LoadStateEnum;
 
+  dashboardStats = signal<AsyncResource<DashboardStatsModel>>(
+    AsyncResource.loading({} as DashboardStatsModel),
+  );
   serieData = signal<AsyncResource<SerieModel[]>>(AsyncResource.loading([]));
   franchiseData = signal<AsyncResource<FranchiseModel[]>>(AsyncResource.loading([]));
   workData = signal<AsyncResource<WorkModel[]>>(AsyncResource.loading([]));
@@ -112,11 +118,13 @@ export class Home implements OnInit {
   }
 
   loadAll(): void {
+    this.dashboardStats.update((s) => AsyncResource.loading(s.data));
     this.serieData.update((s) => AsyncResource.loading(s.data));
     this.franchiseData.update((s) => AsyncResource.loading(s.data));
     this.workData.update((s) => AsyncResource.loading(s.data));
 
     forkJoin({
+      dashboard: this.dashboardService.getStats(),
       series: this.serieService.getAll(),
       franchises: this.franchiseService.getAll(),
       works: this.workService.getAll(),
@@ -124,6 +132,7 @@ export class Home implements OnInit {
       .pipe(
         catchError((err) => {
           const errors = parseHttpError(err, ERROR_MESSAGE.network);
+          this.dashboardStats.update((s) => AsyncResource.error(s, errors));
           this.serieData.update((s) => AsyncResource.error(s, errors));
           this.franchiseData.update((s) => AsyncResource.error(s, errors));
           this.workData.update((s) => AsyncResource.error(s, errors));
@@ -133,7 +142,8 @@ export class Home implements OnInit {
       )
       .subscribe((result) => {
         if (!result) return;
-        const { series, franchises, works } = result;
+        const { series, franchises, works, dashboard } = result;
+        this.dashboardStats.set(AsyncResource.success(dashboard));
         this.serieData.set(
           series.data.length ? AsyncResource.success(series.data) : AsyncResource.empty([]),
         );
