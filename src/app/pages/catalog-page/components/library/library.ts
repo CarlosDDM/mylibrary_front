@@ -4,7 +4,7 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { AsyncResource } from '../../../../models/async-resource';
 import { CatalogCardModel } from '../../../../models/catalog-card-model';
 import { CatalogCardType } from '../../../../components/catalog-card/catalog-card';
-import { PaginationParams } from '../../../../models/pagination-model';
+import { PaginationMeta, PaginationParams } from '../../../../models/pagination-model';
 
 @Component({
   selector: 'app-library',
@@ -14,17 +14,25 @@ import { PaginationParams } from '../../../../models/pagination-model';
 export class Library {
   typeCard = input.required<CatalogCardType>();
   resource = input.required<AsyncResource<CatalogCardModel[]>>();
-
-  skip = input<number>(0);
-
-  totalPages = input.required<number>();
-  pageSize = input<number>(20);
-
+  pagination = input.required<PaginationMeta>();
+  pageSize = input.required<number>();
   retry = output<void>();
   cardClick = output<string>();
   pageChange = output<PaginationParams>();
 
-  protected readonly totalRecords = computed(() => this.totalPages() * this.pageSize());
+  paginatorPt = {
+    root: { class: 'bg-transparent!' },
+  };
+
+  getTypeItem(type: CatalogCardType) {
+    const items: Record<CatalogCardType, string> = {
+      series: 'séries',
+      works: 'obras',
+      franchises: 'franquias',
+    };
+    return items[type];
+  }
+  protected readonly skip = computed(() => (this.pagination().current_page - 1) * this.pageSize());
 
   onPageChange(event: PaginatorState): void {
     this.pageChange.emit({

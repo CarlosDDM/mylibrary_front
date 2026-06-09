@@ -17,7 +17,7 @@ import { parseHttpError } from '../../utils/parse-http-error.utils';
 import { WorksDetail } from '../../components/works-detail/works-detail';
 import { CatalogCardType } from '../../components/catalog-card/catalog-card';
 import { Library } from './components/library/library';
-import { PaginatedResponse, PaginationParams } from '../../models/pagination-model';
+import { PaginatedResponse, PaginationMeta, PaginationParams } from '../../models/pagination-model';
 
 type CatalogItem = SerieModel | WorkModel | FranchiseModel;
 
@@ -36,8 +36,8 @@ export class CatalogPage implements OnInit {
 
   protected readonly type = this.route.snapshot.data['type'] as CatalogCardType;
   protected readonly data = signal<AsyncResource<CatalogCardModel[]>>(AsyncResource.loading([]));
-  protected readonly totalPages = signal<number>(0);
-  protected readonly params = signal<PaginationParams>({ take: 40, skip: 0 });
+  protected readonly pagination = signal<PaginationMeta>({ pages: 0, current_page: 1, total: 0 });
+  protected readonly params = signal<PaginationParams>({ take: 20, skip: 0 });
 
   protected readonly title = computed(() => {
     const titles: Record<CatalogCardType, string> = {
@@ -67,7 +67,11 @@ export class CatalogPage implements OnInit {
       )
       .subscribe((result) => {
         if (!result) return;
-        this.totalPages.set(result.pages);
+        this.pagination.set({
+          pages: result.pages,
+          current_page: result.current_page,
+          total: result.total,
+        });
         const items = result.data as unknown as CatalogCardModel[];
         this.data.set(items.length === 0 ? AsyncResource.empty([]) : AsyncResource.success(items));
       });
@@ -75,7 +79,6 @@ export class CatalogPage implements OnInit {
 
   onPageChange(params: PaginationParams): void {
     const currentParams = this.params();
-
     if (params.skip !== currentParams.skip) {
       this.params.set(params);
       this.loadAll();

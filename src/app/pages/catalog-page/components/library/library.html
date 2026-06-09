@@ -3,18 +3,23 @@
     class="flex-1"
     [typeCard]="typeCard()"
     [resource]="resource()"
-    [skeletonCount]="10"
+    [skeletonCount]="8"
     (cardClick)="cardClick.emit($event)"
     [showButtons]="false"
     (retry)="retry.emit()"
   />
-
-  <div class="mt-auto">
+  <div class="mt-auto flex items-center justify-between border-t border-surface pt-4">
+    <span class="text-sm text-muted-color">
+      <strong class="text-color font-medium">{{ pagination().total }}</strong>
+      {{ getTypeItem(typeCard()) }} no total
+    </span>
     <p-paginator
       [first]="skip()"
-      [totalRecords]="totalRecords()"
+      [totalRecords]="pagination().total"
       [rows]="pageSize()"
       (onPageChange)="onPageChange($event)"
+      template="PrevPageLink PageLinks NextPageLink"
+      [pt]="paginatorPt"
     />
   </div>
 </div>
