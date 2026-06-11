@@ -8,8 +8,7 @@
   <div class="max-w-300 mx-auto flex-1 w-full flex flex-col">
     <app-library
       [typeCard]="type"
-      [resource]="data()"
-      [pagination]="pagination()"
+      [resource]="resource()"
       [pageSize]="params().take!"
       (retry)="loadAll()"
       (cardClick)="handleCardClick($event)"

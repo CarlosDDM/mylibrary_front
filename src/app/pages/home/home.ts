@@ -75,7 +75,6 @@ export class Home implements OnInit {
         openModal: (relatedId: string, type: CatalogCardType = 'works') =>
           this.handleRelatedClick(relatedId, type),
         type: 'series',
-        showButtons: false,
       },
     });
   }
@@ -88,7 +87,6 @@ export class Home implements OnInit {
         openModal: (relatedId: string, type: CatalogCardType = 'works') =>
           this.handleRelatedClick(relatedId, type),
         type: 'franchises',
-        showButtons: false,
       },
     });
   }

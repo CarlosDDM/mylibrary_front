@@ -2,10 +2,9 @@
   <app-bookshelf
     class="flex-1"
     [typeCard]="typeCard()"
-    [resource]="resource()"
+    [resource]="listResource()"
     [skeletonCount]="8"
     (cardClick)="cardClick.emit($event)"
-    [showButtons]="false"
     (retry)="retry.emit()"
   />
   <div class="mt-auto flex items-center justify-between border-t border-surface pt-4">

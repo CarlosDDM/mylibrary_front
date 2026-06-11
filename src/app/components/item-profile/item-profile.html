@@ -13,7 +13,7 @@
           </div>
           <app-chip
             class="w-fit shrink-0"
-            [label]="serieStatus() | translatePipe: statusDictionary"
+            [label]="(serieStatus() ? serieStatus() : '-') | translatePipe: statusDictionary"
             [variant]="statusVariantMap[serieStatus()]"
           />
         </div>
@@ -27,20 +27,17 @@
           <app-info-badge class="flex-1" label="Volumes totais" [value]="serieVolumes()" />
         </div>
       </div>
-      <app-bookshelf
+      <app-bookshelf-browser
         [typeCard]="'works'"
         [resource]="serieWorksResource()"
-        [showButtons]="showButtons"
         (cardClick)="handleOpenWork($event)"
+        (retry)="loadData()"
       />
     }
-
     @case ('franchises') {
-      <app-bookshelf
+      <app-bookshelf-browser
         [typeCard]="'series'"
-        [titleSection]="profileTitle()"
         [resource]="franchiseSeriesResource()"
-        [showButtons]="showButtons"
         (cardClick)="handleOpenSerie($event)"
       />
     }

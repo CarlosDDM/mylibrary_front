@@ -1,6 +1,6 @@
 <div class="w-full">
   <button
-    [title]="normalized()?.name"
+    [title]="normalized()?.name + (normalized()?.volume ? ' - Vol. ' + normalized()?.volume : '')"
     class="flex items-center gap-2 w-full text-left cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/30 rounded-md px-2 py-1.5 hover:bg-zinc-200 dark:hover:bg-white/5 transition-colors duration-150"
     (click)="handleClick.emit(normalized()?.id!)"
     (keydown.enter)="handleClick.emit(normalized()?.id!)"
@@ -46,10 +46,16 @@
             </span>
           }
           @case ('works') {
-            <span class="text-xs text-zinc-500 dark:text-zinc-400">
+            <span class="text-xs text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
               Vol.
               <strong class="text-zinc-700 dark:text-zinc-200">{{ normalized()?.volume }}</strong>
             </span>
+            @if (normalized()?.subtitle) {
+              <span class="text-zinc-400 dark:text-zinc-600 text-xs">·</span>
+              <span class="text-xs text-zinc-500 dark:text-zinc-400 truncate">
+                {{ normalized()?.subtitle }}
+              </span>
+            }
           }
         }
       </div>

@@ -1,5 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { Bookshelf } from '../bookshelf/bookshelf';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { SerieModel } from '../../models/serie-model';
 import { FranchiseModel } from '../../models/franchise-model';
@@ -14,16 +13,16 @@ import { ProgressBadge } from '../../shared/components/progress-badge/progress-b
 import { Chip, ChipVariant } from '../../shared/components/chip/chip';
 import { STATUS_VARIANT } from '../../constants/status-variant-constant';
 import { CatalogCardType } from '../catalog-card/catalog-card';
+import { BookshelfBrowser } from '../bookshelf-browser/bookshelf-browser';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 type ItemProfileData =
   | {
-      showButtons: boolean;
       type: 'series';
       fetchData: () => Observable<SerieModel>;
       openModal: (id: string, type?: CatalogCardType) => void;
     }
   | {
-      showButtons: boolean;
       type: 'franchises';
       fetchData: () => Observable<FranchiseModel>;
       openModal: (id: string, type?: CatalogCardType) => void;
@@ -33,7 +32,7 @@ type ItemProfileResult = SerieModel | WorkRequestModel | FranchiseModel;
 
 @Component({
   selector: 'app-item-profile',
-  imports: [Bookshelf, TranslatePipe, InfoBadge, ProgressBadge, Chip],
+  imports: [TranslatePipe, InfoBadge, ProgressBadge, Chip, BookshelfBrowser],
   templateUrl: './item-profile.html',
 })
 export class ItemProfile implements OnInit {
@@ -45,9 +44,9 @@ export class ItemProfile implements OnInit {
   ) => void;
   protected readonly statusDictionary = STATUS_TRANSLATION;
   protected readonly typeCard = this.config.data!.type;
-  protected readonly showButtons = this.config.data!.showButtons;
   protected readonly dialogService = inject(DialogService);
   protected readonly statusVariantMap = STATUS_VARIANT;
+  private readonly destroyRef = inject(DestroyRef);
 
   profileData = signal<AsyncResource<ItemProfileResult>>(
     AsyncResource.loading({} as ItemProfileResult),
@@ -110,14 +109,22 @@ export class ItemProfile implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fetchDataFn().subscribe({
-      next: (result) => {
-        if (!result) return;
-        this.profileData.set(AsyncResource.success(result));
-      },
-      error: (err) => {
-        this.profileData.update((s) => AsyncResource.error(s, err));
-      },
-    });
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.profileData.set(AsyncResource.loading({} as ItemProfileResult));
+
+    this.fetchDataFn()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          if (!result) return;
+          this.profileData.set(AsyncResource.success(result));
+        },
+        error: (err) => {
+          this.profileData.update((s) => AsyncResource.error(s, err));
+        },
+      });
   }
 }

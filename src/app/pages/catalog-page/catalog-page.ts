@@ -17,7 +17,7 @@ import { parseHttpError } from '../../utils/parse-http-error.utils';
 import { WorksDetail } from '../../components/works-detail/works-detail';
 import { CatalogCardType } from '../../components/catalog-card/catalog-card';
 import { Library } from './components/library/library';
-import { PaginatedResponse, PaginationMeta, PaginationParams } from '../../models/pagination-model';
+import { PaginatedResponse, PaginationParams } from '../../models/pagination-model';
 
 type CatalogItem = SerieModel | WorkModel | FranchiseModel;
 
@@ -35,8 +35,9 @@ export class CatalogPage implements OnInit {
   private readonly franchiseService = inject(FranchiseService);
 
   protected readonly type = this.route.snapshot.data['type'] as CatalogCardType;
-  protected readonly data = signal<AsyncResource<CatalogCardModel[]>>(AsyncResource.loading([]));
-  protected readonly pagination = signal<PaginationMeta>({ pages: 0, current_page: 1, total: 0 });
+  protected readonly resource = signal<AsyncResource<PaginatedResponse<CatalogCardModel>>>(
+    AsyncResource.loading({ data: [], pages: 0, current_page: 1, total: 0 }),
+  );
   protected readonly params = signal<PaginationParams>({ take: 20, skip: 0 });
 
   protected readonly title = computed(() => {
@@ -53,12 +54,12 @@ export class CatalogPage implements OnInit {
   }
 
   loadAll(): void {
-    this.data.update((s) => AsyncResource.loading(s.data));
+    this.resource.update((s) => AsyncResource.loading(s.data));
 
     this.getServiceCall()
       .pipe(
         catchError((err) => {
-          this.data.update((s) =>
+          this.resource.update((s) =>
             AsyncResource.error(s, parseHttpError(err, ERROR_MESSAGE[this.type].load)),
           );
           return of(null);
@@ -67,13 +68,12 @@ export class CatalogPage implements OnInit {
       )
       .subscribe((result) => {
         if (!result) return;
-        this.pagination.set({
-          pages: result.pages,
-          current_page: result.current_page,
-          total: result.total,
-        });
-        const items = result.data as unknown as CatalogCardModel[];
-        this.data.set(items.length === 0 ? AsyncResource.empty([]) : AsyncResource.success(items));
+        const paginated = result as PaginatedResponse<CatalogCardModel>;
+        this.resource.set(
+          paginated.data.length === 0
+            ? AsyncResource.empty(paginated)
+            : AsyncResource.success(paginated),
+        );
       });
   }
 
