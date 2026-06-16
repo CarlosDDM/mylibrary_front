@@ -1,0 +1,23 @@
+<section class="px-4 md:px-8">
+  <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-3 mt-4">
+    @switch (resource().state) {
+      @case (loadStateEnum.Loading) {
+        @for (i of skeletonItems(); track i) {
+          <app-skeleton-item />
+        }
+      }
+      @case (loadStateEnum.Error) {
+        <app-error-state [errors]="resource().error" />
+      }
+      @case (loadStateEnum.Success) {
+        @if (resource().data.length === 0) {
+          <app-empty-state class="col-span-full" />
+        } @else {
+          @for (workData of resource().data; track workData.id) {
+            <app-work-card [work]="workData" (handleClick)="cardClick.emit($event)" />
+          }
+        }
+      }
+    }
+  </div>
+</section>

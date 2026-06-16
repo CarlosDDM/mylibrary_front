@@ -1,34 +1,21 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
-import { SerieModel } from '../../models/serie-model';
-import { FranchiseModel } from '../../models/franchise-model';
-import { WorkRequestModel } from '../../models/work/work-request-model';
 import { Observable } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SerieModel } from '../../models/serie-model';
 import { AsyncResource } from '../../models/async-resource';
 import { TranslatePipe } from '../../pipes/translate-pipe';
 import { STATUS_TRANSLATION } from '../../constants/status-translation-constant';
-import { DialogService } from '../../services/dialog/dialog-service';
+import { STATUS_VARIANT } from '../../constants/status-variant-constant';
 import { InfoBadge } from '../../shared/components/info-badge/info-badge';
 import { ProgressBadge } from '../../shared/components/progress-badge/progress-badge';
-import { Chip, ChipVariant } from '../../shared/components/chip/chip';
-import { STATUS_VARIANT } from '../../constants/status-variant-constant';
-import { CatalogCardType } from '../catalog-card/catalog-card';
+import { Chip } from '../../shared/components/chip/chip';
 import { BookshelfBrowser } from '../bookshelf-browser/bookshelf-browser';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-type ItemProfileData =
-  | {
-      type: 'series';
-      fetchData: () => Observable<SerieModel>;
-      openModal: (id: string, type?: CatalogCardType) => void;
-    }
-  | {
-      type: 'franchises';
-      fetchData: () => Observable<FranchiseModel>;
-      openModal: (id: string, type?: CatalogCardType) => void;
-    };
-
-type ItemProfileResult = SerieModel | WorkRequestModel | FranchiseModel;
+interface ItemProfileData {
+  fetchData: () => Observable<SerieModel>;
+  openModal: (id: string) => void;
+}
 
 @Component({
   selector: 'app-item-profile',
@@ -37,85 +24,40 @@ type ItemProfileResult = SerieModel | WorkRequestModel | FranchiseModel;
 })
 export class ItemProfile implements OnInit {
   private readonly config = inject<DynamicDialogConfig<ItemProfileData>>(DynamicDialogConfig);
-  private readonly fetchDataFn = this.config.data!.fetchData as () => Observable<ItemProfileResult>;
-  protected readonly openModalFn = this.config.data!.openModal as (
-    id: string,
-    type?: CatalogCardType,
-  ) => void;
-  protected readonly statusDictionary = STATUS_TRANSLATION;
-  protected readonly typeCard = this.config.data!.type;
-  protected readonly dialogService = inject(DialogService);
-  protected readonly statusVariantMap = STATUS_VARIANT;
   private readonly destroyRef = inject(DestroyRef);
 
-  profileData = signal<AsyncResource<ItemProfileResult>>(
-    AsyncResource.loading({} as ItemProfileResult),
-  );
+  private readonly fetchData = this.config.data!.fetchData;
+  protected readonly openModal = this.config.data!.openModal;
 
-  protected profileTitle = computed(() => (this.profileData().data as any)?.name ?? '');
+  protected readonly statusDictionary = STATUS_TRANSLATION;
+  protected readonly statusVariantMap = STATUS_VARIANT;
+
+  profileData = signal<AsyncResource<SerieModel>>(AsyncResource.loading({} as SerieModel));
+
+  protected profileTitle = computed(() => this.profileData().data?.name ?? '');
 
   protected serieWorksResource = computed(() =>
-    this.profileData().mapData((data) => (data as SerieModel)?.works ?? []),
-  );
-
-  protected franchiseSeriesResource = computed(() =>
-    this.profileData().mapData((data) => (data as FranchiseModel)?.series ?? []),
+    this.profileData().mapData((data) => data?.works ?? []),
   );
 
   protected serieWorks = computed(() => this.serieWorksResource().data);
 
-  protected serieVolumes = computed(
-    () => (this.profileData().data as SerieModel)?.serieVolumes ?? 0,
-  );
+  protected serieVolumes = computed(() => this.profileData().data?.serieVolumes ?? 0);
 
-  protected serieStatus = computed(
-    () => (this.profileData().data as SerieModel)?.status?.type ?? '',
-  );
-
-  protected serieProgressWidth = computed(() => {
-    const works = this.serieWorks().length;
-    const total = this.serieVolumes();
-    if (!total) return 0;
-    return Math.round((works / total) * 100);
-  });
-
-  statusVariant = computed<ChipVariant>(() => {
-    const status = this.serieStatus();
-
-    switch (status) {
-      case 'ongoing':
-        return 'info';
-      case 'completed':
-        return 'success';
-      case 'hiatus':
-        return 'warning';
-      case 'cancelled':
-        return 'danger';
-      default:
-        return 'neutral';
-    }
-  });
+  protected serieStatus = computed(() => this.profileData().data?.status?.type ?? '');
 
   protected franchiseName = computed(
-    () => (this.profileData().data as SerieModel)?.franchise?.name ?? 'Sem franquia',
+    () => this.profileData().data?.franchise?.name ?? 'Sem franquia',
   );
-
-  handleOpenSerie(id: string): void {
-    this.openModalFn(id, 'series');
-  }
-
-  handleOpenWork(id: string): void {
-    this.openModalFn(id, 'works');
-  }
 
   ngOnInit(): void {
     this.loadData();
   }
 
   loadData(): void {
-    this.profileData.set(AsyncResource.loading({} as ItemProfileResult));
+    this.profileData.set(AsyncResource.loading({} as SerieModel));
 
-    this.fetchDataFn()
+    this.fetchData()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (result) => {

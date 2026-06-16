@@ -1,9 +1,8 @@
 <div class="px-4 pt-3">
   <input pInputText placeholder="Buscar..." [value]="filterText()" (input)="onFilter($event)" />
 </div>
-<app-bookshelf
+<app-bookshelf-work
   [resource]="pageResource()"
-  [typeCard]="typeCard()"
   (cardClick)="cardClick.emit($event)"
   [skeletonCount]="6"
   (retry)="retry.emit()"

@@ -1,32 +1,36 @@
 @switch (stats().state) {
   @case (loadStateEnum.Success) {
-    <div class="block md:hidden px-4">
-      <p-carousel
-        [value]="status()"
-        [numVisible]="1"
-        [numScroll]="1"
-        [circular]="true"
-        [showNavigators]="false"
-        [responsiveOptions]="responsiveOptions"
-      >
-        <ng-template #item let-item>
-          <app-stat-card [stat]="item" />
-        </ng-template>
-      </p-carousel>
-    </div>
-    <div class="hidden md:flex items-center justify-center gap-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full px-2 lg:px-10">
       @for (item of status(); track item.name) {
         <app-stat-card [stat]="item" />
       }
     </div>
   }
-  @default {
-    <div class="block md:hidden px-4">
-      <p-skeleton height="5rem" borderRadius="12px" />
+  @case (loadStateEnum.Error) {
+    <div
+      class="flex items-center justify-between gap-3 border border-red-400/40 bg-red-500/5 rounded-xl p-4 mx-4 md:mx-0"
+    >
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full bg-red-500/10 flex items-center justify-center shrink-0">
+          <i class="pi pi-wifi text-red-400 text-lg"></i>
+        </div>
+        <div>
+          <p class="text-sm font-medium m-0">Não foi possível carregar</p>
+        </div>
+      </div>
+      <app-form-button
+        label="Tentar novamente"
+        icon="pi pi-refresh"
+        severity="danger"
+        outlined
+        size="small"
+      />
     </div>
-    <div class="hidden md:flex items-center justify-center gap-6">
-      @for (item of [1, 2, 3, 4]; track item) {
-        <p-skeleton width="8rem" height="5rem" borderRadius="12px" />
+  }
+  @default {
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full px-2">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <p-skeleton height="9rem" borderRadius="12px" />
       }
     </div>
   }

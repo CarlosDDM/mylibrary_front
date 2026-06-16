@@ -1,9 +1,7 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { FranchiseModel } from '../../models/franchise-model';
 import { WorkModel } from '../../models/work/work-model';
 import { SerieModel } from '../../models/serie-model';
 import { AsyncResource } from '../../models/async-resource';
-import { CatalogCardModel } from '../../models/catalog-card-model';
 import { catchError, Observable, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ItemProfile } from '../../components/item-profile/item-profile';
@@ -15,11 +13,11 @@ import { DialogService } from '../../services/dialog/dialog-service';
 import { ERROR_MESSAGE } from '../../constants/error-messages-constant';
 import { parseHttpError } from '../../utils/parse-http-error.utils';
 import { WorksDetail } from '../../components/works-detail/works-detail';
-import { CatalogCardType } from '../../components/catalog-card/catalog-card';
 import { Library } from './components/library/library';
 import { PaginatedResponse, PaginationParams } from '../../models/pagination-model';
 
-type CatalogItem = SerieModel | WorkModel | FranchiseModel;
+type CatalogItem = SerieModel | WorkModel;
+type TypeCard = 'works' | 'series';
 
 @Component({
   selector: 'app-catalog-page',
@@ -34,17 +32,16 @@ export class CatalogPage implements OnInit {
   private readonly workService = inject(WorkService);
   private readonly franchiseService = inject(FranchiseService);
 
-  protected readonly type = this.route.snapshot.data['type'] as CatalogCardType;
-  protected readonly resource = signal<AsyncResource<PaginatedResponse<CatalogCardModel>>>(
-    AsyncResource.loading({ data: [], pages: 0, current_page: 1, total: 0 }),
-  );
+  protected readonly type = this.route.snapshot.data['type'] as TypeCard;
+  protected readonly resource = signal<
+    AsyncResource<PaginatedResponse<WorkModel[] | SerieModel[]>>
+  >(AsyncResource.loading({ data: [], pages: 0, current_page: 1, total: 0 }));
   protected readonly params = signal<PaginationParams>({ take: 20, skip: 0 });
 
   protected readonly title = computed(() => {
-    const titles: Record<CatalogCardType, string> = {
+    const titles: Record<TypeCard, string> = {
       series: 'Todas as Séries',
       works: 'Todas as Obras',
-      franchises: 'Todas as Franquias',
     };
     return titles[this.type];
   });
@@ -68,7 +65,7 @@ export class CatalogPage implements OnInit {
       )
       .subscribe((result) => {
         if (!result) return;
-        const paginated = result as PaginatedResponse<CatalogCardModel>;
+        const paginated = result as PaginatedResponse<WorkModel[] | SerieModel[]>;
         this.resource.set(
           paginated.data.length === 0
             ? AsyncResource.empty(paginated)
@@ -99,8 +96,8 @@ export class CatalogPage implements OnInit {
       duplicate: true,
       data: {
         fetchData: () => this.getByIdForType(id),
-        openModal: (relatedId: string, relatedType: CatalogCardType = 'works') =>
-          this.handleRelatedClick(relatedId, relatedType),
+        // openModal: (relatedId: string, relatedType: CatalogCardType = 'works') =>
+        //   this.handleRelatedClick(relatedId, relatedType),
         type: this.type,
         showButtons: false,
       },
@@ -117,7 +114,7 @@ export class CatalogPage implements OnInit {
     });
   }
 
-  handleRelatedClick(id: string, type: CatalogCardType): void {
+  handleRelatedClick(id: string, type: TypeCard): void {
     if (type === 'works') {
       this.handleClickWork(id);
     } else {
@@ -126,8 +123,8 @@ export class CatalogPage implements OnInit {
         duplicate: true,
         data: {
           fetchData: () => this.getByIdServiceCall(id, type),
-          openModal: (relatedId: string, relatedType: CatalogCardType = 'works') =>
-            this.handleRelatedClick(relatedId, relatedType),
+          // openModal: (relatedId: string, relatedType: CatalogCardType = 'works') =>
+          //   this.handleRelatedClick(relatedId, relatedType),
           type,
           showButtons: false,
         },
@@ -142,8 +139,6 @@ export class CatalogPage implements OnInit {
         return this.serieService.getAll(params);
       case 'works':
         return this.workService.getAll(params);
-      case 'franchises':
-        return this.franchiseService.getAll(params);
       default:
         throw new Error(`Tipo de catálogo desconhecido: ${this.type}`);
     }
@@ -153,14 +148,12 @@ export class CatalogPage implements OnInit {
     return this.getByIdServiceCall(id, this.type);
   }
 
-  private getByIdServiceCall(id: string, type: CatalogCardType): Observable<CatalogItem> {
+  private getByIdServiceCall(id: string, type: TypeCard): Observable<CatalogItem> {
     switch (type) {
       case 'series':
         return this.serieService.getById(id);
       case 'works':
         return this.workService.getById(id);
-      case 'franchises':
-        return this.franchiseService.getById(id);
     }
   }
 
@@ -168,11 +161,10 @@ export class CatalogPage implements OnInit {
     return this.getModalHeaderByType(this.type);
   }
 
-  private getModalHeaderByType(type: CatalogCardType): string {
-    const headers: Record<CatalogCardType, string> = {
+  private getModalHeaderByType(type: TypeCard): string {
+    const headers: Record<TypeCard, string> = {
       series: 'Série',
       works: 'Obra',
-      franchises: 'Franquia',
     };
     return headers[type];
   }

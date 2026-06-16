@@ -1,20 +1,18 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
-import { Bookshelf } from '../bookshelf/bookshelf';
+import { BookshelfWork } from '../bookshelf-work/bookshelf-work';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { InputTextModule } from 'primeng/inputtext';
-import { CatalogCardModel } from '../../models/catalog-card-model';
-import { CatalogCardType } from '../catalog-card/catalog-card';
 import { AsyncResource } from '../../models/async-resource';
 import { normalize } from '../../utils/normalize.utils';
+import { WorkModel } from '../../models/work/work-model';
 
 @Component({
   selector: 'app-bookshelf-browser',
-  imports: [Bookshelf, PaginatorModule, InputTextModule],
+  imports: [PaginatorModule, InputTextModule, BookshelfWork],
   templateUrl: './bookshelf-browser.html',
 })
 export class BookshelfBrowser {
-  resource = input.required<AsyncResource<CatalogCardModel[]>>();
-  typeCard = input.required<CatalogCardType>();
+  resource = input.required<AsyncResource<WorkModel[]>>();
   pageSize = input<number>(6);
   showButtons = input<boolean>(true);
   cardClick = output<string>();
@@ -35,7 +33,7 @@ export class BookshelfBrowser {
     const page = this.currentPage();
     const size = this.pageSize();
 
-    return this.resource().mapData((items: CatalogCardModel[]) => {
+    return this.resource().mapData((items: WorkModel[]) => {
       const filtered = filter
         ? items.filter(
             (i) =>
@@ -50,7 +48,7 @@ export class BookshelfBrowser {
 
   protected readonly total = computed(() => {
     const filter = normalize(this.filterText());
-    const items: CatalogCardModel[] = this.resource().data ?? [];
+    const items: WorkModel[] = this.resource().data ?? [];
     return filter
       ? items.filter(
           (i) =>

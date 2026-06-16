@@ -1,0 +1,29 @@
+<div class="w-full">
+  <button
+    [title]="serie().name"
+    class="flex flex-col w-full text-left cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/30 rounded-lg overflow-hidden hover:brightness-95 dark:hover:brightness-110 transition-all duration-150"
+    (click)="handleClick.emit(serie().id)"
+    (keydown.enter)="handleClick.emit(serie().id)"
+    (keydown.space)="handleClick.emit(serie().id)"
+  >
+    <div [class]="'w-full h-26 flex items-center justify-center ' + coverColor().bg">
+      <i [class]="'pi pi-book text-4xl! ' + coverColor().icon"></i>
+    </div>
+    <div class="p-2 flex flex-col gap-1 bg-white dark:bg-zinc-900">
+      <span class="text-sm font-medium text-zinc-800 dark:text-zinc-100 truncate">
+        {{ serie().name }}
+      </span>
+      <span [class]="volumesClass()">
+        {{ serie().works?.length ?? 0 }} / {{ serie().serieVolumes }} vol.
+      </span>
+      @if (serie().status) {
+        <app-chip
+          size="sm"
+          class="w-fit"
+          [variant]="statusVariantMap[serie().status!.type]"
+          [label]="serie().status!.type | translatePipe: statusDictionary"
+        />
+      }
+    </div>
+  </button>
+</div>

@@ -4,9 +4,17 @@
   buttonName="Veja todos"
   [path]="'/' + typeCard()"
 />
-<app-bookshelf
-  [typeCard]="typeCard()"
-  [resource]="resource()"
-  (retry)="retry.emit($event)"
-  (cardClick)="clickCard.emit($event)"
-/>
+@if (typeCard() === 'works') {
+  <app-bookshelf-work
+    [resource]="workResource()"
+    (retry)="retry.emit($event)"
+    (cardClick)="clickCard.emit($event)"
+  />
+}
+@if (typeCard() === 'series') {
+  <app-bookshelf-serie
+    [resource]="serieResource()"
+    (retry)="retry.emit($event)"
+    (cardClick)="clickCard.emit($event)"
+  />
+}

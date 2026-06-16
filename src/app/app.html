@@ -1,8 +1,11 @@
-<div class="min-h-screen flex flex-col">
-  <app-header />
-  <p-toast />
+<div class="h-screen flex overflow-hidden">
+  <app-sidebar />
 
-  <main class="flex-1 flex flex-col">
-    <router-outlet />
-  </main>
+  <div class="flex-1 min-w-0 flex flex-col">
+    <app-header />
+    <p-toast />
+    <main class="flex-1 min-w-0 overflow-y-auto">
+      <router-outlet />
+    </main>
+  </div>
 </div>

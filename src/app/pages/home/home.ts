@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { WorkForm } from '../../components/forms/work-form/work-form';
 import { DialogService } from '../../services/dialog/dialog-service';
 import { WrapperStats } from '../../components/wrapper-stats/wrapper-stats';
@@ -10,12 +10,9 @@ import { SerieService } from '../../services/serie/serie-service';
 import { WorkService } from '../../services/works/work-service';
 import { FranchiseService } from '../../services/franchises/franchise-service';
 import { ItemProfile } from '../../components/item-profile/item-profile';
-import { FormButton } from '../../shared/components/forms/form-button/form-button';
 import { LoadStateEnum } from '../../enums/load-state-enum';
 import { WorksDetail } from '../../components/works-detail/works-detail';
 import { WorkModel } from '../../models/work/work-model';
-import { CatalogCardModel } from '../../models/catalog-card-model';
-import { CatalogCardType } from '../../components/catalog-card/catalog-card';
 import { parseHttpError } from '../../utils/parse-http-error.utils';
 import { ERROR_MESSAGE } from '../../constants/error-messages-constant';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -25,7 +22,7 @@ import { DashboardStatsModel } from '../../models/dashboard/dashboard-stats-mode
 
 @Component({
   selector: 'app-home',
-  imports: [FormButton, WrapperStats, HomeSection],
+  imports: [WrapperStats, HomeSection],
   templateUrl: './home.html',
 })
 export class Home implements OnInit {
@@ -44,22 +41,6 @@ export class Home implements OnInit {
   franchiseData = signal<AsyncResource<FranchiseModel[]>>(AsyncResource.loading([]));
   workData = signal<AsyncResource<WorkModel[]>>(AsyncResource.loading([]));
 
-  protected readonly workCatalog = computed(() =>
-    this.workData().mapData((works) =>
-      works.map(
-        (work) =>
-          ({
-            id: work.id,
-            name: work.name,
-            subtitle: work.subtitle,
-            volume: work.volume,
-            language: work.language,
-            isSpecialEdition: work.isSpecialEdition,
-          }) satisfies CatalogCardModel,
-      ),
-    ),
-  );
-
   createWork(): void {
     this.dialogService.show(WorkForm, {
       header: 'Nova Obra',
@@ -69,40 +50,11 @@ export class Home implements OnInit {
   handleClickSerie(id: string): void {
     this.dialogService.show(ItemProfile, {
       header: 'Série',
-      duplicate: true,
       data: {
         fetchData: () => this.serieService.getById(id),
-        openModal: (relatedId: string, type: CatalogCardType = 'works') =>
-          this.handleRelatedClick(relatedId, type),
-        type: 'series',
+        openModal: (workId: string) => this.handleClickWork(workId),
       },
     });
-  }
-
-  handleClickFranchise(id: string): void {
-    this.dialogService.show(ItemProfile, {
-      header: 'Franquia',
-      data: {
-        fetchData: () => this.franchiseService.getById(id),
-        openModal: (relatedId: string, type: CatalogCardType = 'works') =>
-          this.handleRelatedClick(relatedId, type),
-        type: 'franchises',
-      },
-    });
-  }
-
-  handleRelatedClick(id: string, type: CatalogCardType): void {
-    switch (type) {
-      case 'works':
-        this.handleClickWork(id);
-        break;
-      case 'series':
-        this.handleClickSerie(id);
-        break;
-      case 'franchises':
-        this.handleClickFranchise(id);
-        break;
-    }
   }
 
   handleClickWork(id: string): void {

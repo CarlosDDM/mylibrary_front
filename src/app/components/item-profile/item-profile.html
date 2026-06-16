@@ -1,45 +1,31 @@
 <div>
-  @switch (typeCard) {
-    @case ('series') {
-      <div class="border-b border-zinc-700 p-5 pb-4">
-        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-3">
-          <div>
-            <h2 class="text-base font-medium text-zinc-700 dark:text-zinc-100 leading-tight mb-1">
-              {{ profileTitle() }}
-            </h2>
-            <p class="text-sm text-zinc-400 flex items-center gap-1">
-              Serie: {{ franchiseName() }}
-            </p>
-          </div>
-          <app-chip
-            class="w-fit shrink-0"
-            [label]="(serieStatus() ? serieStatus() : '-') | translatePipe: statusDictionary"
-            [variant]="statusVariantMap[serieStatus()]"
-          />
-        </div>
-        <div class="flex gap-2">
-          <app-progress-badge
-            label="Volumes coletados"
-            [collected]="serieWorks().length"
-            [total]="serieVolumes()"
-            class="flex-1"
-          />
-          <app-info-badge class="flex-1" label="Volumes totais" [value]="serieVolumes()" />
-        </div>
+  <div class="border-b border-zinc-700 p-5 pb-4">
+    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-3">
+      <div>
+        <h2 class="text-base font-medium text-zinc-700 dark:text-zinc-100 leading-tight mb-1">
+          {{ profileTitle() }}
+        </h2>
+        <p class="text-sm text-zinc-400 flex items-center gap-1">Franquia: {{ franchiseName() }}</p>
       </div>
-      <app-bookshelf-browser
-        [typeCard]="'works'"
-        [resource]="serieWorksResource()"
-        (cardClick)="handleOpenWork($event)"
-        (retry)="loadData()"
+      <app-chip
+        class="w-fit shrink-0"
+        [label]="serieStatus() || '-' | translatePipe: statusDictionary"
+        [variant]="statusVariantMap[serieStatus()]"
       />
-    }
-    @case ('franchises') {
-      <app-bookshelf-browser
-        [typeCard]="'series'"
-        [resource]="franchiseSeriesResource()"
-        (cardClick)="handleOpenSerie($event)"
+    </div>
+    <div class="flex gap-2">
+      <app-progress-badge
+        label="Volumes coletados"
+        [collected]="serieWorks().length"
+        [total]="serieVolumes()"
+        class="flex-1"
       />
-    }
-  }
+      <app-info-badge class="flex-1" label="Volumes totais" [value]="serieVolumes()" />
+    </div>
+  </div>
+  <app-bookshelf-browser
+    [resource]="serieWorksResource()"
+    (cardClick)="openModal($event)"
+    (retry)="loadData()"
+  />
 </div>

@@ -1,23 +1,25 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, effect, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DrawerService {
   nav = signal(false);
-  admin = signal(false);
+  collapsed = signal<boolean>(localStorage.getItem('sidebar-collapsed') === 'true');
+
+  constructor() {
+    effect(() => localStorage.setItem('sidebar-collapsed', String(this.collapsed())));
+  }
 
   openNav() {
-    this.admin.set(false);
     this.nav.set(true);
   }
-  openAdmin() {
+
+  closeNav() {
     this.nav.set(false);
-    this.admin.set(true);
   }
 
-  closeAll() {
-    this.nav.set(false);
-    this.admin.set(false);
+  toggleCollapse() {
+    this.collapsed.update((v) => !v);
   }
 }

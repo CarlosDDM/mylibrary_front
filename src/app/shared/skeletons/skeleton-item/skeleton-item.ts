@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component } from '@angular/core';
 import { SkeletonModule } from 'primeng/skeleton';
 
 @Component({
@@ -6,6 +6,4 @@ import { SkeletonModule } from 'primeng/skeleton';
   imports: [SkeletonModule],
   templateUrl: './skeleton-item.html',
 })
-export class SkeletonItem {
-  hasBadge = input<boolean>(false);
-}
+export class SkeletonItem {}
