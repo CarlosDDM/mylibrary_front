@@ -7,7 +7,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ItemProfile } from '../../components/item-profile/item-profile';
 import { SerieService } from '../../services/serie/serie-service';
 import { WorkService } from '../../services/works/work-service';
-import { FranchiseService } from '../../services/franchises/franchise-service';
 import { ActivatedRoute } from '@angular/router';
 import { DialogService } from '../../services/dialog/dialog-service';
 import { ERROR_MESSAGE } from '../../constants/error-messages-constant';
@@ -30,7 +29,6 @@ export class CatalogPage implements OnInit {
   private readonly dialogService = inject(DialogService);
   private readonly serieService = inject(SerieService);
   private readonly workService = inject(WorkService);
-  private readonly franchiseService = inject(FranchiseService);
 
   protected readonly type = this.route.snapshot.data['type'] as TypeCard;
   protected readonly resource = signal<
@@ -83,53 +81,33 @@ export class CatalogPage implements OnInit {
   }
 
   handleCardClick(id: string): void {
-    if (this.type === 'works') {
-      this.handleClickWork(id);
-    } else {
-      this.onCardClick(id);
-    }
-  }
-
-  onCardClick(id: string): void {
-    this.dialogService.show(ItemProfile, {
-      header: this.getModalHeader(),
-      duplicate: true,
-      data: {
-        fetchData: () => this.getByIdForType(id),
-        // openModal: (relatedId: string, relatedType: CatalogCardType = 'works') =>
-        //   this.handleRelatedClick(relatedId, relatedType),
-        type: this.type,
-        showButtons: false,
-      },
-    });
-  }
-
-  handleClickWork(id: string): void {
-    this.dialogService.show(WorksDetail, {
-      header: 'Detalhes',
-      styleClass: 'w-[90vw] md:w-[60vw]',
-      data: {
-        fetchData: () => this.workService.getById(id),
-      },
-    });
+    this.openItem(id, this.type);
   }
 
   handleRelatedClick(id: string, type: TypeCard): void {
+    this.openItem(id, type);
+  }
+
+  private openItem(id: string, type: TypeCard): void {
     if (type === 'works') {
-      this.handleClickWork(id);
-    } else {
-      this.dialogService.show(ItemProfile, {
-        header: this.getModalHeaderByType(type),
-        duplicate: true,
+      this.dialogService.show(WorksDetail, {
+        header: 'Detalhes',
+        styleClass: 'w-[90vw] md:w-[60vw]',
         data: {
-          fetchData: () => this.getByIdServiceCall(id, type),
-          // openModal: (relatedId: string, relatedType: CatalogCardType = 'works') =>
-          //   this.handleRelatedClick(relatedId, relatedType),
-          type,
-          showButtons: false,
+          fetchData: () => this.workService.getById(id),
         },
       });
+      return;
     }
+
+    this.dialogService.show(ItemProfile, {
+      header: this.getModalHeaderByType(type),
+      data: {
+        fetchData: () => this.getByIdServiceCall(id, type),
+        type,
+        openModal: (relatedId: string) => this.handleRelatedClick(relatedId, 'works'),
+      },
+    });
   }
 
   private getServiceCall(): Observable<PaginatedResponse<any>> {
@@ -144,10 +122,6 @@ export class CatalogPage implements OnInit {
     }
   }
 
-  private getByIdForType(id: string): Observable<CatalogItem> {
-    return this.getByIdServiceCall(id, this.type);
-  }
-
   private getByIdServiceCall(id: string, type: TypeCard): Observable<CatalogItem> {
     switch (type) {
       case 'series':
@@ -155,10 +129,6 @@ export class CatalogPage implements OnInit {
       case 'works':
         return this.workService.getById(id);
     }
-  }
-
-  private getModalHeader(): string {
-    return this.getModalHeaderByType(this.type);
   }
 
   private getModalHeaderByType(type: TypeCard): string {

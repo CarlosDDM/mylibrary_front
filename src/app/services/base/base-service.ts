@@ -8,12 +8,8 @@ export abstract class BaseService<T, U = T> {
 
   protected abstract path: string;
 
-  getAll({ take = 30, skip = 0 }: PaginationParams = {}): Observable<PaginatedResponse<U>> {
+  getAll({ take = 20, skip = 0 }: PaginationParams = {}): Observable<PaginatedResponse<U>> {
     return this.apiRequest.get<PaginatedResponse<U>>(this.path, { take, skip });
-  }
-
-  getWithoutPagination(): Observable<U[]> {
-    return this.apiRequest.get<U[]>(this.path);
   }
 
   getById(id: string): Observable<U> {

@@ -5,3 +5,5 @@ export enum LoadStateEnum {
   Empty = 'empty',
   Error = 'error',
 }
+
+export type LoadState = 'idle' | 'loading' | 'success' | 'empty' | 'error';

@@ -7,30 +7,16 @@
     </div>
   }
   @case (loadStateEnum.Error) {
-    <div
-      class="flex items-center justify-between gap-3 border border-red-400/40 bg-red-500/5 rounded-xl p-4 mx-4 md:mx-0"
-    >
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-full bg-red-500/10 flex items-center justify-center shrink-0">
-          <i class="pi pi-wifi text-red-400 text-lg"></i>
-        </div>
-        <div>
-          <p class="text-sm font-medium m-0">Não foi possível carregar</p>
-        </div>
-      </div>
-      <app-form-button
-        label="Tentar novamente"
-        icon="pi pi-refresh"
-        severity="danger"
-        outlined
-        size="small"
-      />
-    </div>
+    <app-error-state
+      componentName="Informações gerais"
+      [errors]="stats().error"
+      (retry)="retry.emit()"
+    />
   }
-  @default {
+  @case (loadStateEnum.Loading) {
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full px-2">
       @for (i of [1, 2, 3, 4]; track i) {
-        <p-skeleton height="9rem" borderRadius="12px" />
+        <app-stat-skeleton />
       }
     </div>
   }

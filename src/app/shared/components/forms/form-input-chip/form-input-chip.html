@@ -1,0 +1,12 @@
+<div class="flex flex-col gap-2">
+  @if (label()) {
+    <label [attr.for]="id()" class="text-sm font-medium text-gray-400">{{ label() }}</label>
+  }
+  <div class="flex flex-wrap gap-2" [attr.id]="id()">
+    @for (opt of options(); track optVal(opt)) {
+      <button type="button" (click)="toggle(optVal(opt))" [class]="chipClass()(optVal(opt))">
+        {{ opt[optionLabel()] }}
+      </button>
+    }
+  </div>
+</div>

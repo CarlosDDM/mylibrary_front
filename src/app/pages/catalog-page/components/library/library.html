@@ -1,5 +1,6 @@
 <div class="flex-1 flex flex-col gap-4">
   @if (typeCard() === 'works') {
+    <!-- <app-work-filter />
     <app-bookshelf-work
       class="flex-1"
       [resource]="worksResource()"
@@ -7,6 +8,7 @@
       (cardClick)="cardClick.emit($event)"
       (retry)="retry.emit()"
     />
+   -->
   }
   @if (typeCard() === 'series') {
     <app-bookshelf-serie

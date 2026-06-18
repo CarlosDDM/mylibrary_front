@@ -7,7 +7,7 @@
         }
       }
       @case (loadStateEnum.Error) {
-        <app-error-state [errors]="resource().error" />
+        <app-error-state class="col-span-full" componentName="Obras" [errors]="resource().error" />
       }
       @case (loadStateEnum.Success) {
         @if (resource().data.length === 0) {

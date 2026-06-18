@@ -6,11 +6,12 @@ import { BookshelfWork } from '../../../../components/bookshelf-work/bookshelf-w
 import { WorkModel } from '../../../../models/work/work-model';
 import { SerieModel } from '../../../../models/serie-model';
 import { BookshelfSerie } from '../../../../components/bookshelf-serie/bookshelf-serie';
+import { WorkFilter } from '../../../work-page/components/work-filter/work-filter';
 
 type CardType = 'series' | 'works';
 @Component({
   selector: 'app-library',
-  imports: [PaginatorModule, BookshelfWork, BookshelfSerie],
+  imports: [PaginatorModule, BookshelfWork, BookshelfSerie, WorkFilter],
   templateUrl: './library.html',
 })
 export class Library {

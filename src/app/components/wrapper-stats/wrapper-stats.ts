@@ -1,19 +1,21 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { StatCard } from '../stat-card/stat-card';
 import { DashboardStatsModel } from '../../models/dashboard/dashboard-stats-model';
 import { StateModel } from '../../models/dashboard/stats-model';
 import { SkeletonModule } from 'primeng/skeleton';
 import { AsyncResource } from '../../models/async-resource';
 import { LoadStateEnum } from '../../enums/load-state-enum';
-import { FormButton } from '../../shared/components/forms/form-button/form-button';
+import { ErrorState } from '../../shared/error/error-state/error-state';
+import { StatSkeleton } from '../../shared/skeletons/stat-skeleton/stat-skeleton';
 
 @Component({
   selector: 'app-wrapper-stats',
-  imports: [StatCard, SkeletonModule, FormButton],
+  imports: [StatCard, SkeletonModule, ErrorState, StatSkeleton],
   templateUrl: './wrapper-stats.html',
 })
 export class WrapperStats {
-  stats = input.required<AsyncResource<DashboardStatsModel>>();
+  readonly stats = input.required<AsyncResource<DashboardStatsModel>>();
+  readonly retry = output<void>();
   protected readonly loadStateEnum = LoadStateEnum;
   protected readonly status = computed<StateModel[]>(() => {
     const d = this.stats().data;

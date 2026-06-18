@@ -1,0 +1,54 @@
+<form
+  [formGroup]="WorkFilterForm"
+  (ngSubmit)="submit()"
+  class="flex w-full max-w-sm flex-col gap-5 rounded-xl border border-surface bg-(--p-content-background) p-5"
+>
+  <div class="flex items-center justify-between">
+    <h2 class="text-base font-medium text-gray-100">Filtros</h2>
+    <app-form-button
+      label="Limpar"
+      type="button"
+      icon="pi pi-trash"
+      (click)="WorkFilterForm.reset()"
+      class="text-sm text-gray-400 transition-colors hover:text-gray-200"
+    />
+  </div>
+
+  <app-form-input-multiselect
+    label="Autores"
+    id="authors"
+    [options]="authors().data"
+    optionLabel="name"
+    optionValue="id"
+    formControlName="authors"
+  />
+
+  <app-form-input-multiselect
+    label="Ilustradores"
+    id="illustrators"
+    [options]="illustrators().data"
+    optionLabel="name"
+    optionValue="id"
+    formControlName="illustrators"
+  />
+
+  <app-form-input-multiselect
+    label="Idioma"
+    id="languages"
+    [options]="languages().data"
+    optionLabel="type"
+    optionValue="id"
+    formControlName="languages"
+  />
+
+  <app-form-input-chip
+    label="Mídia"
+    id="medias"
+    [options]="mediaOptions()"
+    optionLabel="type"
+    optionValue="id"
+    formControlName="medias"
+  />
+
+  <app-form-button type="submit" label="Aplicar" class="mt-1 w-full" />
+</form>

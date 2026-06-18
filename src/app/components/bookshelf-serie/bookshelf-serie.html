@@ -3,11 +3,11 @@
     @switch (resource().state) {
       @case (loadStateEnum.Loading) {
         @for (i of skeletonItems(); track i) {
-          <app-skeleton-item />
+          <app-serie-skeleton />
         }
       }
       @case (loadStateEnum.Error) {
-        <app-error-state [errors]="resource().error" />
+        <app-error-state class="col-span-full" componentName="Séries" [errors]="resource().error" />
       }
       @case (loadStateEnum.Success) {
         @if (resource().data.length === 0) {

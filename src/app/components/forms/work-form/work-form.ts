@@ -202,6 +202,7 @@ export class WorkForm implements OnInit {
         },
         error: (err) => {
           this.messageService.showError(ERROR_MESSAGE.works.submit);
+          console.log(err);
         },
       });
   }

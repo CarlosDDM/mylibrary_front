@@ -1,4 +1,4 @@
-export type LoadState = 'idle' | 'loading' | 'success' | 'empty' | 'error';
+import { LoadState } from '../enums/load-state-enum';
 
 export class AsyncResource<T> {
   data: T;

@@ -1,24 +1,29 @@
-<div
-  class="col-span-full flex items-center justify-between gap-3 border border-red-400/40 bg-red-500/5 rounded-xl p-4"
->
-  <div class="flex items-center gap-3">
-    <div class="w-9 h-9 rounded-full bg-red-500/10 flex items-center justify-center shrink-0">
-      <i class="pi pi-wifi text-red-400 text-lg"></i>
+<div class="w-full md:w-120 md:mx-auto">
+  <div
+    class="flex items-center justify-between gap-3 border border-red-400/40 bg-red-500/5 rounded-xl p-4 mx-4 md:mx-0"
+  >
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full bg-red-500/10 flex items-center justify-center shrink-0">
+        <i class="pi pi-wifi text-red-400 text-lg"></i>
+      </div>
+      <div>
+        <p class="text-sm font-medium mb-2 md:text-center">
+          Não foi possível carregar
+          @if (componentName()) {
+            <strong>{{ componentName() }}</strong>
+          }
+        </p>
+        <p class="text-xs text-color-secondary m-0">{{ errorMessages() }}</p>
+      </div>
     </div>
-    <div>
-      <p class="text-sm font-medium m-0">Não foi possível carregar</p>
-      <p class="text-xs text-color-secondary m-0">
-        {{ errorMessages() }}
-      </p>
-    </div>
+
+    <app-form-button
+      label="Tentar novamente"
+      icon="pi pi-refresh"
+      severity="danger"
+      outlined
+      size="small"
+      (handleClick)="retry.emit()"
+    />
   </div>
 </div>
-
-<app-form-button
-  label="Tentar novamente"
-  icon="pi pi-refresh"
-  severity="danger"
-  outlined
-  size="small"
-  (handleClick)="retry.emit()"
-/>

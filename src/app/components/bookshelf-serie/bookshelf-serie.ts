@@ -3,13 +3,13 @@ import { LoadStateEnum } from '../../enums/load-state-enum';
 import { SerieModel } from '../../models/serie-model';
 import { AsyncResource } from '../../models/async-resource';
 import { ErrorState } from '../../shared/error/error-state/error-state';
-import { SkeletonItem } from '../../shared/skeletons/skeleton-item/skeleton-item';
 import { EmptyState } from '../../shared/empty-state/empty-state';
 import { SerieCard } from '../serie-card/serie-card';
+import { SerieSkeleton } from '../../shared/skeletons/serie-skeleton/serie-skeleton';
 
 @Component({
   selector: 'app-bookshelf-serie',
-  imports: [ErrorState, SkeletonItem, EmptyState, SerieCard],
+  imports: [ErrorState, EmptyState, SerieCard, SerieSkeleton],
   templateUrl: './bookshelf-serie.html',
 })
 export class BookshelfSerie {
