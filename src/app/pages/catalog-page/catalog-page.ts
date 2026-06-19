@@ -115,8 +115,6 @@ export class CatalogPage implements OnInit {
     switch (this.type) {
       case 'series':
         return this.serieService.getAll(params);
-      case 'works':
-        return this.workService.getAll(params);
       default:
         throw new Error(`Tipo de catálogo desconhecido: ${this.type}`);
     }

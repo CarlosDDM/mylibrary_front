@@ -1,17 +1,9 @@
-<form
-  [formGroup]="WorkFilterForm"
-  (ngSubmit)="submit()"
-  class="flex w-full max-w-sm flex-col gap-5 rounded-xl border border-surface bg-(--p-content-background) p-5"
->
-  <div class="flex items-center justify-between">
-    <h2 class="text-base font-medium text-gray-100">Filtros</h2>
-    <app-form-button
-      label="Limpar"
-      type="button"
-      icon="pi pi-trash"
-      (click)="WorkFilterForm.reset()"
-      class="text-sm text-gray-400 transition-colors hover:text-gray-200"
-    />
+<form [formGroup]="WorkFilterForm" (ngSubmit)="submit()" class="flex w-full flex-col gap-1">
+  <div
+    class="flex items-center justify-between px-3 pb-3 mb-2 border-b border-zinc-200 dark:border-zinc-800"
+  >
+    <h2 class="text-sm font-semibold text-zinc-700 dark:text-zinc-100">Filtros</h2>
+    <app-form-button label="Limpar" icon="pi pi-trash" type="button" (handleClick)="clear()" />
   </div>
 
   <app-form-input-multiselect
@@ -50,5 +42,5 @@
     formControlName="medias"
   />
 
-  <app-form-button type="submit" label="Aplicar" class="mt-1 w-full" />
+  <app-form-button label="Aplicar" icon="pi pi-check" type="submit" />
 </form>

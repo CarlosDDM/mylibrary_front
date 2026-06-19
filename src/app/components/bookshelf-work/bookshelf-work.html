@@ -9,13 +9,12 @@
       @case (loadStateEnum.Error) {
         <app-error-state class="col-span-full" componentName="Obras" [errors]="resource().error" />
       }
+      @case (loadStateEnum.Empty) {
+        <app-empty-state class="col-span-full" />
+      }
       @case (loadStateEnum.Success) {
-        @if (resource().data.length === 0) {
-          <app-empty-state class="col-span-full" />
-        } @else {
-          @for (workData of resource().data; track workData.id) {
-            <app-work-card [work]="workData" (handleClick)="cardClick.emit($event)" />
-          }
+        @for (workData of resource().data; track workData.id) {
+          <app-work-card [work]="workData" (handleClick)="cardClick.emit($event)" />
         }
       }
     }

@@ -31,6 +31,12 @@ export class FormInputMultiselect implements ControlValueAccessor {
   value = signal<unknown>(null);
   isDisabled = signal(false);
 
+  protected ptChip = {
+    pcChip: {
+      root: { class: 'py-0.5 text-sm/tight' },
+    },
+  };
+
   private onChange: (value: unknown) => void = () => {};
   protected onTouched: () => void = () => {};
 

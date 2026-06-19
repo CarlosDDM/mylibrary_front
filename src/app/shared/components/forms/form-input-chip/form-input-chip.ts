@@ -24,10 +24,10 @@ export class FormInputChip implements ControlValueAccessor {
     const selected = this.value();
     const isDisabled = this.disabled();
     return (val: string) =>
-      clsx('px-4 py-1.5 text-sm rounded-full border transition-colors', {
-        'bg-[color-mix(in_srgb,var(--p-primary-color)_15%,transparent)] text-[var(--p-primary-300)] border-[color-mix(in_srgb,var(--p-primary-color)_50%,transparent)] font-medium':
-          selected.includes(val),
-        'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10': !selected.includes(val),
+      clsx('px-4 py-1.5 text-sm rounded-full border transition-colors cursor-pointer', {
+        'bg-primary border-primary text-primary-contrast font-medium': selected.includes(val),
+        'bg-transparent border-surface text-muted-color hover:border-primary hover:text-color':
+          !selected.includes(val),
         'opacity-50 pointer-events-none': isDisabled,
       });
   });

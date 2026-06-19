@@ -13,7 +13,10 @@ export class ApiService {
     return this.http.post<T>(`${environment.apiUrl}${path}`, data);
   }
 
-  get<T>(path: string, params?: Record<string, string | number | boolean>): Observable<T> {
+  get<T>(
+    path: string,
+    params?: Record<string, string | number | boolean | readonly (string | number | boolean)[]>,
+  ): Observable<T> {
     return this.http.get<T>(`${environment.apiUrl}${path}`, { params });
   }
 

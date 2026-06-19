@@ -1,10 +1,65 @@
-<!-- <div>
-  <app-work-filter />
-  <app-bookshelf-work
-    class="flex-1"
-    [resource]="resource().data"
-    [skeletonCount]="8"
-    (cardClick)="cardClick.emit($event)"
-    (retry)="loadAll()"
-  />
-</div> -->
+<div class="flex flex-1 min-h-full w-full">
+  <aside
+    class="hidden lg:flex w-64 shrink-0 flex-col bg-zinc-100 dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800"
+  >
+    <div class="sticky top-0 p-4 flex flex-col gap-6">
+      <div class="flex flex-col gap-1 px-3 pt-2">
+        <h1 class="text-xl font-bold tracking-tight text-zinc-700 dark:text-zinc-100">Obras</h1>
+        <span class="text-sm text-zinc-500 dark:text-zinc-400">
+          <strong class="text-zinc-700 dark:text-zinc-100 font-semibold">{{
+            pagination().total
+          }}</strong>
+          no total
+        </span>
+      </div>
+
+      <app-work-filter (apply)="onFilterChange($event)" />
+    </div>
+  </aside>
+
+  <div class="flex-1 flex flex-col min-w-0">
+    <div class="flex items-center justify-between px-4 pt-4 pb-2 lg:hidden">
+      <div class="flex flex-col gap-0.5">
+        <h1 class="text-xl font-bold tracking-tight text-zinc-700 dark:text-zinc-100">Obras</h1>
+        <span class="text-sm text-zinc-500 dark:text-zinc-400">
+          <strong class="text-zinc-700 dark:text-zinc-100 font-semibold">{{
+            pagination().total
+          }}</strong>
+          no total
+        </span>
+      </div>
+      <app-form-button
+        label="Filtros"
+        type="button"
+        icon="pi pi-filter"
+        (handleClick)="filterOpen.set(true)"
+      />
+    </div>
+
+    <app-bookshelf-work
+      class="flex-1"
+      [resource]="worksResource()"
+      [skeletonCount]="10"
+      (cardClick)="showDetail($event)"
+      (retry)="loadWorks()"
+    />
+
+    @if (pagination().total > pageSize) {
+      <div class="flex justify-center py-6">
+        <p-paginator
+          [first]="skip()"
+          [totalRecords]="pagination().total"
+          [rows]="pageSize"
+          [pageLinkSize]="5"
+          (onPageChange)="onPageChange($event)"
+          template="PrevPageLink PageLinks NextPageLink"
+          [pt]="paginatorPt"
+        />
+      </div>
+    }
+  </div>
+</div>
+
+<p-drawer [(visible)]="filterOpen" header="Filtros" position="left" styleClass="w-80!">
+  <app-work-filter (apply)="onFilterChange($event)" (handleClose)="filterOpen.set(false)" />
+</p-drawer>

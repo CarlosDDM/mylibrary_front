@@ -29,6 +29,7 @@ export class WorkFilter implements OnInit {
   private readonly illustratorService = inject(IllustratorService);
   private readonly destroyRef = inject(DestroyRef);
   readonly apply = output<WorkFilterValue>();
+  readonly handleClose = output<void>();
 
   protected series = signal<AsyncResource<SerieModel[]>>(AsyncResource.loading([]));
   protected authors = signal<AsyncResource<AuthorModel[]>>(AsyncResource.loading([]));
@@ -37,10 +38,10 @@ export class WorkFilter implements OnInit {
   protected medias = signal<AsyncResource<OptionModel[]>>(AsyncResource.loading([]));
 
   protected WorkFilterForm = new FormGroup({
-    authors: new FormControl<string[] | null>(null),
-    illustrators: new FormControl<string[] | null>(null),
-    languages: new FormControl<string[] | null>(null),
-    medias: new FormControl<string[] | null>(null),
+    authors: new FormControl<string[]>([]),
+    illustrators: new FormControl<string[]>([]),
+    languages: new FormControl<string[]>([]),
+    medias: new FormControl<string[]>([]),
   });
 
   loadAll() {
@@ -71,7 +72,6 @@ export class WorkFilter implements OnInit {
           options: { languages, medias },
           series,
         } = result;
-        console.log(result);
 
         this.languages.update((s) => AsyncResource.success(s.data.concat(languages)));
         this.medias.update((s) => AsyncResource.success(s.data.concat(medias)));
@@ -85,9 +85,15 @@ export class WorkFilter implements OnInit {
     this.medias().data.map((m) => ({ ...m, type: MEDIA_TRANSLATION[m.type] })),
   );
 
-  submit() {
+  clear(): void {
+    this.WorkFilterForm.reset();
+    this.apply.emit(this.WorkFilterForm.getRawValue());
+  }
+
+  submit(): void {
     if (this.WorkFilterForm.invalid || this.WorkFilterForm.pristine) return;
     this.apply.emit(this.WorkFilterForm.getRawValue());
+    this.handleClose.emit();
   }
 
   ngOnInit(): void {
