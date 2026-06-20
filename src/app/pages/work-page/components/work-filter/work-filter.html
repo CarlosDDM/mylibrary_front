@@ -12,7 +12,7 @@
     [options]="authors().data"
     optionLabel="name"
     optionValue="id"
-    formControlName="authors"
+    formControlName="authorIds"
   />
 
   <app-form-input-multiselect
@@ -21,7 +21,7 @@
     [options]="illustrators().data"
     optionLabel="name"
     optionValue="id"
-    formControlName="illustrators"
+    formControlName="illustratorIds"
   />
 
   <app-form-input-multiselect
@@ -30,7 +30,7 @@
     [options]="languages().data"
     optionLabel="type"
     optionValue="id"
-    formControlName="languages"
+    formControlName="languageIds"
   />
 
   <app-form-input-chip
@@ -39,7 +39,7 @@
     [options]="mediaOptions()"
     optionLabel="type"
     optionValue="id"
-    formControlName="medias"
+    formControlName="mediaIds"
   />
 
   <app-form-button label="Aplicar" icon="pi pi-check" type="submit" />

@@ -1,4 +1,4 @@
-import { PaginationParams } from '../pagination-model';
+import { PaginationParams } from '../../pagination-model';
 
 export interface FilterWorkRequest extends PaginationParams {
   mediaIds?: string[];

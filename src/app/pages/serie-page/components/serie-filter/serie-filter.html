@@ -1,1 +1,33 @@
-<p>serie-filter works!</p>
+<form
+  [formGroup]="FormFilterSerie"
+  (ngSubmit)="submit()"
+  class="flex w-full flex-col gap-1"
+  (apply)="submit()"
+>
+  <div
+    class="flex items-center justify-between px-3 pb-3 mb-2 border-b border-zinc-200 dark:border-zinc-800"
+  >
+    <h2 class="text-sm font-semibold text-zinc-700 dark:text-zinc-100">Filtros</h2>
+    <app-form-button label="Limpar" icon="pi pi-trash" type="button" (handleClick)="clear()" />
+  </div>
+
+  <app-form-input-chip
+    label="Status"
+    id="status"
+    [options]="statusTranslated()"
+    optionLabel="type"
+    optionValue="id"
+    formControlName="statusIds"
+  />
+
+  <app-form-input-multiselect
+    label="Franquias"
+    id="franchise"
+    [options]="franchises().data"
+    optionLabel="name"
+    optionValue="id"
+    formControlName="franchiseIds"
+  />
+
+  <app-form-button type="submit" label="Aplicar" icon="pi pi-check" />
+</form>

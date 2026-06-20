@@ -15,7 +15,7 @@ import { FormInputMultiselect } from '../../../../shared/components/forms/form-i
 import { FormInputChip } from '../../../../shared/components/forms/form-input-chip/form-input-chip';
 import { MEDIA_TRANSLATION } from '../../../../constants/media-translation-constant';
 import { FormButton } from '../../../../shared/components/forms/form-button/form-button';
-import { WorkFilterValue } from '../../../../models/work/work-filter-model';
+import { WorkFilterValue } from '../../../../models/filter/work/work-filter-model';
 
 @Component({
   selector: 'app-work-filter',
@@ -38,10 +38,10 @@ export class WorkFilter implements OnInit {
   protected medias = signal<AsyncResource<OptionModel[]>>(AsyncResource.loading([]));
 
   protected WorkFilterForm = new FormGroup({
-    authors: new FormControl<string[]>([]),
-    illustrators: new FormControl<string[]>([]),
-    languages: new FormControl<string[]>([]),
-    medias: new FormControl<string[]>([]),
+    authorIds: new FormControl<string[]>([]),
+    illustratorIds: new FormControl<string[]>([]),
+    languageIds: new FormControl<string[]>([]),
+    mediaIds: new FormControl<string[]>([]),
   });
 
   loadAll() {

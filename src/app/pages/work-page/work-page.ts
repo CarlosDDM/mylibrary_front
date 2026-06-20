@@ -13,10 +13,10 @@ import { DialogService } from '../../services/dialog/dialog-service';
 import { WorksDetail } from '../../components/works-detail/works-detail';
 import { parseHttpError } from '../../utils/parse-http-error.utils';
 import { ERROR_MESSAGE } from '../../constants/error-messages-constant';
-import { FilterWorkRequest } from '../../models/filter/filter-work.model';
-import { WorkFilterValue } from '../../models/work/work-filter-model';
+import { FilterWorkRequest } from '../../models/filter/work/filter-work.model';
+import { WorkFilterValue } from '../../models/filter/work/work-filter-model';
 import { FormButton } from '../../shared/components/forms/form-button/form-button';
-import { DrawerService } from '../../services/drawer/drawer-service';
+import { DEFAULT_PAGINATION_PARAMS } from '../../constants/pagination-params-constant';
 
 @Component({
   selector: 'app-work-page',
@@ -27,15 +27,12 @@ export class WorkPage implements OnInit {
   private readonly workService = inject(WorkService);
   private readonly dialogService = inject(DialogService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly drawerService = inject(DrawerService);
 
-  private readonly DEFAULT_PARAMS: FilterWorkRequest = { take: 20, skip: 0 };
-
-  protected readonly pageSize = this.DEFAULT_PARAMS.take!;
+  protected readonly pageSize = DEFAULT_PAGINATION_PARAMS.take!;
   protected readonly resource = signal<AsyncResource<PaginatedResponse<WorkModel>>>(
     AsyncResource.loading({ data: [], pages: 0, current_page: 1, total: 0 }),
   );
-  protected readonly params = signal<FilterWorkRequest>({ ...this.DEFAULT_PARAMS });
+  protected readonly params = signal<FilterWorkRequest>(DEFAULT_PAGINATION_PARAMS);
 
   protected readonly filterOpen = signal(false);
 
@@ -78,11 +75,11 @@ export class WorkPage implements OnInit {
 
   onFilterChange(filter: WorkFilterValue): void {
     this.params.set({
-      ...this.DEFAULT_PARAMS,
-      ...(filter.authors?.length && { authorIds: filter.authors }),
-      ...(filter.illustrators?.length && { illustratorIds: filter.illustrators }),
-      ...(filter.languages?.length && { languageIds: filter.languages }),
-      ...(filter.medias?.length && { mediaIds: filter.medias }),
+      ...DEFAULT_PAGINATION_PARAMS,
+      ...(filter.authorIds?.length && { authorIds: filter.authorIds }),
+      ...(filter.illustratorIds?.length && { illustratorIds: filter.illustratorIds }),
+      ...(filter.languageIds?.length && { languageIds: filter.languageIds }),
+      ...(filter.mediaIds?.length && { mediaIds: filter.mediaIds }),
     });
     this.loadWorks();
   }

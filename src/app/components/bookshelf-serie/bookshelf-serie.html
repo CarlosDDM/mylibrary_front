@@ -9,13 +9,12 @@
       @case (loadStateEnum.Error) {
         <app-error-state class="col-span-full" componentName="Séries" [errors]="resource().error" />
       }
+      @case (loadStateEnum.Empty) {
+        <app-empty-state class="col-span-full" />
+      }
       @case (loadStateEnum.Success) {
-        @if (resource().data.length === 0) {
-          <app-empty-state class="col-span-full" />
-        } @else {
-          @for (serieData of resource().data; track serieData.id) {
-            <app-serie-card [serie]="serieData" (handleClick)="cardClick.emit($event)" />
-          }
+        @for (serieData of resource().data; track serieData.id) {
+          <app-serie-card [serie]="serieData" (handleClick)="cardClick.emit($event)" />
         }
       }
     }
