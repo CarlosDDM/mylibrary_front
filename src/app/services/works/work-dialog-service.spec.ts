@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SerieDrawerService } from './serie-drawer-service';
+import { WorkDialogService } from './work-dialog-service';
 
-describe('SerieDrawerService', () => {
-  let service: SerieDrawerService;
+describe('WorkDrawerService', () => {
+  let service: WorkDialogService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(SerieDrawerService);
+    service = TestBed.inject(WorkDialogService);
   });
 
   it('should be created', () => {
