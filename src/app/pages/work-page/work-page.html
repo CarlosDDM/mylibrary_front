@@ -41,7 +41,7 @@
       [resource]="worksResource()"
       [skeletonCount]="10"
       (cardClick)="showDetail($event)"
-      (retry)="loadWorks()"
+      (retry)="load()"
     />
 
     @if (pagination().total > pageSize) {

@@ -11,6 +11,7 @@ import { SerieSkeleton } from '../../shared/skeletons/serie-skeleton/serie-skele
   selector: 'app-bookshelf-serie',
   imports: [ErrorState, EmptyState, SerieCard, SerieSkeleton],
   templateUrl: './bookshelf-serie.html',
+
 })
 export class BookshelfSerie {
   resource = input.required<AsyncResource<SerieModel[]>>();

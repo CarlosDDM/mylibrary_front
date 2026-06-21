@@ -1,6 +1,4 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { WorkForm } from '../../components/forms/work-form/work-form';
-import { DialogService } from '../../services/dialog/dialog-service';
 import { WrapperStats } from '../../components/wrapper-stats/wrapper-stats';
 import { AsyncResource } from '../../models/async-resource';
 import { SerieModel } from '../../models/serie-model';
@@ -9,9 +7,7 @@ import { catchError, forkJoin, of } from 'rxjs';
 import { SerieService } from '../../services/serie/serie-service';
 import { WorkService } from '../../services/works/work-service';
 import { FranchiseService } from '../../services/franchises/franchise-service';
-import { ItemProfile } from '../../components/item-profile/item-profile';
 import { LoadStateEnum } from '../../enums/load-state-enum';
-import { WorksDetail } from '../../components/works-detail/works-detail';
 import { WorkModel } from '../../models/work/work-model';
 import { parseHttpError } from '../../utils/parse-http-error.utils';
 import { ERROR_MESSAGE } from '../../constants/error-messages-constant';
@@ -19,6 +15,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HomeSection } from './components/home-section/home-section';
 import { DashboardService } from '../../services/dashboard/dashboard-service';
 import { DashboardStatsModel } from '../../models/dashboard/dashboard-stats-model';
+import { WorkDialogService } from '../../services/works/work-dialog-service';
+import { SerieDialogService } from '../../services/serie/serie-dialog-service';
 
 @Component({
   selector: 'app-home',
@@ -26,12 +24,13 @@ import { DashboardStatsModel } from '../../models/dashboard/dashboard-stats-mode
   templateUrl: './home.html',
 })
 export class Home implements OnInit {
-  private readonly dialogService = inject(DialogService);
   private readonly serieService = inject(SerieService);
   private readonly workService = inject(WorkService);
   private readonly dashboardService = inject(DashboardService);
   private readonly franchiseService = inject(FranchiseService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly workDialogService = inject(WorkDialogService);
+  private readonly serieDialogSerivce = inject(SerieDialogService);
   protected readonly loadStateEnum = LoadStateEnum;
 
   dashboardStats = signal<AsyncResource<DashboardStatsModel>>(
@@ -41,30 +40,12 @@ export class Home implements OnInit {
   franchiseData = signal<AsyncResource<FranchiseModel[]>>(AsyncResource.loading([]));
   workData = signal<AsyncResource<WorkModel[]>>(AsyncResource.loading([]));
 
-  createWork(): void {
-    this.dialogService.show(WorkForm, {
-      header: 'Nova Obra',
-    });
-  }
-
   handleClickSerie(id: string): void {
-    this.dialogService.show(ItemProfile, {
-      header: 'Série',
-      data: {
-        fetchData: () => this.serieService.getById(id),
-        openModal: (workId: string) => this.handleClickWork(workId),
-      },
-    });
+    this.serieDialogSerivce.showDialog(id);
   }
 
   handleClickWork(id: string): void {
-    this.dialogService.show(WorksDetail, {
-      header: 'Detalhes',
-      styleClass: 'w-[90vw] md:w-[60vw]',
-      data: {
-        fetchData: () => this.workService.getById(id),
-      },
-    });
+    this.workDialogService.showDialog(id);
   }
 
   loadAll(): void {

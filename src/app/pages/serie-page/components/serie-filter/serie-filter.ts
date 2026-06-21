@@ -66,11 +66,11 @@ export class SerieFilter implements OnInit {
 
   clear() {
     this.FormFilterSerie.reset();
+    this.apply.emit(this.FormFilterSerie.getRawValue());
   }
 
   submit() {
     if (this.FormFilterSerie.pristine || this.FormFilterSerie.invalid) return;
-    console.log(this.FormFilterSerie.getRawValue());
     this.apply.emit(this.FormFilterSerie.getRawValue());
     this.handleClose.emit();
   }

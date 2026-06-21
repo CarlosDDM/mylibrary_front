@@ -13,8 +13,12 @@
         <app-empty-state class="col-span-full" />
       }
       @case (loadStateEnum.Success) {
-        @for (workData of resource().data; track workData.id) {
-          <app-work-card [work]="workData" (handleClick)="cardClick.emit($event)" />
+        @if (resource().data.length === 0) {
+          <app-empty-state class="col-span-full" />
+        } @else {
+          @for (workData of resource().data; track workData.id) {
+            <app-work-card [work]="workData" (handleClick)="cardClick.emit($event)" />
+          }
         }
       }
     }
