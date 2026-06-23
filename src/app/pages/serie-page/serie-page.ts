@@ -1,4 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AsyncResource } from '../../models/async-resource';
 import { PaginatedResponse } from '../../models/pagination-model';
 import { SerieModel } from '../../models/serie-model';
@@ -23,14 +24,16 @@ import { FormButton } from '../../shared/components/forms/form-button/form-butto
 })
 export class SeriePage extends BasePaginatedPage<SerieModel, FilterSerieRequest> implements OnInit {
   private readonly serieService = inject(SerieService);
-
   private readonly serieDialogService = inject(SerieDialogService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   protected resource = signal<AsyncResource<PaginatedResponse<SerieModel>>>(
     AsyncResource.loading({ data: [], pages: 0, current_page: 1, total: 0 }),
   );
 
   protected readonly filterOpen = signal(false);
+  protected readonly initialName = signal('');
   protected series = computed(() => this.resource().mapData((r) => r.data));
 
   protected readonly params = signal<FilterSerieRequest>(DEFAULT_PAGINATION_PARAMS);
@@ -44,6 +47,7 @@ export class SeriePage extends BasePaginatedPage<SerieModel, FilterSerieRequest>
   protected onFilterChange(filter: SerieFilterValue) {
     this.params.set({
       ...DEFAULT_PAGINATION_PARAMS,
+      ...(filter.name && { name: filter.name }),
       ...(filter.franchiseIds?.length && { franchiseIds: filter.franchiseIds }),
       ...(filter.statusIds?.length && { statusIds: filter.statusIds }),
     });
@@ -56,6 +60,12 @@ export class SeriePage extends BasePaginatedPage<SerieModel, FilterSerieRequest>
   }
 
   ngOnInit(): void {
+    const name = this.route.snapshot.queryParamMap.get('name');
+    if (name) {
+      this.initialName.set(name);
+      this.params.set({ ...DEFAULT_PAGINATION_PARAMS, name });
+      this.router.navigate([], { replaceUrl: true });
+    }
     this.load();
   }
 }

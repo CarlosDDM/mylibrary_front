@@ -13,7 +13,7 @@
         </span>
       </div>
 
-      <app-work-filter (apply)="onFilterChange($event)" />
+      <app-work-filter [initialName]="initialName()" (apply)="onFilterChange($event)" />
     </div>
   </aside>
 

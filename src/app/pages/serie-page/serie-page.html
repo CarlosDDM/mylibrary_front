@@ -13,7 +13,7 @@
         </span>
       </div>
 
-      <app-serie-filter (apply)="onFilterChange($event)" />
+      <app-serie-filter [initialName]="initialName()" (apply)="onFilterChange($event)" />
     </div>
   </aside>
 

@@ -1,0 +1,83 @@
+@if (!hasResults()) {
+  <p class="text-sm text-zinc-500 dark:text-zinc-400 px-1 py-2">Nenhum resultado encontrado.</p>
+} @else {
+  <div class="flex flex-col gap-4">
+
+    @if (hasWorks()) {
+      <div>
+        <div class="flex items-center gap-2 px-2 mb-1">
+          <p class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Obras</p>
+          <span class="text-xs text-zinc-400 dark:text-zinc-500">{{ resource()!.works.total }}</span>
+        </div>
+        @for (work of resource()!.works.data; track work.id) {
+          <button
+            [title]="work.name"
+            class="flex items-center gap-3 w-full text-left cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/30 rounded-md px-2 py-1.5 hover:bg-zinc-100 dark:hover:bg-white/5 transition-colors duration-150"
+            (click)="workSelected.emit(work.id)"
+            (keydown.enter)="workSelected.emit(work.id)"
+            (keydown.space)="workSelected.emit(work.id)"
+          >
+            <div [class]="'shrink-0 w-8 h-10 rounded flex items-center justify-center ' + coverColor(work.name).bg">
+              <i [class]="'pi pi-bookmark text-sm ' + coverColor(work.name).icon"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-zinc-800 dark:text-zinc-100 truncate">{{ work.name }}</p>
+              <p class="text-xs text-zinc-500 dark:text-zinc-400 truncate">
+                Vol. <strong class="text-zinc-700 dark:text-zinc-200">{{ work.volume }}</strong>
+                @if (work.subtitle) {
+                  <span class="text-zinc-400 dark:text-zinc-600"> · </span>{{ work.subtitle }}
+                }
+              </p>
+            </div>
+            <i class="pi pi-angle-right text-zinc-400 dark:text-zinc-600 text-sm shrink-0"></i>
+          </button>
+        }
+        @if (resource()!.works.total > resource()!.works.data.length) {
+          <a
+            [routerLink]="['/works']"
+            [queryParams]="{ name: searchTerm() }"
+            class="block text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-100 px-2 pt-1 transition-colors"
+          >
+            Ver todos os {{ resource()!.works.total }} resultados →
+          </a>
+        }
+      </div>
+    }
+
+    @if (hasSeries()) {
+      <div>
+        <div class="flex items-center gap-2 px-2 mb-1">
+          <p class="text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Séries</p>
+          <span class="text-xs text-zinc-400 dark:text-zinc-500">{{ resource()!.series.total }}</span>
+        </div>
+        @for (serie of resource()!.series.data; track serie.id) {
+          <button
+            [title]="serie.name"
+            class="flex items-center gap-3 w-full text-left cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/30 rounded-md px-2 py-1.5 hover:bg-zinc-100 dark:hover:bg-white/5 transition-colors duration-150"
+            (click)="serieSelected.emit(serie.id)"
+            (keydown.enter)="serieSelected.emit(serie.id)"
+            (keydown.space)="serieSelected.emit(serie.id)"
+          >
+            <div [class]="'shrink-0 w-8 h-10 rounded flex items-center justify-center ' + coverColor(serie.name).bg">
+              <i [class]="'pi pi-book text-sm ' + coverColor(serie.name).icon"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-zinc-800 dark:text-zinc-100 truncate">{{ serie.name }}</p>
+            </div>
+            <i class="pi pi-angle-right text-zinc-400 dark:text-zinc-600 text-sm shrink-0"></i>
+          </button>
+        }
+        @if (resource()!.series.total > resource()!.series.data.length) {
+          <a
+            [routerLink]="['/series']"
+            [queryParams]="{ name: searchTerm() }"
+            class="block text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-100 px-2 pt-1 transition-colors"
+          >
+            Ver todos os {{ resource()!.series.total }} resultados →
+          </a>
+        }
+      </div>
+    }
+
+  </div>
+}

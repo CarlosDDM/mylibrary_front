@@ -1,4 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PaginatorModule } from 'primeng/paginator';
 import { DrawerModule } from 'primeng/drawer';
 import { WorkFilter } from './components/work-filter/work-filter';
@@ -24,6 +25,8 @@ import { BasePaginatedPage } from '../../services/base/base-paginated-page';
 export class WorkPage extends BasePaginatedPage<WorkModel, FilterWorkRequest> implements OnInit {
   private readonly workService = inject(WorkService);
   private readonly dialogService = inject(DialogService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   protected readonly resource = signal<AsyncResource<PaginatedResponse<WorkModel>>>(
     AsyncResource.loading({ data: [], pages: 0, current_page: 1, total: 0 }),
@@ -31,6 +34,7 @@ export class WorkPage extends BasePaginatedPage<WorkModel, FilterWorkRequest> im
   protected readonly params = signal<FilterWorkRequest>(DEFAULT_PAGINATION_PARAMS);
 
   protected readonly filterOpen = signal(false);
+  protected readonly initialName = signal('');
 
   protected readonly worksResource = computed(() => this.resource().mapData((r) => r.data));
 
@@ -46,6 +50,7 @@ export class WorkPage extends BasePaginatedPage<WorkModel, FilterWorkRequest> im
   onFilterChange(filter: WorkFilterValue): void {
     this.params.set({
       ...DEFAULT_PAGINATION_PARAMS,
+      ...(filter.name && { name: filter.name }),
       ...(filter.authorIds?.length && { authorIds: filter.authorIds }),
       ...(filter.illustratorIds?.length && { illustratorIds: filter.illustratorIds }),
       ...(filter.languageIds?.length && { languageIds: filter.languageIds }),
@@ -65,6 +70,12 @@ export class WorkPage extends BasePaginatedPage<WorkModel, FilterWorkRequest> im
   }
 
   ngOnInit(): void {
+    const name = this.route.snapshot.queryParamMap.get('name');
+    if (name) {
+      this.initialName.set(name);
+      this.params.set({ ...DEFAULT_PAGINATION_PARAMS, name });
+      this.router.navigate([], { replaceUrl: true });
+    }
     this.load();
   }
 }

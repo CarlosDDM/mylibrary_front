@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, output, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
 import { FranchiseService } from '../../../../services/franchises/franchise-service';
 import { OptionService } from '../../../../services/options/option-service';
 import { OptionModel } from '../../../../models/option-model';
@@ -10,11 +10,12 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FormInputMultiselect } from '../../../../shared/components/forms/form-input-multiselect/form-input-multiselect';
 import { STATUS_TRANSLATION } from '../../../../constants/status-translation-constant';
 import { FormButton } from '../../../../shared/components/forms/form-button/form-button';
+import { FormInput } from '../../../../shared/components/forms/form-input/form-input';
 import { SerieFilterValue } from '../../../../models/filter/serie/serie-filter-model';
 
 @Component({
   selector: 'app-serie-filter',
-  imports: [FormInputChip, ReactiveFormsModule, FormInputMultiselect, FormButton],
+  imports: [FormInputChip, ReactiveFormsModule, FormInputMultiselect, FormButton, FormInput],
   templateUrl: './serie-filter.html',
 })
 export class SerieFilter implements OnInit {
@@ -25,6 +26,7 @@ export class SerieFilter implements OnInit {
   protected readonly franchises = signal<AsyncResource<FranchiseModel[]>>(
     AsyncResource.loading([]),
   );
+  readonly initialName = input('');
   protected readonly apply = output<SerieFilterValue>();
   protected readonly handleClose = output<void>();
 
@@ -38,6 +40,7 @@ export class SerieFilter implements OnInit {
   );
 
   protected readonly FormFilterSerie = new FormGroup({
+    name: new FormControl<string>(''),
     statusIds: new FormControl<string[]>([]),
     franchiseIds: new FormControl<string[]>([]),
   });
@@ -62,6 +65,10 @@ export class SerieFilter implements OnInit {
 
   ngOnInit(): void {
     this.loadAll();
+    if (this.initialName()) {
+      this.FormFilterSerie.patchValue({ name: this.initialName() });
+      this.FormFilterSerie.markAsDirty();
+    }
   }
 
   clear() {

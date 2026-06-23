@@ -1,7 +1,6 @@
 <header
   class="flex items-center gap-4 h-16 px-8 bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800"
 >
-  <!-- mobile: hambúrguer + logo -->
   <div class="flex items-center gap-4 lg:hidden">
     <button
       (click)="drawerService.openNav()"
@@ -17,7 +16,6 @@
     </a>
   </div>
 
-  <!-- desktop: logo só quando a sidebar está recolhida -->
   @if (drawerService.collapsed()) {
     <a
       routerLink="/"
@@ -56,7 +54,7 @@
       <input
         type="text"
         pInputText
-        placeholder="Buscar séries, franquias, obras..."
+        placeholder="Buscar séries ou obras"
         class="w-full text-sm"
         [ngModel]="search()"
         (ngModelChange)="search.set($event)"
@@ -69,6 +67,21 @@
         />
       }
     </p-iconfield>
-    <p class="text-xs text-zinc-600 mt-3 px-1">Digite para buscar...</p>
+    @if (!results() && !loading()) {
+      <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-3 px-1">Digite para buscar...</p>
+    }
+    @if (loading()) {
+      <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-3 px-1">Buscando...</p>
+    }
+    @if (results()) {
+      <div class="mt-3">
+        <app-search-result
+          [resource]="results()!"
+          [searchTerm]="search()"
+          (workSelected)="onWorkSelected($event)"
+          (serieSelected)="onSerieSelected($event)"
+        />
+      </div>
+    }
   </div>
 </p-dialog>

@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, OnInit, output, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
 import { OptionService } from '../../../../services/options/option-service';
 import { AuthorService } from '../../../../services/authors/author-service';
 import { IllustratorService } from '../../../../services/illustrators/illustrator-service';
@@ -15,11 +15,12 @@ import { FormInputMultiselect } from '../../../../shared/components/forms/form-i
 import { FormInputChip } from '../../../../shared/components/forms/form-input-chip/form-input-chip';
 import { MEDIA_TRANSLATION } from '../../../../constants/media-translation-constant';
 import { FormButton } from '../../../../shared/components/forms/form-button/form-button';
+import { FormInput } from '../../../../shared/components/forms/form-input/form-input';
 import { WorkFilterValue } from '../../../../models/filter/work/work-filter-model';
 
 @Component({
   selector: 'app-work-filter',
-  imports: [ReactiveFormsModule, FormInputMultiselect, FormInputChip, FormButton],
+  imports: [ReactiveFormsModule, FormInputMultiselect, FormInputChip, FormButton, FormInput],
   templateUrl: './work-filter.html',
 })
 export class WorkFilter implements OnInit {
@@ -28,6 +29,7 @@ export class WorkFilter implements OnInit {
   private readonly authorService = inject(AuthorService);
   private readonly illustratorService = inject(IllustratorService);
   private readonly destroyRef = inject(DestroyRef);
+  readonly initialName = input('');
   readonly apply = output<WorkFilterValue>();
   readonly handleClose = output<void>();
 
@@ -38,6 +40,7 @@ export class WorkFilter implements OnInit {
   protected medias = signal<AsyncResource<OptionModel[]>>(AsyncResource.loading([]));
 
   protected WorkFilterForm = new FormGroup({
+    name: new FormControl<string>(''),
     authorIds: new FormControl<string[]>([]),
     illustratorIds: new FormControl<string[]>([]),
     languageIds: new FormControl<string[]>([]),
@@ -98,5 +101,9 @@ export class WorkFilter implements OnInit {
 
   ngOnInit(): void {
     this.loadAll();
+    if (this.initialName()) {
+      this.WorkFilterForm.patchValue({ name: this.initialName() });
+      this.WorkFilterForm.markAsDirty();
+    }
   }
 }
