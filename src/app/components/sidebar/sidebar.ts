@@ -4,8 +4,10 @@ import { DrawerModule } from 'primeng/drawer';
 import { Tooltip } from 'primeng/tooltip';
 import { MenuItem } from 'primeng/api';
 import { DrawerService } from '../../services/drawer/drawer-service';
+import { AdminSidebar } from '../admin-sidebar/admin-sidebar';
+import { UserButton } from '../user-button/user-button';
 
-type NavContent =
+export type NavContent =
   | {
       label: string;
       icon: string;
@@ -15,7 +17,7 @@ type NavContent =
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink, RouterLinkActive, DrawerModule, Tooltip],
+  imports: [RouterLink, RouterLinkActive, DrawerModule, Tooltip, AdminSidebar, UserButton],
   templateUrl: './sidebar.html',
   styles: `
     :host {

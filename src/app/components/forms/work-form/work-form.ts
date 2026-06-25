@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { WorkRequestModel } from '../../../models/work/work-request-model';
 import { OptionModel } from '../../../models/option-model';
@@ -9,20 +9,16 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, forkJoin, of, throwError } from 'rxjs';
 import { AuthorForm } from '../author-form/author-form';
 import { AsyncResource } from '../../../models/async-resource';
-import { LoadStateEnum } from '../../../enums/load-state-enum';
 import { ERROR_MESSAGE } from '../../../constants/error-messages-constant';
 import { SUCCESS_MESSAGE } from '../../../constants/success-message-constant';
 import { IllustratorForm } from '../illustrator-form/illustrator-form';
 import { SeriesForm } from '../series-form/series-form';
-import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { MEDIA_TRANSLATION } from '../../../constants/media-translation-constant';
 import { SerieService } from '../../../services/serie/serie-service';
 import { OptionService } from '../../../services/options/option-service';
 import { AuthorService } from '../../../services/authors/author-service';
 import { IllustratorService } from '../../../services/illustrators/illustrator-service';
 import { WorkService } from '../../../services/works/work-service';
-import { ToastService } from '../../../services/toast/toast-service';
-import { DialogService } from '../../../services/dialog/dialog-service';
 import { FormInputCheckbox } from '../../../shared/components/forms/form-input-checkbox/form-input-checkbox';
 import { FormInputSelect } from '../../../shared/components/forms/form-input-select/form-input-select';
 import { FormInputMultiselect } from '../../../shared/components/forms/form-input-multiselect/form-input-multiselect';
@@ -30,6 +26,8 @@ import { FormInputNumber } from '../../../shared/components/forms/form-input-num
 import { FormInputCounter } from '../../../shared/components/forms/form-input-counter/form-input-counter';
 import { FormButton } from '../../../shared/components/forms/form-button/form-button';
 import { FormInput } from '../../../shared/components/forms/form-input/form-input';
+import { BaseForm } from '../../../services/base/base-form';
+import { DialogService } from '../../../services/dialog/dialog-service';
 
 @Component({
   selector: 'app-work-form',
@@ -46,18 +44,14 @@ import { FormInput } from '../../../shared/components/forms/form-input/form-inpu
   ],
   templateUrl: './work-form.html',
 })
-export class WorkForm implements OnInit {
+export class WorkForm extends BaseForm implements OnInit {
   private readonly serieService = inject(SerieService);
   private readonly optionService = inject(OptionService);
   private readonly authorsService = inject(AuthorService);
   private readonly illustratorService = inject(IllustratorService);
   private readonly workService = inject(WorkService);
-  private readonly destroyRef = inject(DestroyRef);
   private readonly dialogService = inject(DialogService);
-  private readonly messageService = inject(ToastService);
   protected readonly workMediaTranslation = MEDIA_TRANSLATION;
-  protected readonly loadState = LoadStateEnum;
-  private readonly ref = inject(DynamicDialogRef, { optional: true });
 
   languages = signal<AsyncResource<OptionModel[]>>(AsyncResource.loading([]));
   medias = signal<AsyncResource<OptionModel[]>>(AsyncResource.loading([]));
@@ -65,7 +59,7 @@ export class WorkForm implements OnInit {
   authors = signal<AsyncResource<AuthorModel[]>>(AsyncResource.loading([]));
   illustrators = signal<AsyncResource<IllustratorModel[]>>(AsyncResource.loading([]));
 
-  formWork = new FormGroup({
+  form = new FormGroup({
     name: new FormControl('', Validators.required),
     subtitle: new FormControl<string | null>(null),
     volume: new FormControl<number>(0, Validators.min(0)),
@@ -78,12 +72,7 @@ export class WorkForm implements OnInit {
     illustrators: new FormControl<string[]>([]),
   });
 
-  isInvalid(field: string): boolean {
-    const control = this.formWork.get(field);
-    return !!control?.invalid && (!!control?.touched || !!control?.dirty);
-  }
-
-  ngOnInit() {
+  loadInitial() {
     forkJoin({
       options: this.optionService.getOptions(),
       series: this.serieService.getAll(),
@@ -98,7 +87,7 @@ export class WorkForm implements OnInit {
           this.authors.update((s) => AsyncResource.error(s, err));
           this.illustrators.update((s) => AsyncResource.error(s, err));
 
-          this.formWork.disable();
+          this.form.disable();
 
           this.messageService.showError(ERROR_MESSAGE.config.load);
           return of(null);
@@ -115,35 +104,38 @@ export class WorkForm implements OnInit {
           series,
         } = result;
 
-        this.languages.update((s) => AsyncResource.success(s.data.concat(languages)));
-        this.medias.update((s) => AsyncResource.success(s.data.concat(medias)));
-        this.series.update((s) => AsyncResource.success(s.data.concat(series.data)));
-        this.authors.update((s) => AsyncResource.success(s.data.concat(authors.data)));
-        this.illustrators.update((s) => AsyncResource.success(s.data.concat(illustrators.data)));
+        this.languages.set(AsyncResource.success(languages));
+        this.medias.set(AsyncResource.success(medias));
+        this.series.set(AsyncResource.success(series.data));
+        this.authors.set(AsyncResource.success(authors.data));
+        this.illustrators.set(AsyncResource.success(illustrators.data));
       });
+  }
 
-    this.formWork
+  private watchSerieChanges() {
+    this.form
       .get('serieId')
       ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((serieId) => {
-        const nameControl = this.formWork.get('name');
+        const nameControl = this.form.get('name');
         const serie = this.series().data.find((s) => s.id === serieId);
 
         if (serie) nameControl?.setValue(serie.name);
       });
   }
 
+  ngOnInit() {
+    this.loadInitial();
+    this.watchSerieChanges();
+  }
+
   authorModal() {
-    const ref = this.dialogService.show(AuthorForm, {
-      header: 'Criar autor',
-    });
+    const ref = this.dialogService.show(AuthorForm, { header: 'Criar autor' });
 
     ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((author: AuthorModel) => {
       if (author) {
         this.authors.update((current) => current.mapData((data) => [...data, author]));
-        this.formWork
-          .get('authors')
-          ?.setValue([...(this.formWork.get('authors')?.value ?? []), author.id]);
+        this.form.get('authors')?.setValue([...(this.form.get('authors')?.value ?? []), author.id]);
       }
     });
   }
@@ -158,9 +150,9 @@ export class WorkForm implements OnInit {
       .subscribe((illustrator: IllustratorModel) => {
         if (illustrator) {
           this.illustrators.update((current) => current.mapData((data) => [...data, illustrator]));
-          this.formWork
+          this.form
             .get('illustrators')
-            ?.setValue([...(this.formWork.get('illustrators')?.value ?? []), illustrator.id]);
+            ?.setValue([...(this.form.get('illustrators')?.value ?? []), illustrator.id]);
         }
       });
   }
@@ -173,15 +165,15 @@ export class WorkForm implements OnInit {
     ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((serie: SerieModel) => {
       if (serie) {
         this.series.update((current) => current.mapData((data) => [...data, serie]));
-        this.formWork.get('serieId')?.setValue(serie.id);
+        this.form.get('serieId')?.setValue(serie.id);
       }
     });
   }
 
   onSubmit() {
-    if (this.formWork.invalid) return;
+    if (this.form.invalid) return;
 
-    const data = this.formWork.value as WorkRequestModel;
+    const data = this.form.value as WorkRequestModel;
 
     this.workService
       .create(data)

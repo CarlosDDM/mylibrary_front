@@ -1,0 +1,47 @@
+@if (isAdmin()) {
+  <div class="flex flex-col gap-1 mt-1">
+    <div class="px-3 py-2">
+      <hr class="border-zinc-200 dark:border-zinc-800" />
+    </div>
+
+    @for (group of navGroups; track group.label) {
+      @if (collapsed()) {
+        <button
+          (click)="menu.toggle($event)"
+          [pTooltip]="group.label"
+          tooltipPosition="right"
+          class="flex items-center justify-center px-3 py-2 rounded-lg cursor-pointer text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-200/60 dark:hover:bg-zinc-800/60 transition-colors w-full"
+        >
+          <i class="text-base {{ group.icon }}"></i>
+        </button>
+        <p-menu #menu [model]="group.items" [popup]="true" appendTo="body" />
+      } @else {
+        <button
+          (click)="toggleGroup(group.label)"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-200/60 dark:hover:bg-zinc-800/60 transition-colors w-full text-left"
+        >
+          <i class="text-base {{ group.icon }}"></i>
+          <span class="flex-1 text-sm font-medium">{{ group.label }}</span>
+          <i
+            class="pi pi-angle-down text-xs transition-transform duration-200"
+            [class.rotate-180]="isExpanded(group.label)"
+          ></i>
+        </button>
+
+        @if (isExpanded(group.label)) {
+          <div class="flex flex-col gap-1 pl-3">
+            @for (item of group.items; track item.label) {
+              <button
+                class="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-200/60 dark:hover:bg-zinc-800/60 transition-colors w-full text-left"
+                (click)="item.command?.({ originalEvent: $event, item })"
+              >
+                <i class="text-base {{ item.icon }}"></i>
+                <span class="text-sm font-medium">{{ item.label }}</span>
+              </button>
+            }
+          </div>
+        }
+      }
+    }
+  </div>
+}

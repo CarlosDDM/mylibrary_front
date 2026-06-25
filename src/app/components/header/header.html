@@ -15,7 +15,6 @@
       My Library
     </a>
   </div>
-
   @if (drawerService.collapsed()) {
     <a
       routerLink="/"
@@ -25,63 +24,5 @@
     </a>
   }
 
-  <button
-    (click)="searchOpen.set(true)"
-    class="ml-auto flex items-center gap-2 px-3 py-1.5 rounded-md cursor-pointer border border-zinc-300 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:border-zinc-400 dark:hover:border-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 shadow-sm dark:shadow-none transition-all"
-  >
-    <i class="pi pi-search text-sm"></i>
-    <span class="hidden md:inline text-sm">Buscar...</span>
-    <span
-      class="hidden md:inline text-xs leading-none text-zinc-500 dark:text-zinc-400 border border-zinc-400 dark:border-zinc-600 rounded px-1.5 py-0.5"
-      >Ctrl+K</span
-    >
-  </button>
+  <app-search-bar class="ml-auto" />
 </header>
-
-<p-dialog
-  [(visible)]="searchOpen"
-  [showHeader]="false"
-  [modal]="true"
-  [draggable]="false"
-  [resizable]="false"
-  [dismissableMask]="true"
-  position="top"
-  styleClass="w-full max-w-lg mt-16"
->
-  <div class="px-1 py-6">
-    <p-iconfield class="w-full">
-      <p-inputicon class="pi pi-search" />
-      <input
-        type="text"
-        pInputText
-        placeholder="Buscar séries ou obras"
-        class="w-full text-sm"
-        [ngModel]="search()"
-        (ngModelChange)="search.set($event)"
-      />
-      @if (search()) {
-        <p-inputicon
-          class="pi pi-times cursor-pointer"
-          style="right: 0.5rem"
-          (click)="search.set('')"
-        />
-      }
-    </p-iconfield>
-    @if (!results() && !loading()) {
-      <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-3 px-1">Digite para buscar...</p>
-    }
-    @if (loading()) {
-      <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-3 px-1">Buscando...</p>
-    }
-    @if (results()) {
-      <div class="mt-3">
-        <app-search-result
-          [resource]="results()!"
-          [searchTerm]="search()"
-          (workSelected)="onWorkSelected($event)"
-          (serieSelected)="onSerieSelected($event)"
-        />
-      </div>
-    }
-  </div>
-</p-dialog>

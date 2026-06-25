@@ -13,7 +13,7 @@ type ButtonSize = 'small' | 'large';
 })
 export class FormButton {
   type = input<ButtonType>('button');
-  label = input.required<string>();
+  label = input<string>('');
   disabled = input<boolean>(false);
   handleClick = output<void>();
   severity = input<ButtonSeverity>('primary');
