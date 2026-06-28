@@ -5,12 +5,10 @@ import { OptionModel } from '../../../models/option-model';
 import { SerieModel } from '../../../models/serie-model';
 import { AuthorModel } from '../../../models/author-model';
 import { IllustratorModel } from '../../../models/illustrator-model';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { catchError, forkJoin, of, throwError } from 'rxjs';
 import { AuthorForm } from '../author-form/author-form';
 import { AsyncResource } from '../../../models/async-resource';
-import { ERROR_MESSAGE } from '../../../constants/error-messages-constant';
-import { SUCCESS_MESSAGE } from '../../../constants/success-message-constant';
 import { IllustratorForm } from '../illustrator-form/illustrator-form';
 import { SeriesForm } from '../series-form/series-form';
 import { MEDIA_TRANSLATION } from '../../../constants/media-translation-constant';
@@ -62,7 +60,8 @@ export class WorkForm extends BaseForm implements OnInit {
   form = new FormGroup({
     name: new FormControl('', Validators.required),
     subtitle: new FormControl<string | null>(null),
-    volume: new FormControl<number>(0, Validators.min(0)),
+    volume: new FormControl<number | null>(1),
+    volumeName: new FormControl<string | null>(null),
     price: new FormControl<number>(0, Validators.min(0)),
     mediaId: new FormControl<string | null>(null, Validators.required),
     languageId: new FormControl<string | null>(null, Validators.required),
@@ -72,7 +71,13 @@ export class WorkForm extends BaseForm implements OnInit {
     illustrators: new FormControl<string[]>([]),
   });
 
-  loadInitial() {
+  protected isSpecial = toSignal(this.form.get('isSpecialEdition')!.valueChanges, {
+    initialValue: this.form.value.isSpecialEdition ?? false,
+  });
+
+  protected noVolumeControl = new FormControl(false);
+
+  override loadInitial() {
     forkJoin({
       options: this.optionService.getOptions(),
       series: this.serieService.getAll(),
@@ -89,7 +94,7 @@ export class WorkForm extends BaseForm implements OnInit {
 
           this.form.disable();
 
-          this.messageService.showError(ERROR_MESSAGE.config.load);
+          this.messageService.showError(this.errorMessage.config.load);
           return of(null);
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -124,9 +129,26 @@ export class WorkForm extends BaseForm implements OnInit {
       });
   }
 
+  private watchNoVolumeChanges() {
+    this.noVolumeControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((noVolume) => {
+        const volume = this.form.get('volume');
+
+        if (noVolume) {
+          volume?.setValue(null);
+          volume?.disable();
+        } else {
+          volume?.enable();
+          volume?.setValue(1);
+        }
+      });
+  }
+
   ngOnInit() {
     this.loadInitial();
     this.watchSerieChanges();
+    this.watchNoVolumeChanges();
   }
 
   authorModal() {
@@ -173,14 +195,14 @@ export class WorkForm extends BaseForm implements OnInit {
   onSubmit() {
     if (this.form.invalid) return;
 
-    const data = this.form.value as WorkRequestModel;
+    const data = this.form.getRawValue() as WorkRequestModel;
 
     this.workService
       .create(data)
       .pipe(
         catchError((err) => {
           if (err instanceof TypeError || err.status === 0) {
-            this.messageService.showError(ERROR_MESSAGE.network);
+            this.messageService.showError(this.errorMessage.network);
             return of(null);
           }
           return throwError(() => err);
@@ -189,11 +211,11 @@ export class WorkForm extends BaseForm implements OnInit {
       .subscribe({
         next: (res) => {
           if (!res) return;
-          this.messageService.showSuccess(SUCCESS_MESSAGE.work);
+          this.messageService.showSuccess(this.successMessage.work);
           return this.ref?.close(res);
         },
         error: (err) => {
-          this.messageService.showError(ERROR_MESSAGE.works.submit);
+          this.messageService.showError(this.errorMessage.works.submit);
           console.log(err);
         },
       });

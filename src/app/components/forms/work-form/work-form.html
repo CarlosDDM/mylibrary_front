@@ -30,8 +30,16 @@
       currency="BRL"
       [min]="0"
     />
-    <div class="flex items-center justify-between flex-wrap gap-x-2 gap-y-3">
-      <app-form-input-counter id="volume" label="Volume" [min]="0" formControlName="volume" />
+    <div class="flex items-start justify-between flex-wrap gap-x-2 gap-y-3">
+      <div class="flex flex-col gap-2">
+        <app-form-input-counter id="volume" label="Volume" [min]="0" formControlName="volume" />
+        <app-form-input-checkbox
+          class="text-sm/tight text-muted-color"
+          id="noVolume"
+          label="Sem volume"
+          [formControl]="noVolumeControl"
+        />
+      </div>
       <app-form-input-checkbox
         id="isSpecialEdition"
         label="Edição especial"
@@ -39,6 +47,15 @@
       />
     </div>
   </div>
+
+  @if (isSpecial()) {
+    <app-form-input
+      class="col-span-2"
+      label="Nome do volume"
+      id="volumeName"
+      formControlName="volumeName"
+    />
+  }
 
   <app-form-input-select
     id="languageId"

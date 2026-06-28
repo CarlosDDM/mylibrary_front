@@ -3,6 +3,7 @@ export interface WorkRequestModel {
   name: string;
   subtitle: string | null;
   volume: number | null;
+  volumeName: string | null;
   price: number | null;
   mediaId: string;
   languageId: string;

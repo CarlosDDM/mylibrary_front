@@ -1,40 +1,35 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FranchiseModel } from '../../../models/franchise-model';
-import { SUCCESS_MESSAGE } from '../../../constants/success-message-constant';
-import { ERROR_MESSAGE } from '../../../constants/error-messages-constant';
-import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { catchError, of, throwError } from 'rxjs';
 import { FranchiseService } from '../../../services/franchises/franchise-service';
-import { ToastService } from '../../../services/toast/toast-service';
 import { FormInput } from '../../../shared/components/forms/form-input/form-input';
 import { FormButton } from '../../../shared/components/forms/form-button/form-button';
+import { BaseForm } from '../../../services/base/base-form';
 
 @Component({
   selector: 'app-franchise-form',
   imports: [ReactiveFormsModule, FormInput, FormButton],
   templateUrl: './franchise-form.html',
 })
-export class FranchiseForm {
+export class FranchiseForm extends BaseForm {
   private readonly franchiseService = inject(FranchiseService);
-  private readonly messageService = inject(ToastService);
-  private readonly ref = inject(DynamicDialogRef, { optional: true });
 
-  formFranchise = new FormGroup({
+  form = new FormGroup({
     name: new FormControl<string>('', Validators.required),
   });
 
   onSubmit() {
-    if (this.formFranchise.invalid) return;
+    if (this.form.invalid) return;
 
-    const data = this.formFranchise.value as FranchiseModel;
+    const data = this.form.value as FranchiseModel;
 
     this.franchiseService
       .create(data)
       .pipe(
         catchError((err) => {
           if (err.status === 0) {
-            this.messageService.showError(ERROR_MESSAGE.network);
+            this.messageService.showError(this.errorMessage.network);
             return of(null);
           }
           return throwError(() => err);
@@ -44,12 +39,12 @@ export class FranchiseForm {
         next: (res) => {
           if (!res) return;
 
-          this.messageService.showSuccess(SUCCESS_MESSAGE.franchise);
+          this.messageService.showSuccess(this.successMessage.franchise);
 
           return this.ref?.close(res);
         },
         error: () => {
-          this.messageService.showError(ERROR_MESSAGE.franchises.submit);
+          this.messageService.showError(this.errorMessage.franchises.submit);
         },
       });
   }

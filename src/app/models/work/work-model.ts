@@ -8,6 +8,7 @@ export interface WorkModel {
   name: string;
   subtitle: string | null;
   volume: number | null;
+  volumeName: string | null;
   price: number | null;
   isSpecialEdition: boolean;
   media: OptionModel;
