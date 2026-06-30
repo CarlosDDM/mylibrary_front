@@ -3,6 +3,8 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@a
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 
+type InputType = 'text' | 'email' | 'password';
+
 @Component({
   selector: 'app-form-input',
   imports: [ReactiveFormsModule, InputTextModule, FloatLabelModule],
@@ -19,6 +21,7 @@ export class FormInput implements ControlValueAccessor {
   id = input.required<string>();
   label = input.required<string>();
   invalid = input<boolean>(false);
+  type = input<InputType>('text');
 
   value = '';
   disabled = false;

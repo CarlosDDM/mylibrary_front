@@ -1,12 +1,11 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { catchError, forkJoin, of, throwError } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 import { OptionModel } from '../../../models/option-model';
 import { AsyncResource } from '../../../models/async-resource';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FranchiseModel } from '../../../models/franchise-model';
 import { STATUS_TRANSLATION } from '../../../constants/status-translation-constant';
-import { SerieModel } from '../../../models/serie-model';
 import { DialogService } from '../../../services/dialog/dialog-service';
 import { FranchiseForm } from '../franchise-form/franchise-form';
 import { SerieService } from '../../../services/serie/serie-service';
@@ -17,6 +16,8 @@ import { FormInputCounter } from '../../../shared/components/forms/form-input-co
 import { FormInputSelect } from '../../../shared/components/forms/form-input-select/form-input-select';
 import { FormInput } from '../../../shared/components/forms/form-input/form-input';
 import { BaseForm } from '../../../services/base/base-form';
+import { parseHttpError } from '../../../utils/parse-http-error.utils';
+import { SerieRequestModel } from '../../../models/serie/serie-request-model';
 
 @Component({
   selector: 'app-series-form',
@@ -37,7 +38,7 @@ export class SeriesForm extends BaseForm implements OnInit {
   form = new FormGroup({
     name: new FormControl<string>('', Validators.required),
     statusId: new FormControl<string | null>(null, Validators.required),
-    serieVolumes: new FormControl<number | null>(1, Validators.min(1)),
+    serieVolumes: new FormControl<number | null>(null, Validators.min(1)),
     franchiseId: new FormControl<string | null>(null),
   });
 
@@ -90,20 +91,11 @@ export class SeriesForm extends BaseForm implements OnInit {
   onSubmit() {
     if (this.form.invalid) return;
 
-    const data = this.form.value as SerieModel;
+    const data = this.form.getRawValue() as SerieRequestModel;
 
     this.serieService
       .create(data)
-      .pipe(
-        catchError((err) => {
-          if (err.status === 0) {
-            this.messageService.showError(this.errorMessage.network);
-            return of(null);
-          }
-          return throwError(() => err);
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
           if (!res) return;
@@ -111,8 +103,9 @@ export class SeriesForm extends BaseForm implements OnInit {
           return this.ref?.close(res);
         },
         error: (err) => {
-          this.messageService.showError(this.errorMessage.series.submit);
-          console.log(err);
+          parseHttpError(err, this.errorMessage.series.submit).forEach((messages) => {
+            this.messageService.showError(messages);
+          });
         },
       });
   }

@@ -14,9 +14,10 @@ export function parseHttpError(err: unknown, fallback: string): string[] {
 
   const body = err.error;
 
-  // backend retornou array de erros
-  if (Array.isArray(body?.errors) && body.errors.length > 0) {
-    return body.errors;
+  // backend retornou array de erros (errors[] ou message[])
+  const errors = body?.errors ?? body?.message;
+  if (Array.isArray(errors) && errors.length > 0) {
+    return errors;
   }
 
   // backend retornou mensagem única

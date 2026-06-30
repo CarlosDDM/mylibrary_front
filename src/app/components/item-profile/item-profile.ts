@@ -2,7 +2,7 @@ import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angula
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { Observable } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SerieModel } from '../../models/serie-model';
+import { SerieModel } from '../../models/serie/serie-model';
 import { AsyncResource } from '../../models/async-resource';
 import { TranslatePipe } from '../../pipes/translate-pipe';
 import { STATUS_TRANSLATION } from '../../constants/status-translation-constant';

@@ -2,7 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AsyncResource } from '../../models/async-resource';
 import { PaginatedResponse } from '../../models/pagination-model';
-import { SerieModel } from '../../models/serie-model';
+import { SerieModel } from '../../models/serie/serie-model';
 import { SerieService } from '../../services/serie/serie-service';
 import { BookshelfSerie } from '../../components/bookshelf-serie/bookshelf-serie';
 import { SerieFilter } from './components/serie-filter/serie-filter';
@@ -20,7 +20,6 @@ import { FormButton } from '../../shared/components/forms/form-button/form-butto
   selector: 'app-serie-page',
   imports: [BookshelfSerie, SerieFilter, Paginator, DrawerModule, FormButton],
   templateUrl: './serie-page.html',
-
 })
 export class SeriePage extends BasePaginatedPage<SerieModel, FilterSerieRequest> implements OnInit {
   private readonly serieService = inject(SerieService);

@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { WrapperStats } from '../../components/wrapper-stats/wrapper-stats';
 import { AsyncResource } from '../../models/async-resource';
-import { SerieModel } from '../../models/serie-model';
+import { SerieModel } from '../../models/serie/serie-model';
 import { FranchiseModel } from '../../models/franchise-model';
 import { catchError, forkJoin, of } from 'rxjs';
 import { SerieService } from '../../services/serie/serie-service';

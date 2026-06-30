@@ -3,7 +3,7 @@ import { SectionHeader } from '../../../../components/section-header/section-hea
 import { BookshelfWork } from '../../../../components/bookshelf-work/bookshelf-work';
 import { AsyncResource } from '../../../../models/async-resource';
 import { WorkModel } from '../../../../models/work/work-model';
-import { SerieModel } from '../../../../models/serie-model';
+import { SerieModel } from '../../../../models/serie/serie-model';
 import { BookshelfSerie } from '../../../../components/bookshelf-serie/bookshelf-serie';
 
 type CardType = 'series' | 'works';

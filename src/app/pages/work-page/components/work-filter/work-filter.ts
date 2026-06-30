@@ -1,4 +1,13 @@
-import { Component, computed, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  input,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
 import { OptionService } from '../../../../services/options/option-service';
 import { AuthorService } from '../../../../services/authors/author-service';
 import { IllustratorService } from '../../../../services/illustrators/illustrator-service';
@@ -9,7 +18,7 @@ import { IllustratorModel } from '../../../../models/illustrator-model';
 import { OptionModel } from '../../../../models/option-model';
 import { SerieService } from '../../../../services/serie/serie-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SerieModel } from '../../../../models/serie-model';
+import { SerieModel } from '../../../../models/serie/serie-model';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FormInputMultiselect } from '../../../../shared/components/forms/form-input-multiselect/form-input-multiselect';
 import { FormInputChip } from '../../../../shared/components/forms/form-input-chip/form-input-chip';

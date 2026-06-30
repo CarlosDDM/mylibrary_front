@@ -1,4 +1,4 @@
-import { SerieModel } from './serie-model';
+import { SerieModel } from './serie/serie-model';
 
 export interface FranchiseModel {
   id: string;

@@ -19,8 +19,13 @@ export const ERROR_MESSAGE = {
     submit: 'Erro ao salvar a série',
     load: 'Erro ao carregar a série',
   },
+  users: {
+    submit: 'Erro ao salvar o usuário',
+    load: 'Erro ao carregar os usuários',
+  },
   config: {
     load: 'Erro ao tentar buscar as opções, verifique sua conexão',
   },
-  network: 'Sem conexão com o servidor, verifique sua internet',
+  auth: 'Não foi possivel realizar o login, verifique sua conexão',
+  network: 'Sem conexão com o servidor, verifique sua conexão',
 };

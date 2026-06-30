@@ -1,0 +1,40 @@
+<form class="flex flex-col px-4 py-2 gap-6" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <app-form-input
+    class="w-full"
+    id="name"
+    label="Nome"
+    formControlName="name"
+    [invalid]="isInvalid('name')"
+  />
+
+  <app-form-input
+    class="w-full"
+    id="username"
+    label="Login"
+    formControlName="username"
+    [invalid]="isInvalid('username')"
+  />
+
+  <app-form-input
+    class="w-full"
+    id="email"
+    label="E-mail"
+    formControlName="email"
+    [invalid]="isInvalid('email')"
+  />
+
+  <app-form-input
+    class="w-full"
+    id="password"
+    label="Senha"
+    formControlName="password"
+    [invalid]="isInvalid('password')"
+  />
+
+  <app-form-button
+    type="submit"
+    label="Salvar usuário"
+    size="large"
+    [disabled]="form.invalid || form.disabled"
+  />
+</form>

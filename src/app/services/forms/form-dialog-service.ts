@@ -9,9 +9,11 @@ import { SeriesForm } from '../../components/forms/series-form/series-form';
 import { FranchiseForm } from '../../components/forms/franchise-form/franchise-form';
 import { AuthorModel } from '../../models/author-model';
 import { IllustratorModel } from '../../models/illustrator-model';
-import { SerieModel } from '../../models/serie-model';
+import { SerieModel } from '../../models/serie/serie-model';
 import { FranchiseModel } from '../../models/franchise-model';
 import { WorkModel } from '../../models/work/work-model';
+import { UserModel } from '../../models/user-model';
+import { UserForm } from '../../components/forms/user-form/user-form';
 
 @Injectable({
   providedIn: 'root',
@@ -46,5 +48,9 @@ export class FormDialogService {
   openFranchiseForm(): Observable<FranchiseModel | undefined> {
     return this.dialogService.show(FranchiseForm, { ...this.config, header: 'Criar franquia' })
       .onClose;
+  }
+
+  openUserForm(): Observable<UserModel | undefined> {
+    return this.dialogService.show(UserForm, { ...this.config, header: 'Criar usuário' }).onClose;
   }
 }

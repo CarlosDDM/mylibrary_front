@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
-import { catchError, of, throwError } from 'rxjs';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthorModel } from '../../../models/author-model';
 import { AuthorService } from '../../../services/authors/author-service';
 import { FormInput } from '../../../shared/components/forms/form-input/form-input';
 import { FormButton } from '../../../shared/components/forms/form-button/form-button';
 import { BaseForm } from '../../../services/base/base-form';
+import { parseHttpError } from '../../../utils/parse-http-error.utils';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-author-form',
@@ -20,18 +21,10 @@ export class AuthorForm extends BaseForm {
   });
 
   onSubmit() {
-    const data = this.form.value as AuthorModel;
+    const data = this.form.getRawValue() as AuthorModel;
     return this.authorService
       .create(data)
-      .pipe(
-        catchError((err) => {
-          if (err.status === 0) {
-            this.messageService.showError(this.errorMessage.network);
-            return of(null);
-          }
-          return throwError(() => err);
-        }),
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
           if (!res) return;
@@ -39,7 +32,9 @@ export class AuthorForm extends BaseForm {
           return this.ref?.close(res);
         },
         error: (err) => {
-          this.messageService.showError(this.errorMessage.authors.submit);
+          parseHttpError(err, this.errorMessage.authors.submit).forEach((messages) => {
+            this.messageService.showError(messages);
+          });
         },
       });
   }

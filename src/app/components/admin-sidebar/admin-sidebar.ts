@@ -59,7 +59,11 @@ export class AdminSidebar {
           icon: 'pi pi-pencil',
           command: () => this.formDialogService.openIllustratorForm(),
         },
-        { label: 'Usuários', icon: 'pi pi-users' },
+        {
+          label: 'Usuários',
+          icon: 'pi pi-users',
+          command: () => this.formDialogService.openUserForm(),
+        },
       ],
     },
   ];

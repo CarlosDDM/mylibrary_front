@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IllustratorModel } from '../../../models/illustrator-model';
-import { catchError, of, throwError } from 'rxjs';
 import { IllustratorService } from '../../../services/illustrators/illustrator-service';
 import { FormInput } from '../../../shared/components/forms/form-input/form-input';
 import { FormButton } from '../../../shared/components/forms/form-button/form-button';
 import { BaseForm } from '../../../services/base/base-form';
+import { parseHttpError } from '../../../utils/parse-http-error.utils';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-illustrator-form',
@@ -20,18 +21,10 @@ export class IllustratorForm extends BaseForm {
   });
 
   onSubmit() {
-    const data = this.form.value as IllustratorModel;
+    const data = this.form.getRawValue() as IllustratorModel;
     return this.illustratorService
       .create(data)
-      .pipe(
-        catchError((err) => {
-          if (err.status === 0) {
-            this.messageService.showError(this.errorMessage.network);
-            return of(null);
-          }
-          return throwError(() => err);
-        }),
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
           if (!res) return;
@@ -39,7 +32,9 @@ export class IllustratorForm extends BaseForm {
           return this.ref?.close(res);
         },
         error: (err) => {
-          this.messageService.showError(this.errorMessage.illustrators.submit);
+          parseHttpError(err, this.errorMessage.illustrators.submit).forEach((messages) => {
+            this.messageService.showError(messages);
+          });
         },
       });
   }

@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FranchiseModel } from '../../../models/franchise-model';
-import { catchError, of, throwError } from 'rxjs';
 import { FranchiseService } from '../../../services/franchises/franchise-service';
 import { FormInput } from '../../../shared/components/forms/form-input/form-input';
 import { FormButton } from '../../../shared/components/forms/form-button/form-button';
 import { BaseForm } from '../../../services/base/base-form';
+import { parseHttpError } from '../../../utils/parse-http-error.utils';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-franchise-form',
@@ -22,19 +23,11 @@ export class FranchiseForm extends BaseForm {
   onSubmit() {
     if (this.form.invalid) return;
 
-    const data = this.form.value as FranchiseModel;
+    const data = this.form.getRawValue() as FranchiseModel;
 
     this.franchiseService
       .create(data)
-      .pipe(
-        catchError((err) => {
-          if (err.status === 0) {
-            this.messageService.showError(this.errorMessage.network);
-            return of(null);
-          }
-          return throwError(() => err);
-        }),
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
           if (!res) return;
@@ -43,8 +36,10 @@ export class FranchiseForm extends BaseForm {
 
           return this.ref?.close(res);
         },
-        error: () => {
-          this.messageService.showError(this.errorMessage.franchises.submit);
+        error: (err) => {
+          parseHttpError(err, this.errorMessage.franchises.submit).forEach((messages) => {
+            this.messageService.showError(messages);
+          });
         },
       });
   }

@@ -4,7 +4,7 @@ import { STATUS_TRANSLATION } from '../../constants/status-translation-constant'
 import { STATUS_VARIANT } from '../../constants/status-variant-constant';
 import { Chip } from '../../shared/components/chip/chip';
 import clsx from 'clsx';
-import { SerieModel } from '../../models/serie-model';
+import { SerieModel } from '../../models/serie/serie-model';
 
 @Component({
   selector: 'app-serie-card',

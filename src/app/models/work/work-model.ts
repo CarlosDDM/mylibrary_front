@@ -1,7 +1,7 @@
 import { AuthorModel } from '../author-model';
 import { IllustratorModel } from '../illustrator-model';
 import { OptionModel } from '../option-model';
-import { SerieModel } from '../serie-model';
+import { SerieModel } from '../serie/serie-model';
 
 export interface WorkModel {
   id: string;

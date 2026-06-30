@@ -2,11 +2,11 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { WorkRequestModel } from '../../../models/work/work-request-model';
 import { OptionModel } from '../../../models/option-model';
-import { SerieModel } from '../../../models/serie-model';
+import { SerieModel } from '../../../models/serie/serie-model';
 import { AuthorModel } from '../../../models/author-model';
 import { IllustratorModel } from '../../../models/illustrator-model';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { catchError, forkJoin, of, throwError } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 import { AuthorForm } from '../author-form/author-form';
 import { AsyncResource } from '../../../models/async-resource';
 import { IllustratorForm } from '../illustrator-form/illustrator-form';
@@ -26,6 +26,7 @@ import { FormButton } from '../../../shared/components/forms/form-button/form-bu
 import { FormInput } from '../../../shared/components/forms/form-input/form-input';
 import { BaseForm } from '../../../services/base/base-form';
 import { DialogService } from '../../../services/dialog/dialog-service';
+import { parseHttpError } from '../../../utils/parse-http-error.utils';
 
 @Component({
   selector: 'app-work-form',
@@ -199,15 +200,7 @@ export class WorkForm extends BaseForm implements OnInit {
 
     this.workService
       .create(data)
-      .pipe(
-        catchError((err) => {
-          if (err instanceof TypeError || err.status === 0) {
-            this.messageService.showError(this.errorMessage.network);
-            return of(null);
-          }
-          return throwError(() => err);
-        }),
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
           if (!res) return;
@@ -215,8 +208,9 @@ export class WorkForm extends BaseForm implements OnInit {
           return this.ref?.close(res);
         },
         error: (err) => {
-          this.messageService.showError(this.errorMessage.works.submit);
-          console.log(err);
+          parseHttpError(err, this.errorMessage.works.submit).forEach((messages) => {
+            this.messageService.showError(messages);
+          });
         },
       });
   }
