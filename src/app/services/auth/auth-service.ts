@@ -1,8 +1,9 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { ApiService } from '../api/api-service';
 import { AuthLoginModel } from '../../models/auth/auth-login.model';
-import { Observable, switchMap, tap } from 'rxjs';
+import { finalize, Observable, switchMap, tap } from 'rxjs';
 import { AuthUserModel } from '../../models/auth/auth-user.model';
+import { Role } from '../../enums/role-enum';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,7 @@ export class AuthService {
 
   private _user = signal<AuthUserModel | null>(null);
   readonly user = this._user.asReadonly();
+  readonly isAdmin = computed(() => this._user()?.role === Role.ADMIN);
   readonly isAuthenticated = computed(() => this._user() !== null);
 
   me(): Observable<AuthUserModel> {
@@ -28,6 +30,10 @@ export class AuthService {
   logout(): Observable<void> {
     return this.apiService
       .post<void>(`${this.path}/logout`, {})
-      .pipe(tap(() => this._user.set(null)));
+      .pipe(finalize(() => this.clearSession()));
+  }
+
+  clearSession(): void {
+    this._user.set(null);
   }
 }

@@ -3,6 +3,7 @@ import { Tooltip } from 'primeng/tooltip';
 import { Menu } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { FormDialogService } from '../../services/forms/form-dialog-service';
+import { AuthService } from '../../services/auth/auth-service';
 
 interface AdminNavGroup {
   label: string;
@@ -16,8 +17,9 @@ interface AdminNavGroup {
   templateUrl: './admin-sidebar.html',
 })
 export class AdminSidebar {
+  private readonly authService = inject(AuthService);
   readonly collapsed = input<boolean>(false);
-  protected readonly isAdmin = signal(true);
+  protected readonly isAdmin = this.authService.isAdmin;
   protected readonly expandedGroups = signal(new Set<string>());
   private readonly formDialogService = inject(FormDialogService);
 

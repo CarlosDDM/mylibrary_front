@@ -26,7 +26,13 @@
         type="password"
         [invalid]="isInvalid('password')"
       />
-      <app-form-button type="submit" label="Entrar" icon="pi pi-sign-in" [fluid]="true" />
+      <app-form-button
+        type="submit"
+        label="Entrar"
+        icon="pi pi-sign-in"
+        [fluid]="true"
+        [disabled]="submitting"
+      />
     </form>
   </div>
 </div>

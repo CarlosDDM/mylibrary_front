@@ -28,7 +28,7 @@ export type NavContent =
 export class Sidebar {
   protected readonly drawerService = inject(DrawerService);
   protected navItems: NavContent[] = [
-    { label: 'Home', icon: 'pi pi-home', routerLink: '/' },
+    { label: 'Home', icon: 'pi pi-home', routerLink: '/home' },
     { label: 'Séries', icon: 'pi pi-book', routerLink: '/series' },
     { label: 'Obras', icon: 'pi pi-bookmark', routerLink: '/works' },
   ];

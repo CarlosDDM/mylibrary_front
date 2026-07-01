@@ -21,9 +21,9 @@ import { SerieDialogService } from '../../services/serie/serie-dialog-service';
 @Component({
   selector: 'app-home',
   imports: [WrapperStats, HomeSection],
-  templateUrl: './home.html',
+  templateUrl: './home-page.html',
 })
-export class Home implements OnInit {
+export class HomePage implements OnInit {
   private readonly serieService = inject(SerieService);
   private readonly workService = inject(WorkService);
   private readonly dashboardService = inject(DashboardService);

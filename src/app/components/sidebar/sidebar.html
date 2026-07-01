@@ -8,7 +8,7 @@
   >
     @if (!drawerService.collapsed()) {
       <a
-        routerLink="/"
+        routerLink="/home"
         class="flex-1 px-3 truncate text-xl font-semibold text-zinc-700 dark:text-zinc-100 hover:opacity-70 transition-opacity"
       >
         My Library
@@ -49,7 +49,7 @@
 
 <p-drawer [(visible)]="drawerService.nav" position="left">
   <ng-template #header>
-    <a routerLink="/" (click)="drawerService.closeNav()">
+    <a routerLink="/home" (click)="drawerService.closeNav()">
       <span class="text-xl font-semibold text-zinc-700 dark:text-zinc-100">My Library</span>
     </a>
   </ng-template>
