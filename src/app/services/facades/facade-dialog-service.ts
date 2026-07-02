@@ -1,4 +1,4 @@
-import { inject, Injectable, Type } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { Observable } from 'rxjs';
 import { DialogService } from '../dialog/dialog-service';
@@ -12,21 +12,19 @@ import { IllustratorModel } from '../../models/illustrator-model';
 import { SerieModel } from '../../models/serie/serie-model';
 import { FranchiseModel } from '../../models/franchise-model';
 import { WorkModel } from '../../models/work/work-model';
-import { UserModel } from '../../models/user-model';
 import { UserForm } from '../../components/forms/user-form/user-form';
+import { ChangePasswordForm } from '../../components/forms/change-password-form/change-password-form';
+import { UserModel } from '../../models/user/user-model';
+import { Configuration } from '../../components/configuration/configuration';
 
 @Injectable({
   providedIn: 'root',
 })
-export class FormDialogService {
+export class FacadeDialogService {
   private readonly dialogService = inject(DialogService);
   private readonly config: DynamicDialogConfig = {
     styleClass: 'lg:w-[45vw]',
   };
-
-  showForm(component: Type<unknown>, config?: DynamicDialogConfig) {
-    return this.dialogService.show(component, config);
-  }
 
   openWorkForm(): Observable<WorkModel | undefined> {
     return this.dialogService.show(WorkForm, { ...this.config, header: 'Criar obra' }).onClose;
@@ -52,5 +50,18 @@ export class FormDialogService {
 
   openUserForm(): Observable<UserModel | undefined> {
     return this.dialogService.show(UserForm, { ...this.config, header: 'Criar usuário' }).onClose;
+  }
+
+  openChangePasswordForm(): Observable<void> {
+    return this.dialogService.show(ChangePasswordForm, { ...this.config, header: 'Alterar senha' })
+      .onClose;
+  }
+
+  openConfigureDialog(): Observable<void> {
+    const styleClass = {
+      styleClass: 'lg:w-[45vw] h-[60vh]',
+    };
+    return this.dialogService.show(Configuration, { ...styleClass, header: 'Configurações' })
+      .onClose;
   }
 }

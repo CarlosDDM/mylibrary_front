@@ -22,6 +22,7 @@ export const ERROR_MESSAGE = {
   users: {
     submit: 'Erro ao salvar o usuário',
     load: 'Erro ao carregar os usuários',
+    changePassword: 'Erro ao alterar a senha',
   },
   config: {
     load: 'Erro ao tentar buscar as opções, verifique sua conexão',

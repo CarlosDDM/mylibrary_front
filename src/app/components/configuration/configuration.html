@@ -1,0 +1,15 @@
+<p-tabs value="info">
+  <p-tablist>
+    <p-tab value="info">Informações do usuário</p-tab>
+    <p-tab value="security">Segurança</p-tab>
+  </p-tablist>
+  <p-tabpanels>
+    <p-tabpanel value="info">
+      <app-user-form />
+    </p-tabpanel>
+    <p-tabpanel value="security">
+      <h2 class="text-lg font-semibold mt-2 mb-8">Mudar a senha</h2>
+      <app-change-password-form />
+    </p-tabpanel>
+  </p-tabpanels>
+</p-tabs>

@@ -1,4 +1,4 @@
 <div>
+  <p-menu #menu [model]="userButtons" [popup]="true" appendTo="body" [pt]="ptMenu" />
   <p-button class="h-5 w-5" icon="pi pi-user" (click)="menu.toggle($event)" rounded />
-  <p-tieredmenu #menu [model]="userButtons" [popup]="true" appendTo="body" />
 </div>

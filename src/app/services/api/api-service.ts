@@ -20,6 +20,10 @@ export class ApiService {
     return this.http.get<T>(`${environment.apiUrl}${path}`, { params });
   }
 
+  patch<T>(path: string, data: unknown): Observable<T> {
+    return this.http.patch<T>(`${environment.apiUrl}${path}`, data);
+  }
+
   delete<T>(path: string): Observable<T> {
     return this.http.delete<T>(`${environment.apiUrl}${path}`);
   }

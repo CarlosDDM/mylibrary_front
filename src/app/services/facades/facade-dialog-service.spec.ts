@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { FormDialogService } from './form-dialog-service';
+import { FacadeDialogService } from './facade-dialog-service';
 
-describe('FormDialogService', () => {
-  let service: FormDialogService;
+describe('FacadeDialogService', () => {
+  let service: FacadeDialogService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(FormDialogService);
+    service = TestBed.inject(FacadeDialogService);
   });
 
   it('should be created', () => {

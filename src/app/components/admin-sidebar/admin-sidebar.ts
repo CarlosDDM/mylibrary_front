@@ -1,9 +1,10 @@
-import { Component, effect, inject, input, signal } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { Tooltip } from 'primeng/tooltip';
 import { Menu } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
-import { FormDialogService } from '../../services/forms/form-dialog-service';
+import { FacadeDialogService } from '../../services/facades/facade-dialog-service';
 import { AuthService } from '../../services/auth/auth-service';
+import { AdminMenuService } from '../../services/admin-menu/admin-menu-service';
 
 interface AdminNavGroup {
   label: string;
@@ -18,18 +19,10 @@ interface AdminNavGroup {
 })
 export class AdminSidebar {
   private readonly authService = inject(AuthService);
+  private readonly formDialogService = inject(FacadeDialogService);
+  protected readonly menuState = inject(AdminMenuService);
   readonly collapsed = input<boolean>(false);
   protected readonly isAdmin = this.authService.isAdmin;
-  protected readonly expandedGroups = signal(new Set<string>());
-  private readonly formDialogService = inject(FormDialogService);
-
-  constructor() {
-    effect(() => {
-      if (this.collapsed()) {
-        this.expandedGroups.set(new Set());
-      }
-    });
-  }
 
   protected navGroups: AdminNavGroup[] = [
     {
@@ -69,20 +62,4 @@ export class AdminSidebar {
       ],
     },
   ];
-
-  protected isExpanded(label: string): boolean {
-    return this.expandedGroups().has(label);
-  }
-
-  protected toggleGroup(label: string) {
-    this.expandedGroups.update((set) => {
-      const next = new Set(set);
-      if (next.has(label)) {
-        next.delete(label);
-      } else {
-        next.add(label);
-      }
-      return next;
-    });
-  }
 }

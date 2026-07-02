@@ -4,9 +4,9 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { FormInput } from '../../../shared/components/forms/form-input/form-input';
 import { FormButton } from '../../../shared/components/forms/form-button/form-button';
 import { UsersService } from '../../../services/users/users-service';
-import { UserModel } from '../../../models/user-model';
 import { parseHttpError } from '../../../utils/parse-http-error.utils';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { UserModel } from '../../../models/user/user-model';
 
 @Component({
   selector: 'app-user-form',
@@ -39,7 +39,7 @@ export class UserForm extends BaseForm {
       .subscribe({
         next: (result) => {
           if (!result) return;
-          this.messageService.showSuccess(this.successMessage.user);
+          this.messageService.showSuccess(this.successMessage.user.create);
           this.ref?.close(result);
         },
         error: (err) => {

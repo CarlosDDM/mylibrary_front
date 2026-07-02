@@ -19,6 +19,7 @@
     class="w-full"
     id="email"
     label="E-mail"
+    type="email"
     formControlName="email"
     [invalid]="isInvalid('email')"
   />
@@ -26,6 +27,7 @@
   <app-form-input
     class="w-full"
     id="password"
+    type="password"
     label="Senha"
     formControlName="password"
     [invalid]="isInvalid('password')"

@@ -1,10 +1,9 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ButtonDirective, ButtonLabel } from 'primeng/button';
 
 @Component({
   selector: 'app-section-header',
-  imports: [RouterLink, ButtonDirective, ButtonLabel],
+  imports: [RouterLink],
   templateUrl: './section-header.html',
 })
 export class SectionHeader {

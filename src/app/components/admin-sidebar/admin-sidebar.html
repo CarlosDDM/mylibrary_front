@@ -17,18 +17,18 @@
         <p-menu #menu [model]="group.items" [popup]="true" appendTo="body" />
       } @else {
         <button
-          (click)="toggleGroup(group.label)"
+          (click)="menuState.toggleGroup(group.label)"
           class="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-200/60 dark:hover:bg-zinc-800/60 transition-colors w-full text-left"
         >
           <i class="text-base {{ group.icon }}"></i>
           <span class="flex-1 text-sm font-medium">{{ group.label }}</span>
           <i
             class="pi pi-angle-down text-xs transition-transform duration-200"
-            [class.rotate-180]="isExpanded(group.label)"
+            [class.rotate-180]="menuState.isExpanded(group.label)"
           ></i>
         </button>
 
-        @if (isExpanded(group.label)) {
+        @if (menuState.isExpanded(group.label)) {
           <div class="flex flex-col gap-1 pl-3">
             @for (item of group.items; track item.label) {
               <button
