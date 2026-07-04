@@ -6,6 +6,7 @@ export const SUCCESS_MESSAGE = {
   franchise: 'Sucesso na criação da franquia',
   user: {
     create: 'Sucesso na criação do usuário',
+    update: 'Usuário atualizado com sucesso',
     changePassword: 'Senha alterada com sucesso',
   },
 };

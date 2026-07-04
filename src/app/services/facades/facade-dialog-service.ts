@@ -15,7 +15,7 @@ import { WorkModel } from '../../models/work/work-model';
 import { UserForm } from '../../components/forms/user-form/user-form';
 import { ChangePasswordForm } from '../../components/forms/change-password-form/change-password-form';
 import { UserModel } from '../../models/user/user-model';
-import { Configuration } from '../../components/configuration/configuration';
+import { AccountSettings } from '../../components/account-settings/account-settings';
 
 @Injectable({
   providedIn: 'root',
@@ -58,10 +58,7 @@ export class FacadeDialogService {
   }
 
   openConfigureDialog(): Observable<void> {
-    const styleClass = {
-      styleClass: 'lg:w-[45vw] h-[60vh]',
-    };
-    return this.dialogService.show(Configuration, { ...styleClass, header: 'Configurações' })
+    return this.dialogService.show(AccountSettings, { ...this.config, header: 'Configurações' })
       .onClose;
   }
 }

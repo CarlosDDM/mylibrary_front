@@ -20,6 +20,10 @@ export abstract class BaseForm {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   loadInitial(): void {}
 
+  handleClick() {
+    this.ref?.close();
+  }
+
   isInvalid(field: string) {
     const control = this.form.get(field);
     return !!control?.invalid && (!!control?.touched || !!control?.dirty);

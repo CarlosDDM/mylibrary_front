@@ -1,15 +1,19 @@
-<p-tabs value="info">
+<p-tabs [(value)]="activeTab">
   <p-tablist>
     <p-tab value="info">Informações do usuário</p-tab>
     <p-tab value="security">Segurança</p-tab>
   </p-tablist>
   <p-tabpanels>
     <p-tabpanel value="info">
-      <app-user-form />
+      @if (activeTab() === 'info') {
+        <app-info-user-settings />
+      }
     </p-tabpanel>
     <p-tabpanel value="security">
-      <h2 class="text-lg font-semibold mt-2 mb-8">Mudar a senha</h2>
-      <app-change-password-form />
+      @if (activeTab() === 'security') {
+        <h2 class="text-lg font-semibold my-4">Senha</h2>
+        <app-settings-password />
+      }
     </p-tabpanel>
   </p-tabpanels>
 </p-tabs>

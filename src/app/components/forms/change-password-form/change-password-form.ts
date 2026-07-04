@@ -1,21 +1,30 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BaseForm } from '../../../services/base/base-form';
 import { FormButton } from '../../../shared/components/forms/form-button/form-button';
-import { FormInput } from '../../../shared/components/forms/form-input/form-input';
 import { matchFields } from '../../../utils/validators/match-fields.validator';
 import { UserChangePasswordModel } from '../../../models/user/user-change-password-model';
 import { UsersService } from '../../../services/users/users-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { parseHttpError } from '../../../utils/parse-http-error.utils';
+import { FormInputPassword } from '../../../shared/components/forms/form-input-password/form-input-password';
 
 @Component({
   selector: 'app-change-password-form',
-  imports: [ReactiveFormsModule, FormButton, FormInput],
+  imports: [ReactiveFormsModule, FormButton, FormInputPassword],
   templateUrl: './change-password-form.html',
 })
 export class ChangePasswordForm extends BaseForm {
   private readonly userService = inject(UsersService);
+  embedded = input<boolean>(false);
+  closeButton = output<void>();
+
+  override handleClick() {
+    this.closeButton.emit();
+    if (!this.embedded()) {
+      this.ref?.close();
+    }
+  }
 
   form = new FormGroup(
     {
@@ -36,7 +45,7 @@ export class ChangePasswordForm extends BaseForm {
       .subscribe({
         next: () => {
           this.messageService.showSuccess(this.successMessage.user.changePassword);
-          this.ref?.close();
+          this.handleClick();
         },
         error: (err) => {
           this.form.reset();

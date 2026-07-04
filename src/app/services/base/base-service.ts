@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { ApiService } from '../api/api-service';
 import { PaginatedResponse, PaginationParams } from '../../models/pagination-model';
 
-export abstract class BaseService<T, U = T> {
+export abstract class BaseService<T, U = T, V = T> {
   protected readonly apiRequest = inject(ApiService);
 
   protected abstract path: string;
@@ -22,5 +22,9 @@ export abstract class BaseService<T, U = T> {
 
   delete(id: string): Observable<void> {
     return this.apiRequest.delete<void>(`${this.path}/${id}`);
+  }
+
+  patch(id: string, item: V): Observable<U> {
+    return this.apiRequest.patch<U>(`${this.path}/${id}`, item);
   }
 }

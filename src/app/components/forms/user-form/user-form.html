@@ -24,11 +24,11 @@
     [invalid]="isInvalid('email')"
   />
 
-  <app-form-input
+  <app-form-input-password
     class="w-full"
     id="password"
-    type="password"
     label="Senha"
+    [feedback]="true"
     formControlName="password"
     [invalid]="isInvalid('password')"
   />

@@ -7,10 +7,11 @@ import { UsersService } from '../../../services/users/users-service';
 import { parseHttpError } from '../../../utils/parse-http-error.utils';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserModel } from '../../../models/user/user-model';
+import { FormInputPassword } from '../../../shared/components/forms/form-input-password/form-input-password';
 
 @Component({
   selector: 'app-user-form',
-  imports: [ReactiveFormsModule, FormInput, FormButton],
+  imports: [ReactiveFormsModule, FormInput, FormButton, FormInputPassword],
   templateUrl: './user-form.html',
 })
 export class UserForm extends BaseForm {

@@ -1,0 +1,29 @@
+<div class="flex flex-col max-w-70 sm:max-w-full">
+  @if (editable()) {
+    <app-user-info-form
+      [userLoad]="userData()"
+      (saved)="onSaved($event)"
+      (closeButton)="handleClick()"
+    />
+  } @else {
+    @for (row of rows(); track row.label) {
+      <div class="flex items-center justify-between py-3 border-b border-white/10">
+        <span class="flex items-center gap-2 text-surface-400">
+          <i [class]="row.icon"></i>{{ row.label }}
+        </span>
+        @if (state() === loadStateEnum.Loading) {
+          <p-skeleton width="8rem" height="1rem" />
+        } @else {
+          <span class="text-surface-0 truncate ml-4 w-[50%] text-right">{{ row.value }}</span>
+        }
+      </div>
+    }
+    <app-form-button
+      class="mt-4"
+      (handleClick)="handleClick()"
+      icon="pi pi-pen-to-square"
+      label="Editar"
+      [disabled]="state() !== loadStateEnum.Success"
+    />
+  }
+</div>
