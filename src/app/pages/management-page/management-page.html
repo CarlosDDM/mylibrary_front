@@ -1,0 +1,22 @@
+<section class="min-h-dvh flex">
+  <p-tabs value="work" class="flex-1 min-w-0">
+    <p-tablist>
+      <p-tab value="work">Obras</p-tab>
+      <p-tab value="serie">Séries</p-tab>
+      <p-tab value="franchise">Franquias</p-tab>
+      <p-tab value="author">Autores</p-tab>
+      <p-tab value="illustrator">Ilustradores</p-tab>
+      <p-tab value="user">Usuários</p-tab>
+    </p-tablist>
+    <p-tabpanels class="flex-1 min-w-0">
+      <p-tabpanel value="work">
+        <app-management-table
+          class="block min-w-0"
+          [rawData]="rawData()"
+          [cols]="cols"
+          (lazyLoad)="load($event)"
+        />
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+</section>
