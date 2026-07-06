@@ -1,15 +1,16 @@
 import { inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../api/api-service';
-import { PaginatedResponse, PaginationParams } from '../../models/pagination-model';
+import { PaginatedResponse } from '../../models/pagination-model';
+import { DefaultFilter } from '../../models/filter/management-filter.model';
 
 export abstract class BaseService<T, U = T, V = T> {
   protected readonly apiRequest = inject(ApiService);
 
   protected abstract path: string;
 
-  getAll({ take = 20, skip = 0 }: PaginationParams = {}): Observable<PaginatedResponse<U>> {
-    return this.apiRequest.get<PaginatedResponse<U>>(this.path, { take, skip });
+  getAll({ take = 20, skip = 0, name = '' }: DefaultFilter = {}): Observable<PaginatedResponse<U>> {
+    return this.apiRequest.get<PaginatedResponse<U>>(this.path, { take, skip, name });
   }
 
   getById(id: string): Observable<U> {

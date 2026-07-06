@@ -7,6 +7,7 @@ import { InputIcon } from 'primeng/inputicon';
 import { InputText } from 'primeng/inputtext';
 import { Button } from 'primeng/button';
 import { ResolveFieldPipe } from '../../../../pipes/resolve-field-pipe';
+import { LoadStateEnum } from '../../../../enums/load-state-enum';
 
 export interface Column {
   field: string;
@@ -27,6 +28,7 @@ export class ManagementTable {
   emptyValue = input<string>('-');
   editClick = output<string>();
   deleteClick = output<string>();
+  protected readonly loadStateEnum = LoadStateEnum;
   rawData = input<AsyncResource<PaginatedResponse<unknown>>>(
     AsyncResource.loading({
       current_page: 0,

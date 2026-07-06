@@ -1,22 +1,18 @@
 <section class="min-h-dvh flex">
-  <p-tabs value="work" class="flex-1 min-w-0">
+  <p-tabs value="work" [lazy]="true" class="flex-1 min-w-0">
     <p-tablist>
-      <p-tab value="work">Obras</p-tab>
-      <p-tab value="serie">Séries</p-tab>
-      <p-tab value="franchise">Franquias</p-tab>
-      <p-tab value="author">Autores</p-tab>
-      <p-tab value="illustrator">Ilustradores</p-tab>
-      <p-tab value="user">Usuários</p-tab>
+      @for (table of tables; track table.value) {
+        <p-tab [value]="table.value">{{ table.label }}</p-tab>
+      }
     </p-tablist>
     <p-tabpanels class="flex-1 min-w-0">
-      <p-tabpanel value="work">
-        <app-management-table
-          class="block min-w-0"
-          [rawData]="rawData()"
-          [cols]="cols"
-          (lazyLoad)="load($event)"
-        />
-      </p-tabpanel>
+      @for (table of tables; track table.value) {
+        <p-tabpanel [value]="table.value">
+          <ng-template #content>
+            <ng-container *ngComponentOutlet="table.content" />
+          </ng-template>
+        </p-tabpanel>
+      }
     </p-tabpanels>
   </p-tabs>
 </section>
