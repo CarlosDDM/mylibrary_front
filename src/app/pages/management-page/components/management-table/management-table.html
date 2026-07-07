@@ -15,8 +15,16 @@
   [scrollable]="true"
 >
   <ng-template #caption>
-    <div class="flex">
-      <p-iconfield iconPosition="left" class="ml-auto">
+    <div class="flex items-center gap-2">
+      <p-button
+        icon="pi pi-refresh"
+        (click)="lazyLoad.emit(dt.createLazyLoadMetadata())"
+        text
+        rounded
+        class="ml-auto"
+        pTooltip="Atualizar"
+      />
+      <p-iconfield iconPosition="left">
         <p-inputicon>
           <i class="pi pi-search"></i>
         </p-inputicon>

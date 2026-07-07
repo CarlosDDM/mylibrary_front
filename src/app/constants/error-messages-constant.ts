@@ -1,32 +1,53 @@
-export const ERROR_MESSAGE = {
+import { CrudMessages } from '../models/crud-messages.model';
+
+// Erros de sistema — não pertencem a nenhum model, são falhas de conexão/infra.
+export const SYSTEM_ERROR = {
+  network: 'Sem conexão com o servidor, verifique sua conexão',
+  auth: 'Não foi possivel realizar o login, verifique sua conexão',
+  config: 'Erro ao tentar buscar as opções, verifique sua conexão',
+} as const;
+
+// Erros por entidade — para adicionar uma nova, copie um bloco e o compilador exige as 4 chaves.
+export const ENTITY_ERROR = {
   works: {
-    submit: 'Erro ao salvar a obra',
-    load: 'Erro ao carregar as obras',
+    create: 'Erro ao salvar a obra',
+    read: 'Erro ao carregar as obras',
+    update: 'Erro ao salvar a obra',
+    delete: 'Erro ao excluir a obra',
   },
   authors: {
-    submit: 'Erro ao salvar o autor',
-    load: 'Erro ao carregar o autor',
+    create: 'Erro ao salvar o autor',
+    read: 'Erro ao carregar o autor',
+    update: 'Erro ao salvar o autor',
+    delete: 'Erro ao excluir o autor',
   },
   franchises: {
-    submit: 'Erro ao salvar a franquia',
-    load: 'Erro ao carregar a franquia',
+    create: 'Erro ao salvar a franquia',
+    read: 'Erro ao carregar a franquia',
+    update: 'Erro ao salvar a franquia',
+    delete: 'Erro ao excluir a franquia',
   },
   illustrators: {
-    submit: 'Erro ao salvar o ilustrador',
-    load: 'Erro ao carregar o ilustrador',
+    create: 'Erro ao salvar o ilustrador',
+    read: 'Erro ao carregar o ilustrador',
+    update: 'Erro ao salvar o ilustrador',
+    delete: 'Erro ao excluir o ilustrador',
   },
   series: {
-    submit: 'Erro ao salvar a série',
-    load: 'Erro ao carregar a série',
+    create: 'Erro ao salvar a série',
+    read: 'Erro ao carregar a série',
+    update: 'Erro ao salvar a série',
+    delete: 'Erro ao excluir a série',
   },
   users: {
-    submit: 'Erro ao salvar o usuário',
-    load: 'Erro ao carregar os usuários',
-    changePassword: 'Erro ao alterar a senha',
+    create: 'Erro ao salvar o usuário',
+    read: 'Erro ao carregar os usuários',
+    update: 'Erro ao salvar o usuário',
+    delete: 'Erro ao excluir o usuário',
   },
-  config: {
-    load: 'Erro ao tentar buscar as opções, verifique sua conexão',
-  },
-  auth: 'Não foi possivel realizar o login, verifique sua conexão',
-  network: 'Sem conexão com o servidor, verifique sua conexão',
-};
+} satisfies Record<string, CrudMessages>;
+
+// Ações de conta do usuário — não são CRUD de entidade.
+export const ACCOUNT_ERROR = {
+  changePassword: 'Erro ao alterar a senha',
+} as const;

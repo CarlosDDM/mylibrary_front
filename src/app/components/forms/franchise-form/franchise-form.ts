@@ -32,12 +32,12 @@ export class FranchiseForm extends BaseForm {
         next: (res) => {
           if (!res) return;
 
-          this.messageService.showSuccess(this.successMessage.franchise);
+          this.messageService.showSuccess(this.entitySuccess.franchises.create);
 
           return this.ref?.close(res);
         },
         error: (err) => {
-          parseHttpError(err, this.errorMessage.franchises.submit).forEach((messages) => {
+          parseHttpError(err, this.entityError.franchises.create).forEach((messages) => {
             this.messageService.showError(messages);
           });
         },

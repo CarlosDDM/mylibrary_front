@@ -98,6 +98,7 @@ export class WorkFilter implements OnInit {
   );
 
   clear(): void {
+    if (this.WorkFilterForm.pristine) return;
     this.WorkFilterForm.reset();
     this.apply.emit(this.WorkFilterForm.getRawValue());
   }

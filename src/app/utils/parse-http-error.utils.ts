@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ERROR_MESSAGE } from '../constants/error-messages-constant';
+import { SYSTEM_ERROR } from '../constants/error-messages-constant';
 
 export function parseHttpError(err: unknown, fallback: string): string[] {
   // sem conexão com o servidor
@@ -9,7 +9,7 @@ export function parseHttpError(err: unknown, fallback: string): string[] {
 
   // erro de rede (status 0 = sem resposta do servidor)
   if (err.status === 0) {
-    return [ERROR_MESSAGE.network];
+    return [SYSTEM_ERROR.network];
   }
 
   const body = err.error;

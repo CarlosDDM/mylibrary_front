@@ -9,11 +9,16 @@ import { AuthorService } from '../../../../services/authors/author-service';
   templateUrl: './author-management.html',
 })
 export class AuthorManagement extends BaseManagementPage {
+  override readonly entityKey = 'authors';
   override cols: Column[] = [
     {
       field: 'name',
-      header: 'name',
+      header: 'Nome',
     },
   ];
   override service = inject(AuthorService);
+
+  override getFormDialog(id?: string) {
+    return this.formDialog.openAuthorForm(id);
+  }
 }

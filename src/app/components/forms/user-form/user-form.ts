@@ -40,11 +40,11 @@ export class UserForm extends BaseForm {
       .subscribe({
         next: (result) => {
           if (!result) return;
-          this.messageService.showSuccess(this.successMessage.user.create);
+          this.messageService.showSuccess(this.entitySuccess.users.create);
           this.ref?.close(result);
         },
         error: (err) => {
-          parseHttpError(err, this.errorMessage.users.submit).forEach((message) => {
+          parseHttpError(err, this.entityError.users.create).forEach((message) => {
             this.messageService.showError(message);
           });
         },

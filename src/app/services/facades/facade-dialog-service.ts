@@ -26,26 +26,44 @@ export class FacadeDialogService {
     styleClass: 'lg:w-[45vw]',
   };
 
-  openWorkForm(): Observable<WorkModel | undefined> {
-    return this.dialogService.show(WorkForm, { ...this.config, header: 'Criar obra' }).onClose;
+  openWorkForm(id?: string): Observable<WorkModel | undefined> {
+    return this.dialogService.show(WorkForm, {
+      ...this.config,
+      header: id ? 'Criar obra' : 'Editar obra',
+      data: id,
+    }).onClose;
   }
 
-  openAuthorForm(): Observable<AuthorModel | undefined> {
-    return this.dialogService.show(AuthorForm, { ...this.config, header: 'Criar autor' }).onClose;
+  openAuthorForm(id?: string): Observable<AuthorModel | undefined> {
+    return this.dialogService.show(AuthorForm, {
+      ...this.config,
+      header: id ? 'Editar autor' : 'Criar autor',
+      data: id,
+    }).onClose;
   }
 
-  openIllustratorForm(): Observable<IllustratorModel | undefined> {
-    return this.dialogService.show(IllustratorForm, { ...this.config, header: 'Criar ilustrador' })
-      .onClose;
+  openIllustratorForm(id?: string): Observable<IllustratorModel | undefined> {
+    return this.dialogService.show(IllustratorForm, {
+      ...this.config,
+      header: id ? 'Criar ilustrador' : 'Editar ilustrador',
+      data: id,
+    }).onClose;
   }
 
-  openSerieForm(): Observable<SerieModel | undefined> {
-    return this.dialogService.show(SeriesForm, { ...this.config, header: 'Criar série' }).onClose;
+  openSerieForm(id?: string): Observable<SerieModel | undefined> {
+    return this.dialogService.show(SeriesForm, {
+      ...this.config,
+      header: id ? 'Criar série' : 'Editar série',
+      data: id,
+    }).onClose;
   }
 
-  openFranchiseForm(): Observable<FranchiseModel | undefined> {
-    return this.dialogService.show(FranchiseForm, { ...this.config, header: 'Criar franquia' })
-      .onClose;
+  openFranchiseForm(id?: string): Observable<FranchiseModel | undefined> {
+    return this.dialogService.show(FranchiseForm, {
+      ...this.config,
+      header: id ? 'Criar franquia' : 'Editar franquia',
+      data: id,
+    }).onClose;
   }
 
   openUserForm(): Observable<UserModel | undefined> {
@@ -57,7 +75,7 @@ export class FacadeDialogService {
       .onClose;
   }
 
-  openConfigureDialog(): Observable<void> {
+  openAccountSettingsDialog(): Observable<void> {
     return this.dialogService.show(AccountSettings, { ...this.config, header: 'Configurações' })
       .onClose;
   }

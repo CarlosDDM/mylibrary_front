@@ -9,6 +9,7 @@ import { IllustratorService } from '../../../../services/illustrators/illustrato
   templateUrl: './illustrator-management.html',
 })
 export class IllustratorManagement extends BaseManagementPage {
+  override readonly entityKey = 'illustrators';
   override cols: Column[] = [
     {
       field: 'name',
@@ -16,4 +17,8 @@ export class IllustratorManagement extends BaseManagementPage {
     },
   ];
   override service = inject(IllustratorService);
+
+  override getFormDialog(id?: string) {
+    return this.formDialog.openIllustratorForm(id);
+  }
 }

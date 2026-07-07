@@ -1,6 +1,6 @@
 import { Component, computed, input, output } from '@angular/core';
 import { FormButton } from '../../components/forms/form-button/form-button';
-import { ERROR_MESSAGE } from '../../../constants/error-messages-constant';
+import { SYSTEM_ERROR } from '../../../constants/error-messages-constant';
 
 @Component({
   selector: 'app-error-state',
@@ -14,6 +14,6 @@ export class ErrorState {
 
   protected readonly errorMessages = computed(() => {
     const errs = this.errors() ?? [];
-    return errs.length ? errs : [ERROR_MESSAGE.network];
+    return errs.length ? errs : [SYSTEM_ERROR.network];
   });
 }

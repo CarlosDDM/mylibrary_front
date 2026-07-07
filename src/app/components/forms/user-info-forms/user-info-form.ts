@@ -49,10 +49,10 @@ export class UserInfoForm extends BaseForm implements OnInit {
       .subscribe({
         next: (updated) => {
           this.saved.emit(updated);
-          this.messageService.showSuccess(this.successMessage.user.update);
+          this.messageService.showSuccess(this.entitySuccess.users.update);
         },
         error: (err) =>
-          parseHttpError(err, this.errorMessage.users.submit).forEach((message) =>
+          parseHttpError(err, this.entityError.users.update).forEach((message) =>
             this.messageService.showError(message),
           ),
       });

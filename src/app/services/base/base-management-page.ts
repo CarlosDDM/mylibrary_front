@@ -6,17 +6,20 @@ import { TableLazyLoadEvent } from 'primeng/table';
 import { BaseService } from './base-service';
 import { DefaultFilter } from '../../models/filter/management-filter.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ToastService } from '../toast/toast-service';
-import { ERROR_MESSAGE } from '../../constants/error-messages-constant';
-import { parseHttpError } from '../../utils/parse-http-error.utils';
+import { ConfirmService } from '../dialog/confirm-service';
+import { BaseNotifierService } from './base-notifier-service';
+import { ENTITY_CONFIRM } from '../../constants/confirm-message-constant';
+import { FacadeDialogService } from '../facades/facade-dialog-service';
+import { Observable } from 'rxjs';
 
-export abstract class BaseManagementPage {
+export abstract class BaseManagementPage extends BaseNotifierService {
   abstract cols: Column[];
   abstract readonly service: BaseService<unknown>;
   readonly destroyRef = inject(DestroyRef);
-  readonly messageService = inject(ToastService);
+  readonly confirmService = inject(ConfirmService);
+  readonly formDialog = inject(FacadeDialogService);
+
   readonly defaultRows = 20;
-  errorMessage = ERROR_MESSAGE;
 
   rawData: WritableSignal<AsyncResource<PaginatedResponse<unknown>>> = signal(
     AsyncResource.loading({
@@ -46,13 +49,62 @@ export abstract class BaseManagementPage {
           this.rawData.set(AsyncResource.success(result));
         },
         error: (err) => {
-          this.rawData.update((current) =>
-            AsyncResource.error(current, [this.errorMessage.network]),
-          );
-          parseHttpError(err, 'Deu ruim').forEach((m) => {
-            this.messageService.showError(m);
-          });
+          this.rawData.update((current) => AsyncResource.error(current, [this.errors.read]));
+          this.notifyError(err, 'read');
         },
       });
+  }
+
+  abstract getFormDialog(id?: string): Observable<unknown>;
+
+  edit(id: string) {
+    this.getFormDialog(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((item) => {
+        if (item) this.updateInList(item as { id: string });
+      });
+  }
+
+  delete(id: string) {
+    this.confirmService.showConfirm({
+      header: 'Confirmar exclusão',
+      message: ENTITY_CONFIRM[this.entityKey].delete,
+      accept: () => this.performDelete(id),
+    });
+  }
+
+  private performDelete(id: string) {
+    this.service
+      .delete(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.removeFromList(id);
+          this.notifySuccess('delete');
+        },
+        error: (err) => {
+          this.notifyError(err, 'delete');
+        },
+      });
+  }
+
+  private removeFromList(id: string) {
+    this.rawData.update((current) =>
+      current.mapData((page) => {
+        const data = (page.data as { id: string }[]).filter((item) => item.id !== id);
+        return { ...page, data, total: Math.max(0, page.total - 1) };
+      }),
+    );
+  }
+
+  protected updateInList(item: { id: string }) {
+    this.rawData.update((current) =>
+      current.mapData((page) => {
+        const data = (page.data as { id: string }[]).map((row) =>
+          row.id === item.id ? item : row,
+        );
+        return { ...page, data };
+      }),
+    );
   }
 }

@@ -6,6 +6,7 @@ import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { InputText } from 'primeng/inputtext';
 import { Button } from 'primeng/button';
+import { Tooltip } from 'primeng/tooltip';
 import { ResolveFieldPipe } from '../../../../pipes/resolve-field-pipe';
 import { LoadStateEnum } from '../../../../enums/load-state-enum';
 
@@ -19,7 +20,7 @@ export interface Column {
 
 @Component({
   selector: 'app-management-table',
-  imports: [TableModule, IconField, InputIcon, InputText, Button, ResolveFieldPipe],
+  imports: [TableModule, IconField, InputIcon, InputText, Button, Tooltip, ResolveFieldPipe],
   templateUrl: './management-table.html',
 })
 export class ManagementTable {

@@ -14,7 +14,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { AsyncResource } from '../../models/async-resource';
 import { parseHttpError } from '../../utils/parse-http-error.utils';
-import { ERROR_MESSAGE } from '../../constants/error-messages-constant';
+import { SYSTEM_ERROR } from '../../constants/error-messages-constant';
 import { LoadStateEnum } from '../../enums/load-state-enum';
 
 @Component({
@@ -55,7 +55,7 @@ export class SearchBar {
         return this.searchService.search({ name }).pipe(
           catchError((err) => {
             this.results.update((s) =>
-              AsyncResource.error(s, parseHttpError(err, ERROR_MESSAGE.network)),
+              AsyncResource.error(s, parseHttpError(err, SYSTEM_ERROR.network)),
             );
             return EMPTY;
           }),

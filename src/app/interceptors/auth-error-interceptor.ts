@@ -6,7 +6,7 @@ import { DialogService } from '../services/dialog/dialog-service';
 import { AuthService } from '../services/auth/auth-service';
 import { ToastService } from '../services/toast/toast-service';
 import { parseHttpError } from '../utils/parse-http-error.utils';
-import { ERROR_MESSAGE } from '../constants/error-messages-constant';
+import { SYSTEM_ERROR } from '../constants/error-messages-constant';
 
 export const authErrorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
@@ -21,7 +21,7 @@ export const authErrorInterceptor: HttpInterceptorFn = (req, next) => {
         if (!isAuthCheck) {
           authService.clearSession();
           dialogService.closeAll();
-          parseHttpError(err, ERROR_MESSAGE.auth).forEach((message) =>
+          parseHttpError(err, SYSTEM_ERROR.auth).forEach((message) =>
             messageService.showError(message),
           );
           router.navigate(['auth/login']);

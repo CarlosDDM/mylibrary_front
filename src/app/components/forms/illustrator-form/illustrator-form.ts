@@ -28,11 +28,11 @@ export class IllustratorForm extends BaseForm {
       .subscribe({
         next: (res) => {
           if (!res) return;
-          this.messageService.showSuccess(this.successMessage.illustrator);
+          this.messageService.showSuccess(this.entitySuccess.illustrators.create);
           return this.ref?.close(res);
         },
         error: (err) => {
-          parseHttpError(err, this.errorMessage.illustrators.submit).forEach((messages) => {
+          parseHttpError(err, this.entityError.illustrators.create).forEach((messages) => {
             this.messageService.showError(messages);
           });
         },

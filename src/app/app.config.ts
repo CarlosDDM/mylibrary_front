@@ -9,7 +9,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { providePrimeNG } from 'primeng/config';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
@@ -31,6 +31,7 @@ export const appConfig: ApplicationConfig = {
       return firstValueFrom(authService.me().pipe(catchError(() => of(null))));
     }),
     MessageService,
+    ConfirmationService,
     DialogService,
     providePrimeNG({
       theme: {

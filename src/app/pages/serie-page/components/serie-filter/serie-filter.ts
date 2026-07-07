@@ -72,6 +72,7 @@ export class SerieFilter implements OnInit {
   }
 
   clear() {
+    if (this.FormFilterSerie.pristine) return;
     this.FormFilterSerie.reset();
     this.apply.emit(this.FormFilterSerie.getRawValue());
   }

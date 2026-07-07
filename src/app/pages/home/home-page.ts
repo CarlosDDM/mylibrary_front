@@ -10,7 +10,7 @@ import { FranchiseService } from '../../services/franchises/franchise-service';
 import { LoadStateEnum } from '../../enums/load-state-enum';
 import { WorkModel } from '../../models/work/work-model';
 import { parseHttpError } from '../../utils/parse-http-error.utils';
-import { ERROR_MESSAGE } from '../../constants/error-messages-constant';
+import { SYSTEM_ERROR } from '../../constants/error-messages-constant';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HomeSection } from './components/home-section/home-section';
 import { DashboardService } from '../../services/dashboard/dashboard-service';
@@ -62,7 +62,7 @@ export class HomePage implements OnInit {
     })
       .pipe(
         catchError((err) => {
-          const errors = parseHttpError(err, ERROR_MESSAGE.network);
+          const errors = parseHttpError(err, SYSTEM_ERROR.network);
           this.dashboardStats.update((s) => AsyncResource.error(s, errors));
           this.serieData.update((s) => AsyncResource.error(s, errors));
           this.franchiseData.update((s) => AsyncResource.error(s, errors));

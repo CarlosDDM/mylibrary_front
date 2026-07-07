@@ -10,7 +10,7 @@ import { WorkModel } from '../../models/work/work-model';
 import { WorkService } from '../../services/works/work-service';
 import { DialogService } from '../../services/dialog/dialog-service';
 import { WorksDetail } from '../../components/works-detail/works-detail';
-import { ERROR_MESSAGE } from '../../constants/error-messages-constant';
+import { ENTITY_ERROR } from '../../constants/error-messages-constant';
 import { FilterWorkRequest } from '../../models/filter/work/filter-work.model';
 import { WorkFilterValue } from '../../models/filter/work/work-filter-model';
 import { FormButton } from '../../shared/components/forms/form-button/form-button';
@@ -38,7 +38,7 @@ export class WorkPage extends BasePaginatedPage<WorkModel, FilterWorkRequest> im
 
   protected readonly worksResource = computed(() => this.resource().mapData((r) => r.data));
 
-  protected errorMessage = ERROR_MESSAGE.works.load;
+  protected errorMessage = ENTITY_ERROR.works.read;
   protected fetch(params: FilterWorkRequest) {
     return this.workService.getAll(params);
   }

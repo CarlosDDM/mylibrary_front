@@ -13,6 +13,7 @@ import { WorkModel } from '../../../../models/work/work-model';
   templateUrl: './work-management.html',
 })
 export class WorkManagement extends BaseManagementPage {
+  override readonly entityKey = 'works';
   override service = inject(WorkService);
 
   override cols: Column[] = [
@@ -52,7 +53,7 @@ export class WorkManagement extends BaseManagementPage {
     },
   ];
 
-  handleClick(id: string) {
-    console.log(`id:${id} clicado`);
+  override getFormDialog(id?: string) {
+    return this.formDialog.openWorkForm(id);
   }
 }

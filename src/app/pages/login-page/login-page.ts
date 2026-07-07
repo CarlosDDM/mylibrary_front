@@ -46,7 +46,7 @@ export class LoginPage extends BaseForm {
           this.router.navigate(['/home']);
         },
         error: (err) => {
-          parseHttpError(err, this.errorMessage.auth).forEach((message) => {
+          parseHttpError(err, this.systemError.auth).forEach((message) => {
             this.messageService.showError(message);
           });
         },

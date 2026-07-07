@@ -44,12 +44,12 @@ export class ChangePasswordForm extends BaseForm {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.messageService.showSuccess(this.successMessage.user.changePassword);
+          this.messageService.showSuccess(this.accountSuccess.changePassword);
           this.handleClick();
         },
         error: (err) => {
           this.form.reset();
-          parseHttpError(err, this.errorMessage.users.changePassword).forEach((message) => {
+          parseHttpError(err, this.accountError.changePassword).forEach((message) => {
             this.messageService.showError(message);
           });
         },

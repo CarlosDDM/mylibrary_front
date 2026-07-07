@@ -7,7 +7,7 @@ import { UsersService } from '../../services/users/users-service';
 import { AuthService } from '../../services/auth/auth-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { parseHttpError } from '../../utils/parse-http-error.utils';
-import { ERROR_MESSAGE } from '../../constants/error-messages-constant';
+import { ENTITY_ERROR } from '../../constants/error-messages-constant';
 import { ToastService } from '../../services/toast/toast-service';
 import { Skeleton } from 'primeng/skeleton';
 import { LoadStateEnum } from '../../enums/load-state-enum';
@@ -58,7 +58,7 @@ export class InfoUserSettings implements OnInit {
 
         error: (err) => {
           this.userLoad.update((v) => AsyncResource.error(v, err));
-          parseHttpError(err, ERROR_MESSAGE.users.load).forEach((message) =>
+          parseHttpError(err, ENTITY_ERROR.users.read).forEach((message) =>
             this.messageService.showError(message),
           );
         },

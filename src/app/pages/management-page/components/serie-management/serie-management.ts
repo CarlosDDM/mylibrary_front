@@ -11,6 +11,7 @@ import { STATUS_TRANSLATION } from '../../../../constants/status-translation-con
   templateUrl: './serie-management.html',
 })
 export class SerieManagement extends BaseManagementPage {
+  override readonly entityKey = 'series';
   override cols: Column[] = [
     {
       field: 'name',
@@ -32,4 +33,8 @@ export class SerieManagement extends BaseManagementPage {
     },
   ];
   override service = inject(SerieService);
+
+  override getFormDialog(id?: string) {
+    return this.formDialog.openSerieForm(id);
+  }
 }

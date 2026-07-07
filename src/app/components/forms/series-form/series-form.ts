@@ -52,7 +52,7 @@ export class SeriesForm extends BaseForm implements OnInit {
           this.status.update((s) => AsyncResource.error(s, err));
           this.franchise.update((s) => AsyncResource.error(s, err));
 
-          this.messageService.showError(this.errorMessage.config.load);
+          this.messageService.showError(this.systemError.config);
           return of(null);
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -99,11 +99,11 @@ export class SeriesForm extends BaseForm implements OnInit {
       .subscribe({
         next: (res) => {
           if (!res) return;
-          this.messageService.showSuccess(this.successMessage.serie);
+          this.messageService.showSuccess(this.entitySuccess.series.create);
           return this.ref?.close(res);
         },
         error: (err) => {
-          parseHttpError(err, this.errorMessage.series.submit).forEach((messages) => {
+          parseHttpError(err, this.entityError.series.create).forEach((messages) => {
             this.messageService.showError(messages);
           });
         },

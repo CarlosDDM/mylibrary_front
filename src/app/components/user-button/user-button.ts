@@ -32,7 +32,7 @@ export class UserButton implements OnInit {
           {
             label: 'Configurações',
             icon: 'pi pi-cog',
-            command: () => this.formDialogService.openConfigureDialog().subscribe(),
+            command: () => this.formDialogService.openAccountSettingsDialog().subscribe(),
           },
         ],
       },

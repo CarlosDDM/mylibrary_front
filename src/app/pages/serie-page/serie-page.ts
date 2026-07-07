@@ -7,7 +7,7 @@ import { SerieService } from '../../services/serie/serie-service';
 import { BookshelfSerie } from '../../components/bookshelf-serie/bookshelf-serie';
 import { SerieFilter } from './components/serie-filter/serie-filter';
 import { DEFAULT_PAGINATION_PARAMS } from '../../constants/pagination-params-constant';
-import { ERROR_MESSAGE } from '../../constants/error-messages-constant';
+import { ENTITY_ERROR } from '../../constants/error-messages-constant';
 import { FilterSerieRequest } from '../../models/filter/serie/filter-serie.model';
 import { SerieFilterValue } from '../../models/filter/serie/serie-filter-model';
 import { Paginator } from 'primeng/paginator';
@@ -41,7 +41,7 @@ export class SeriePage extends BasePaginatedPage<SerieModel, FilterSerieRequest>
     return this.serieService.getAll(params);
   }
 
-  protected errorMessage: string = ERROR_MESSAGE.series.load;
+  protected errorMessage: string = ENTITY_ERROR.series.read;
 
   protected onFilterChange(filter: SerieFilterValue) {
     this.params.set({

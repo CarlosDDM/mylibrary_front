@@ -95,7 +95,7 @@ export class WorkForm extends BaseForm implements OnInit {
 
           this.form.disable();
 
-          this.messageService.showError(this.errorMessage.config.load);
+          this.messageService.showError(this.systemError.config);
           return of(null);
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -204,11 +204,11 @@ export class WorkForm extends BaseForm implements OnInit {
       .subscribe({
         next: (res) => {
           if (!res) return;
-          this.messageService.showSuccess(this.successMessage.work);
+          this.messageService.showSuccess(this.entitySuccess.works.create);
           return this.ref?.close(res);
         },
         error: (err) => {
-          parseHttpError(err, this.errorMessage.works.submit).forEach((messages) => {
+          parseHttpError(err, this.entityError.works.create).forEach((messages) => {
             this.messageService.showError(messages);
           });
         },
