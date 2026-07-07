@@ -8,13 +8,15 @@
   } @else {
     @for (row of rows(); track row.label) {
       <div class="flex items-center justify-between py-3 border-b border-white/10">
-        <span class="flex items-center gap-2 text-surface-400">
+        <span class="flex items-center gap-2 text-surface-600 dark:text-surface-400">
           <i [class]="row.icon"></i>{{ row.label }}
         </span>
         @if (state() === loadStateEnum.Loading) {
           <p-skeleton width="8rem" height="1rem" />
         } @else {
-          <span class="text-surface-0 truncate ml-4 w-[50%] text-right">{{ row.value }}</span>
+          <span class="text-surface-950 dark:text-surface-0 truncate ml-4 w-[50%] text-right">{{
+            row.value
+          }}</span>
         }
       </div>
     }
