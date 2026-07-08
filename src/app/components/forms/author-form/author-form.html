@@ -4,6 +4,6 @@
     type="submit"
     label="Salvar"
     size="large"
-    [disabled]="form.invalid || form.disabled"
+    [disabled]="form.invalid || form.disabled || isSubmitting()"
   />
 </form>

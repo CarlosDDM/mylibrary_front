@@ -5,8 +5,8 @@ import { AuthorService } from '../../../services/authors/author-service';
 import { FormInput } from '../../../shared/components/forms/form-input/form-input';
 import { FormButton } from '../../../shared/components/forms/form-button/form-button';
 import { BaseForm } from '../../../services/base/base-form';
-import { parseHttpError } from '../../../utils/parse-http-error.utils';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-author-form',
@@ -15,14 +15,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class AuthorForm extends BaseForm implements OnInit {
   private readonly authorService = inject(AuthorService);
+  override readonly entityKey = 'authors';
 
   form = new FormGroup({
     name: new FormControl('', Validators.required),
   });
-
-  ngOnInit(): void {
-    this.loadInitial();
-  }
 
   override loadInitial(): void {
     if (!this.editId) return;
@@ -37,28 +34,33 @@ export class AuthorForm extends BaseForm implements OnInit {
       });
   }
 
+  ngOnInit(): void {
+    this.loadInitial();
+  }
+
   onSubmit() {
+    if (this.form.invalid || this.form.pristine || this.isSubmitting()) return;
+
+    this.isSubmitting.set(true);
+
     const data = this.form.getRawValue() as AuthorModel;
     const request = this.isEdit
       ? this.authorService.patch(this.editId!, data)
       : this.authorService.create(data);
 
-    return request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    return request
+      .pipe(
+        finalize(() => this.isSubmitting.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
       next: (res) => {
         if (!res) return;
-        this.messageService.showSuccess(
-          this.isEdit ? this.entitySuccess.authors.update : this.entitySuccess.authors.create,
-        );
+        this.notifySuccess(this.isEdit ? 'update' : 'create');
+        this.form.markAsPristine();
         return this.ref?.close(res);
       },
-      error: (err) => {
-        const fallback = this.isEdit
-          ? this.entityError.authors.update
-          : this.entityError.authors.create;
-        parseHttpError(err, fallback).forEach((messages) => {
-          this.messageService.showError(messages);
-        });
-      },
+      error: (err) => this.notifyError(err, this.isEdit ? 'update' : 'create'),
     });
   }
 }

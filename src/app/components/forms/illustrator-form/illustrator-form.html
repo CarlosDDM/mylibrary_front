@@ -2,7 +2,7 @@
   <app-form-input class="w-full" id="name" label="Nome do ilustrador" formControlName="name" />
   <app-form-button
     type="submit"
-    [disabled]="form.invalid || form.disabled"
+    [disabled]="form.invalid || form.disabled || isSubmitting()"
     label="Salvar"
     size="large"
   />

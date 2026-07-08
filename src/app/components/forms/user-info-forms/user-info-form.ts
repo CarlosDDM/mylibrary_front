@@ -5,7 +5,7 @@ import { AuthService } from '../../../services/auth/auth-service';
 import { UsersService } from '../../../services/users/users-service';
 import { UserResponseModel } from '../../../models/user/user-response-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { parseHttpError } from '../../../utils/parse-http-error.utils';
+import { finalize } from 'rxjs';
 import { InputText } from 'primeng/inputtext';
 import { InputIcon } from 'primeng/inputicon';
 import { IconField } from 'primeng/iconfield';
@@ -21,6 +21,7 @@ import { UserUpdateModel } from '../../../models/user/user-update.model';
 export class UserInfoForm extends BaseForm implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly userService = inject(UsersService);
+  override readonly entityKey = 'users';
   userLoad = input<UserResponseModel>();
   closeButton = output<void>();
   saved = output<UserResponseModel>();
@@ -31,7 +32,23 @@ export class UserInfoForm extends BaseForm implements OnInit {
     email: new FormControl<string | null>(null),
   });
 
+  override loadInitial(): void {
+    if (!this.editId) return;
+    this.form.disable();
+    this.userService
+      .getById(this.editId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (user) => {
+          this.form.patchValue(user);
+          this.form.get('name')?.enable();
+          this.form.get('email')?.enable();
+        },
+      });
+  }
+
   ngOnInit(): void {
+    this.loadInitial();
     this.form.patchValue({
       name: this.userLoad()?.name ?? null,
       username: this.userLoad()?.username,
@@ -40,22 +57,30 @@ export class UserInfoForm extends BaseForm implements OnInit {
   }
 
   onSubmit(): void {
+    if (this.form.invalid || this.form.pristine || this.isSubmitting()) return;
+
+    this.isSubmitting.set(true);
+
     const { name, email } = this.form.getRawValue();
     const data: UserUpdateModel = { name, email };
 
-    this.userService
-      .patch(this.authService.user()!.userId, data)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    const request = this.isEdit
+      ? this.userService.patch(this.editId!, data)
+      : this.userService.patch(this.authService.user()!.userId, data);
+    request
+      .pipe(
+        finalize(() => this.isSubmitting.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe({
-        next: (updated) => {
-          this.saved.emit(updated);
-          this.messageService.showSuccess(this.entitySuccess.users.update);
-        },
-        error: (err) =>
-          parseHttpError(err, this.entityError.users.update).forEach((message) =>
-            this.messageService.showError(message),
-          ),
-      });
+      next: (updated) => {
+        this.saved.emit(updated);
+        this.notifySuccess('update');
+        this.form.markAsPristine();
+        if (this.isEdit) this.ref?.close(updated);
+      },
+      error: (err) => this.notifyError(err, 'update'),
+    });
   }
 
   clearField(field: 'name' | 'email'): void {

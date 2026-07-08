@@ -1,7 +1,7 @@
-<form [formGroup]="form" class="grid grid-cols-1 px-2 py-4 gap-5 w-full" (ngSubmit)="onSubmit()">
+<form [formGroup]="form" class="flex flex-col gap-6 px-2 py-4 w-full" (ngSubmit)="onSubmit()">
   <app-form-input id="name" label="Nome da série" formControlName="name" />
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
     <app-form-input-select
       formControlName="statusId"
       id="statusId"
@@ -13,30 +13,47 @@
       [translateKey]="serieTranslation"
     />
 
-    <app-form-input-counter
-      formControlName="serieVolumes"
-      id="serieVolumes"
-      label="qtd. Volumes"
-      [min]="1"
-    />
+    <div class="flex flex-col gap-2">
+      <app-form-input-counter
+        formControlName="serieVolumes"
+        id="serieVolumes"
+        label="Qtd. volumes"
+        [min]="1"
+      />
+      <app-form-input-checkbox
+        class="text-sm/tight text-muted-color"
+        id="noVolumes"
+        label="Sem volumes"
+        [formControl]="noVolumesControl"
+      />
+    </div>
   </div>
 
-  <app-form-input-select
-    id="franchiseId"
-    label="Franquia"
-    formControlName="franchiseId"
-    [options]="franchise().data"
-    optionLabel="name"
-    optionValue="id"
-    [loading]="franchise().state === loadState.Loading"
-    buttonLabel="Criar nova franquia"
-    (handleOnclick)="franchiseModal()"
-  />
+  <div class="flex flex-col gap-2">
+    <app-form-input-select
+      id="franchiseId"
+      label="Franquia"
+      formControlName="franchiseId"
+      [options]="franchise().data"
+      optionLabel="name"
+      optionValue="id"
+      [loading]="franchise().state === loadState.Loading"
+      buttonLabel="Criar nova franquia"
+      (handleOnclick)="franchiseModal()"
+    />
+    <app-form-input-checkbox
+      class="text-sm/tight text-muted-color"
+      id="noFranchise"
+      label="Sem franquia"
+      [formControl]="noFranchiseControl"
+    />
+  </div>
 
   <app-form-button
     type="submit"
     label="Salvar"
-    [disabled]="form.invalid || form.disabled"
+    [disabled]="form.invalid || form.disabled || isSubmitting()"
     size="large"
+    class="mt-1"
   />
 </form>

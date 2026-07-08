@@ -16,6 +16,7 @@ import { UserForm } from '../../components/forms/user-form/user-form';
 import { ChangePasswordForm } from '../../components/forms/change-password-form/change-password-form';
 import { UserModel } from '../../models/user/user-model';
 import { AccountSettings } from '../../components/account-settings/account-settings';
+import { ManagementUser } from '../../components/management-user/management-user';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +30,7 @@ export class FacadeDialogService {
   openWorkForm(id?: string): Observable<WorkModel | undefined> {
     return this.dialogService.show(WorkForm, {
       ...this.config,
-      header: id ? 'Criar obra' : 'Editar obra',
+      header: id ? 'Editar obra' : 'Criar obra',
       data: id,
     }).onClose;
   }
@@ -45,7 +46,7 @@ export class FacadeDialogService {
   openIllustratorForm(id?: string): Observable<IllustratorModel | undefined> {
     return this.dialogService.show(IllustratorForm, {
       ...this.config,
-      header: id ? 'Criar ilustrador' : 'Editar ilustrador',
+      header: id ? 'Editar ilustrador' : 'Criar ilustrador',
       data: id,
     }).onClose;
   }
@@ -53,7 +54,7 @@ export class FacadeDialogService {
   openSerieForm(id?: string): Observable<SerieModel | undefined> {
     return this.dialogService.show(SeriesForm, {
       ...this.config,
-      header: id ? 'Criar série' : 'Editar série',
+      header: id ? 'Editar série' : 'Criar série',
       data: id,
     }).onClose;
   }
@@ -61,7 +62,7 @@ export class FacadeDialogService {
   openFranchiseForm(id?: string): Observable<FranchiseModel | undefined> {
     return this.dialogService.show(FranchiseForm, {
       ...this.config,
-      header: id ? 'Criar franquia' : 'Editar franquia',
+      header: id ? 'Editar franquia' : 'Criar franquia',
       data: id,
     }).onClose;
   }
@@ -78,5 +79,13 @@ export class FacadeDialogService {
   openAccountSettingsDialog(): Observable<void> {
     return this.dialogService.show(AccountSettings, { ...this.config, header: 'Configurações' })
       .onClose;
+  }
+
+  openAdminUserForm(id?: string): Observable<UserModel | undefined> {
+    return this.dialogService.show(ManagementUser, {
+      ...this.config,
+      header: 'Editar usuário',
+      data: id,
+    }).onClose;
   }
 }

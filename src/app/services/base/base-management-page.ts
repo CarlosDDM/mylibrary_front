@@ -68,7 +68,7 @@ export abstract class BaseManagementPage extends BaseNotifierService {
   delete(id: string) {
     this.confirmService.showConfirm({
       header: 'Confirmar exclusão',
-      message: ENTITY_CONFIRM[this.entityKey].delete,
+      message: ENTITY_CONFIRM[this.entityKey!].delete,
       accept: () => this.performDelete(id),
     });
   }

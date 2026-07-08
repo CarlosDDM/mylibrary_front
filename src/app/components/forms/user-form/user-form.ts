@@ -4,8 +4,8 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { FormInput } from '../../../shared/components/forms/form-input/form-input';
 import { FormButton } from '../../../shared/components/forms/form-button/form-button';
 import { UsersService } from '../../../services/users/users-service';
-import { parseHttpError } from '../../../utils/parse-http-error.utils';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs';
 import { UserModel } from '../../../models/user/user-model';
 import { FormInputPassword } from '../../../shared/components/forms/form-input-password/form-input-password';
 
@@ -16,6 +16,7 @@ import { FormInputPassword } from '../../../shared/components/forms/form-input-p
 })
 export class UserForm extends BaseForm {
   private readonly userService = inject(UsersService);
+  override readonly entityKey = 'users';
 
   form = new FormGroup({
     name: new FormControl<string | null>(null, Validators.minLength(4)),
@@ -31,23 +32,25 @@ export class UserForm extends BaseForm {
   });
 
   onSubmit(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid || this.form.pristine || this.isSubmitting()) return;
+
+    this.isSubmitting.set(true);
     const data = this.form.getRawValue() as UserModel;
 
     this.userService
       .create(data)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        finalize(() => this.isSubmitting.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe({
         next: (result) => {
           if (!result) return;
-          this.messageService.showSuccess(this.entitySuccess.users.create);
+          this.notifySuccess('create');
+          this.form.markAsPristine();
           this.ref?.close(result);
         },
-        error: (err) => {
-          parseHttpError(err, this.entityError.users.create).forEach((message) => {
-            this.messageService.showError(message);
-          });
-        },
+        error: (err) => this.notifyError(err, 'create'),
       });
   }
 }

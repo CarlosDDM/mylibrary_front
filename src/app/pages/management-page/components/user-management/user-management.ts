@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { Column, ManagementTable } from '../management-table/management-table';
 import { BaseManagementPage } from '../../../../services/base/base-management-page';
 import { UsersService } from '../../../../services/users/users-service';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-user-management',
@@ -27,7 +26,7 @@ export class UserManagement extends BaseManagementPage {
   ];
   override service = inject(UsersService);
 
-  override getFormDialog(id?: string): Observable<unknown> {
-    throw new Error('Method not implemented.');
+  override getFormDialog(id?: string) {
+    return this.formDialog.openAdminUserForm(id);
   }
 }

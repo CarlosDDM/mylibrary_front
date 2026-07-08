@@ -6,6 +6,7 @@ import { matchFields } from '../../../utils/validators/match-fields.validator';
 import { UserChangePasswordModel } from '../../../models/user/user-change-password-model';
 import { UsersService } from '../../../services/users/users-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs';
 import { parseHttpError } from '../../../utils/parse-http-error.utils';
 import { FormInputPassword } from '../../../shared/components/forms/form-input-password/form-input-password';
 
@@ -36,15 +37,21 @@ export class ChangePasswordForm extends BaseForm {
   );
 
   onSubmit(): void {
-    if (this.form.pristine || this.form.invalid) return;
+    if (this.form.pristine || this.form.invalid || this.isSubmitting()) return;
+
+    this.isSubmitting.set(true);
 
     const data = this.form.getRawValue() as UserChangePasswordModel;
     this.userService
       .changePasswordFromUser(data)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        finalize(() => this.isSubmitting.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe({
         next: () => {
           this.messageService.showSuccess(this.accountSuccess.changePassword);
+          this.form.markAsPristine();
           this.handleClick();
         },
         error: (err) => {

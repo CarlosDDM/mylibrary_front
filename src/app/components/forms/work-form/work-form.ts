@@ -6,7 +6,7 @@ import { SerieModel } from '../../../models/serie/serie-model';
 import { AuthorModel } from '../../../models/author-model';
 import { IllustratorModel } from '../../../models/illustrator-model';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { catchError, forkJoin, of } from 'rxjs';
+import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { AuthorForm } from '../author-form/author-form';
 import { AsyncResource } from '../../../models/async-resource';
 import { IllustratorForm } from '../illustrator-form/illustrator-form';
@@ -26,7 +26,6 @@ import { FormButton } from '../../../shared/components/forms/form-button/form-bu
 import { FormInput } from '../../../shared/components/forms/form-input/form-input';
 import { BaseForm } from '../../../services/base/base-form';
 import { DialogService } from '../../../services/dialog/dialog-service';
-import { parseHttpError } from '../../../utils/parse-http-error.utils';
 
 @Component({
   selector: 'app-work-form',
@@ -50,6 +49,7 @@ export class WorkForm extends BaseForm implements OnInit {
   private readonly illustratorService = inject(IllustratorService);
   private readonly workService = inject(WorkService);
   private readonly dialogService = inject(DialogService);
+  override readonly entityKey = 'works';
   protected readonly workMediaTranslation = MEDIA_TRANSLATION;
 
   languages = signal<AsyncResource<OptionModel[]>>(AsyncResource.loading([]));
@@ -77,6 +77,27 @@ export class WorkForm extends BaseForm implements OnInit {
   });
 
   protected noVolumeControl = new FormControl(false);
+
+  loadForm() {
+    if (!this.editId) return;
+    this.form.disable();
+    this.workService
+      .getById(this.editId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (work) => {
+          this.form.patchValue({
+            ...work,
+            serieId: work.serie.id,
+            languageId: work.language.id,
+            mediaId: work.media.id,
+            authors: work.authors.map((author) => author.id),
+            illustrators: work.illustrators?.map((illustrator) => illustrator.id),
+          });
+          this.form.enable();
+        },
+      });
+  }
 
   override loadInitial() {
     forkJoin({
@@ -147,6 +168,7 @@ export class WorkForm extends BaseForm implements OnInit {
   }
 
   ngOnInit() {
+    this.loadForm();
     this.loadInitial();
     this.watchSerieChanges();
     this.watchNoVolumeChanges();
@@ -194,24 +216,28 @@ export class WorkForm extends BaseForm implements OnInit {
   }
 
   onSubmit() {
-    if (this.form.invalid) return;
+    if (this.form.invalid || this.form.pristine || this.isSubmitting()) return;
+
+    this.isSubmitting.set(true);
 
     const data = this.form.getRawValue() as WorkRequestModel;
+    const request = this.isEdit
+      ? this.workService.patch(this.editId!, data)
+      : this.workService.create(data);
 
-    this.workService
-      .create(data)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    request
+      .pipe(
+        finalize(() => this.isSubmitting.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe({
         next: (res) => {
           if (!res) return;
-          this.messageService.showSuccess(this.entitySuccess.works.create);
+          this.notifySuccess(this.isEdit ? 'update' : 'create');
+          this.form.markAsPristine();
           return this.ref?.close(res);
         },
-        error: (err) => {
-          parseHttpError(err, this.entityError.works.create).forEach((messages) => {
-            this.messageService.showError(messages);
-          });
-        },
+        error: (err) => this.notifyError(err, this.isEdit ? 'update' : 'create'),
       });
   }
 }

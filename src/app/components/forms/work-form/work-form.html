@@ -110,7 +110,7 @@
   <app-form-button
     class="col-span-2"
     type="submit"
-    [disabled]="form.invalid || form.disabled"
+    [disabled]="form.invalid || form.disabled || isSubmitting()"
     label="Salvar"
     size="large"
   />
