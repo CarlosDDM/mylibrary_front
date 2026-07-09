@@ -6,7 +6,8 @@ import { SerieModel } from '../../../models/serie/serie-model';
 import { AuthorModel } from '../../../models/author-model';
 import { IllustratorModel } from '../../../models/illustrator-model';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { catchError, finalize, forkJoin, of } from 'rxjs';
+import { catchError, finalize, of } from 'rxjs';
+import { LazyOptions } from '../../../shared/utils/lazy-options';
 import { AuthorForm } from '../author-form/author-form';
 import { AsyncResource } from '../../../models/async-resource';
 import { IllustratorForm } from '../illustrator-form/illustrator-form';
@@ -54,9 +55,19 @@ export class WorkForm extends BaseForm implements OnInit {
 
   languages = signal<AsyncResource<OptionModel[]>>(AsyncResource.loading([]));
   medias = signal<AsyncResource<OptionModel[]>>(AsyncResource.loading([]));
-  series = signal<AsyncResource<SerieModel[]>>(AsyncResource.loading([]));
-  authors = signal<AsyncResource<AuthorModel[]>>(AsyncResource.loading([]));
-  illustrators = signal<AsyncResource<IllustratorModel[]>>(AsyncResource.loading([]));
+
+  protected readonly seriesLoader = new LazyOptions<SerieModel>(
+    (filter) => this.serieService.getAll(filter),
+    this.destroyRef,
+  );
+  protected readonly authorsLoader = new LazyOptions<AuthorModel>(
+    (filter) => this.authorsService.getAll(filter),
+    this.destroyRef,
+  );
+  protected readonly illustratorsLoader = new LazyOptions<IllustratorModel>(
+    (filter) => this.illustratorService.getAll(filter),
+    this.destroyRef,
+  );
 
   form = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -68,8 +79,8 @@ export class WorkForm extends BaseForm implements OnInit {
     languageId: new FormControl<string | null>(null, Validators.required),
     serieId: new FormControl<string | null>(null),
     isSpecialEdition: new FormControl(false),
-    authors: new FormControl<string[]>([], Validators.required),
-    illustrators: new FormControl<string[]>([]),
+    authors: new FormControl<string[] | null>([], Validators.required),
+    illustrators: new FormControl<string[] | null>([]),
   });
 
   protected isSpecial = toSignal(this.form.get('isSpecialEdition')!.valueChanges, {
@@ -86,33 +97,33 @@ export class WorkForm extends BaseForm implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (work) => {
+          this.seriesLoader.seed(work.serie ? [work.serie] : []);
+          this.authorsLoader.seed(work.authors ?? []);
+          this.illustratorsLoader.seed(work.illustrators ?? []);
           this.form.patchValue({
             ...work,
-            serieId: work.serie.id,
-            languageId: work.language.id,
-            mediaId: work.media.id,
-            authors: work.authors.map((author) => author.id),
-            illustrators: work.illustrators?.map((illustrator) => illustrator.id),
+            serieId: work.serie?.id ?? null,
+            languageId: work.language?.id ?? null,
+            mediaId: work.media?.id ?? null,
+            authors: work.authors?.map((author) => author?.id),
+            illustrators: work.illustrators?.map((illustrator) => illustrator?.id),
           });
           this.form.enable();
+        },
+        error: (err) => {
+          this.form.enable();
+          this.notifyError(err, 'read');
         },
       });
   }
 
   override loadInitial() {
-    forkJoin({
-      options: this.optionService.getOptions(),
-      series: this.serieService.getAll(),
-      authors: this.authorsService.getAll(),
-      illustrators: this.illustratorService.getAll(),
-    })
+    this.optionService
+      .getOptions()
       .pipe(
         catchError((err) => {
           this.languages.update((s) => AsyncResource.error(s, err));
           this.medias.update((s) => AsyncResource.error(s, err));
-          this.series.update((s) => AsyncResource.error(s, err));
-          this.authors.update((s) => AsyncResource.error(s, err));
-          this.illustrators.update((s) => AsyncResource.error(s, err));
 
           this.form.disable();
 
@@ -124,19 +135,13 @@ export class WorkForm extends BaseForm implements OnInit {
       .subscribe((result) => {
         if (!result) return;
 
-        const {
-          authors,
-          illustrators,
-          options: { languages, medias },
-          series,
-        } = result;
-
-        this.languages.set(AsyncResource.success(languages));
-        this.medias.set(AsyncResource.success(medias));
-        this.series.set(AsyncResource.success(series.data));
-        this.authors.set(AsyncResource.success(authors.data));
-        this.illustrators.set(AsyncResource.success(illustrators.data));
+        this.languages.set(AsyncResource.success(result.languages));
+        this.medias.set(AsyncResource.success(result.medias));
       });
+
+    this.seriesLoader.search('');
+    this.authorsLoader.search('');
+    this.illustratorsLoader.search('');
   }
 
   private watchSerieChanges() {
@@ -145,7 +150,7 @@ export class WorkForm extends BaseForm implements OnInit {
       ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((serieId) => {
         const nameControl = this.form.get('name');
-        const serie = this.series().data.find((s) => s.id === serieId);
+        const serie = this.seriesLoader.options().find((s) => s.id === serieId);
 
         if (serie) nameControl?.setValue(serie.name);
       });
@@ -164,6 +169,7 @@ export class WorkForm extends BaseForm implements OnInit {
           volume?.enable();
           volume?.setValue(1);
         }
+        this.form.markAsDirty();
       });
   }
 
@@ -179,7 +185,7 @@ export class WorkForm extends BaseForm implements OnInit {
 
     ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((author: AuthorModel) => {
       if (author) {
-        this.authors.update((current) => current.mapData((data) => [...data, author]));
+        this.authorsLoader.seed([author]);
         this.form.get('authors')?.setValue([...(this.form.get('authors')?.value ?? []), author.id]);
       }
     });
@@ -194,7 +200,7 @@ export class WorkForm extends BaseForm implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((illustrator: IllustratorModel) => {
         if (illustrator) {
-          this.illustrators.update((current) => current.mapData((data) => [...data, illustrator]));
+          this.illustratorsLoader.seed([illustrator]);
           this.form
             .get('illustrators')
             ?.setValue([...(this.form.get('illustrators')?.value ?? []), illustrator.id]);
@@ -209,7 +215,7 @@ export class WorkForm extends BaseForm implements OnInit {
 
     ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((serie: SerieModel) => {
       if (serie) {
-        this.series.update((current) => current.mapData((data) => [...data, serie]));
+        this.seriesLoader.seed([serie]);
         this.form.get('serieId')?.setValue(serie.id);
       }
     });

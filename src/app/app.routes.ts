@@ -7,6 +7,8 @@ import { HomePage } from './pages/home/home-page';
 import { authGuard } from './guards/auth-guard';
 import { guestGuard } from './guards/guest-guard';
 import { ManagementPage } from './pages/management-page/management-page';
+import { adminGuard } from './guards/admin-guard';
+import { NotFound } from './pages/not-found/not-found';
 
 export const routes: Routes = [
   {
@@ -18,9 +20,10 @@ export const routes: Routes = [
       { path: 'home', component: HomePage },
       { path: 'series', component: SeriePage },
       { path: 'works', component: WorkPage },
-      { path: 'management', component: ManagementPage },
+      { path: 'management', component: ManagementPage, canActivate: [adminGuard] },
     ],
   },
   { path: 'auth/login', component: LoginPage, canActivate: [guestGuard] },
-  { path: '**', redirectTo: '' },
+  { path: 'not-found', component: NotFound },
+  { path: '**', component: NotFound },
 ];

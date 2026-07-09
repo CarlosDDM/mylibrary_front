@@ -53,6 +53,7 @@ export class FormInputNumber implements ControlValueAccessor {
   }
 
   onValueChange(value: number | null): void {
+    if (this.value() === value) return;
     this.value.set(value);
     this.onChange(value);
     this.onTouched();

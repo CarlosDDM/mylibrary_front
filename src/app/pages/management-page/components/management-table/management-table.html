@@ -56,18 +56,20 @@
         </td>
       }
       <td>
-        <p-button
+        <app-form-button
           icon="pi pi-pencil"
           (click)="editClick.emit(rowData.id)"
           severity="secondary"
-          rounded
-          styleClass="mr-2"
+          [rounded]="true"
+          [fluid]="false"
+          class="mr-2"
         />
-        <p-button
+        <app-form-button
           icon="pi pi-trash"
           (click)="deleteClick.emit(rowData.id)"
           severity="danger"
-          rounded
+          [fluid]="false"
+          [rounded]="true"
         />
       </td>
     </tr>

@@ -19,7 +19,8 @@ export class FormButton {
   severity = input<ButtonSeverity>('primary');
   variant = input<ButtonVariant>('outlined');
   icon = input<string | undefined>(undefined);
-  size = input<ButtonSize>('small');
+  size = input<ButtonSize>();
   text = input<boolean>(false);
   fluid = input<boolean>(true);
+  rounded = input<boolean>(false);
 }

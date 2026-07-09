@@ -34,6 +34,10 @@ export class FranchiseForm extends BaseForm implements OnInit {
           this.form.patchValue(franchise);
           this.form.enable();
         },
+        error: (err) => {
+          this.form.enable();
+          this.notifyError(err, 'read');
+        },
       });
   }
 

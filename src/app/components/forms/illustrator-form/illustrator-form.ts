@@ -34,6 +34,10 @@ export class IllustratorForm extends BaseForm implements OnInit {
           this.form.patchValue(illustator);
           this.form.enable();
         },
+        error: (err) => {
+          this.form.enable();
+          this.notifyError(err, 'read');
+        },
       });
   }
 

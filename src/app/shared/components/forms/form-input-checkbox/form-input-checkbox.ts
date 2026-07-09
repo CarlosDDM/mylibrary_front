@@ -25,6 +25,7 @@ export class FormInputCheckbox implements ControlValueAccessor {
   onTouched = () => {};
 
   onValueChange(checked: boolean): void {
+    if (this.value === checked) return;
     this.value = checked;
     this.onChange(checked);
   }

@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { catchError, finalize, forkJoin, of } from 'rxjs';
+import { catchError, finalize, of } from 'rxjs';
+import { LazyOptions } from '../../../shared/utils/lazy-options';
 import { OptionModel } from '../../../models/option-model';
 import { AsyncResource } from '../../../models/async-resource';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -41,7 +42,11 @@ export class SeriesForm extends BaseForm implements OnInit {
   protected readonly serieTranslation = STATUS_TRANSLATION;
 
   status = signal<AsyncResource<OptionModel[]>>(AsyncResource.loading([]));
-  franchise = signal<AsyncResource<FranchiseModel[]>>(AsyncResource.loading([]));
+
+  protected readonly franchiseLoader = new LazyOptions<FranchiseModel>(
+    (filter) => this.franchiseService.getAll(filter),
+    this.destroyRef,
+  );
 
   protected noVolumesControl = new FormControl(false);
   protected noFranchiseControl = new FormControl(false);
@@ -62,26 +67,28 @@ export class SeriesForm extends BaseForm implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (serie) => {
+          this.franchiseLoader.seed(serie.franchise ? [serie.franchise] : []);
           this.form.patchValue({
             franchiseId: serie.franchise?.id,
             name: serie.name,
-            statusId: serie.status.id,
+            statusId: serie.status?.id ?? null,
             serieVolumes: serie.serieVolumes,
           });
           this.form.enable();
+        },
+        error: (err) => {
+          this.form.enable();
+          this.notifyError(err, 'read');
         },
       });
   }
 
   override loadInitial(): void {
-    forkJoin({
-      options: this.optionService.getOptions(),
-      franchise: this.franchiseService.getAll(),
-    })
+    this.optionService
+      .getOptions()
       .pipe(
         catchError((err) => {
           this.status.update((s) => AsyncResource.error(s, err));
-          this.franchise.update((s) => AsyncResource.error(s, err));
 
           this.messageService.showError(this.systemError.config);
           return of(null);
@@ -90,16 +97,13 @@ export class SeriesForm extends BaseForm implements OnInit {
       )
       .subscribe((result) => {
         if (!result) return;
-        const {
-          options: { status },
-          franchise,
-        } = result;
 
-        this.status.update((s) => AsyncResource.success(s.data.concat(status)));
-        this.franchise.update((s) => AsyncResource.success(s.data.concat(franchise.data)));
+        this.status.update((s) => AsyncResource.success(s.data.concat(result.status)));
 
-        if (!this.isEdit) this.form.get('statusId')?.setValue(status[0].id);
+        if (!this.isEdit) this.form.get('statusId')?.setValue(result.status[0].id);
       });
+
+    this.franchiseLoader.search('');
   }
 
   private watchNoVolumes() {
@@ -114,6 +118,7 @@ export class SeriesForm extends BaseForm implements OnInit {
           control?.enable();
           control?.setValue(1);
         }
+        this.form.markAsDirty();
       });
   }
 
@@ -128,6 +133,7 @@ export class SeriesForm extends BaseForm implements OnInit {
         } else {
           control?.enable();
         }
+        this.form.markAsDirty();
       });
   }
 
@@ -145,7 +151,7 @@ export class SeriesForm extends BaseForm implements OnInit {
 
     ref.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((franchise: FranchiseModel) => {
       if (franchise) {
-        this.franchise.update((current) => current.mapData((data) => [...data, franchise]));
+        this.franchiseLoader.seed([franchise]);
         this.form.get('franchiseId')?.setValue(franchise.id);
       }
     });

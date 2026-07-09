@@ -1,10 +1,12 @@
 import { Component, inject, input } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Tooltip } from 'primeng/tooltip';
 import { Menu } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { FacadeDialogService } from '../../services/facades/facade-dialog-service';
 import { AuthService } from '../../services/auth/auth-service';
 import { AdminMenuService } from '../../services/admin-menu/admin-menu-service';
+import { DrawerService } from '../../services/drawer/drawer-service';
 
 interface AdminNavGroup {
   label: string;
@@ -14,13 +16,14 @@ interface AdminNavGroup {
 
 @Component({
   selector: 'app-admin-sidebar',
-  imports: [Tooltip, Menu],
+  imports: [Tooltip, Menu, RouterLink, RouterLinkActive],
   templateUrl: './admin-sidebar.html',
 })
 export class AdminSidebar {
   private readonly authService = inject(AuthService);
   private readonly formDialogService = inject(FacadeDialogService);
   protected readonly menuState = inject(AdminMenuService);
+  protected readonly drawerService = inject(DrawerService);
   readonly collapsed = input<boolean>(false);
   protected readonly isAdmin = this.authService.isAdmin;
 

@@ -1,30 +1,32 @@
-import { Component, inject, input, OnInit, output } from '@angular/core';
+import { Component, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { BaseForm } from '../../../services/base/base-form';
-import { AuthService } from '../../../services/auth/auth-service';
-import { UsersService } from '../../../services/users/users-service';
-import { UserResponseModel } from '../../../models/user/user-response-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 import { InputText } from 'primeng/inputtext';
 import { InputIcon } from 'primeng/inputicon';
 import { IconField } from 'primeng/iconfield';
 import { FloatLabel } from 'primeng/floatlabel';
-import { FormButton } from '../../../shared/components/forms/form-button/form-button';
+import { BaseNotifierService } from '../../../services/base/base-notifier-service';
+import { UsersService } from '../../../services/users/users-service';
+import { UserResponseModel } from '../../../models/user/user-response-model';
 import { UserUpdateModel } from '../../../models/user/user-update.model';
+import { FormButton } from '../../../shared/components/forms/form-button/form-button';
 
 @Component({
-  selector: 'app-user-info-form',
+  selector: 'app-admin-user-info-form',
   imports: [ReactiveFormsModule, InputText, InputIcon, IconField, FloatLabel, FormButton],
-  templateUrl: './user-info-form.html',
+  templateUrl: './admin-user-info-form.html',
 })
-export class UserInfoForm extends BaseForm implements OnInit {
-  private readonly authService = inject(AuthService);
+export class AdminUserInfoForm extends BaseNotifierService implements OnInit {
   private readonly userService = inject(UsersService);
+  private readonly destroyRef = inject(DestroyRef);
   override readonly entityKey = 'users';
-  userLoad = input<UserResponseModel>();
-  closeButton = output<void>();
+
+  editId = input.required<string>();
   saved = output<UserResponseModel>();
+  handleCancel = output<void>();
+
+  protected readonly isSubmitting = signal(false);
 
   form = new FormGroup({
     name: new FormControl<string | null>(null),
@@ -33,11 +35,22 @@ export class UserInfoForm extends BaseForm implements OnInit {
   });
 
   ngOnInit(): void {
-    this.form.patchValue({
-      name: this.userLoad()?.name ?? null,
-      username: this.userLoad()?.username,
-      email: this.userLoad()?.email ?? null,
-    });
+    this.form.disable();
+    this.userService
+      .getById(this.editId())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (user) => {
+          this.form.patchValue(user);
+          this.form.get('name')?.enable();
+          this.form.get('email')?.enable();
+        },
+        error: (err) => {
+          this.form.get('name')?.enable();
+          this.form.get('email')?.enable();
+          this.notifyError(err, 'read');
+        },
+      });
   }
 
   onSubmit(): void {
@@ -49,7 +62,7 @@ export class UserInfoForm extends BaseForm implements OnInit {
     const data: UserUpdateModel = { name: name || null, email: email || null };
 
     this.userService
-      .patch(this.authService.user()!.userId, data)
+      .patch(this.editId(), data)
       .pipe(
         finalize(() => this.isSubmitting.set(false)),
         takeUntilDestroyed(this.destroyRef),

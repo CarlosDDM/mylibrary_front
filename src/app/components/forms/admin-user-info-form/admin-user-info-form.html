@@ -1,0 +1,41 @@
+<form class="flex flex-col px-4 py-2 gap-6" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="w-full">
+    <p-floatlabel variant="on">
+      <p-iconfield iconPosition="right">
+        <input pInputText id="name" formControlName="name" fluid />
+        <p-inputicon class="pi pi-times cursor-pointer" (click)="clearField('name')" />
+      </p-iconfield>
+      <label for="name">Nome</label>
+    </p-floatlabel>
+  </div>
+
+  <div class="w-full">
+    <p-floatlabel variant="on">
+      <p-iconfield iconPosition="right">
+        <input pInputText type="text" id="username" formControlName="username" fluid />
+        <p-inputicon class="pi pi-lock" />
+      </p-iconfield>
+      <label for="username">Login</label>
+    </p-floatlabel>
+  </div>
+
+  <div class="w-full">
+    <p-floatlabel variant="on">
+      <p-iconfield iconPosition="right">
+        <input pInputText id="email" type="email" formControlName="email" fluid />
+        <p-inputicon class="pi pi-times cursor-pointer" (click)="clearField('email')" />
+      </p-iconfield>
+      <label for="email">E-mail</label>
+    </p-floatlabel>
+  </div>
+
+  <div class="flex justify-end gap-4 mt-auto">
+    <app-form-button
+      (handleClick)="handleCancel.emit()"
+      severity="danger"
+      label="Cancelar"
+      size="large"
+    />
+    <app-form-button type="submit" label="Atualizar" size="large" [disabled]="isSubmitting()" />
+  </div>
+</form>

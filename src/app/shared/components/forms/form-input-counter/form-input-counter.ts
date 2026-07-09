@@ -42,6 +42,7 @@ export class FormInputCounter implements ControlValueAccessor {
   }
 
   onValueChange(value: number | null) {
+    if (this.value() === value) return;
     this.value.set(value);
     this.onChange(value);
     this.onTouched();

@@ -3,3 +3,7 @@ export interface UserChangePasswordModel {
   newPassword: string;
   confirmPassword: string;
 }
+
+export interface UserChangePasswordAdminModel {
+  newPassword: string;
+}

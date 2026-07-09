@@ -11,6 +11,13 @@
       [ngModel]="value()"
       (onBlur)="onTouched()"
       (ngModelChange)="onValueChange($event)"
+      [lazy]="lazy()"
+      [virtualScroll]="lazy()"
+      [virtualScrollItemSize]="44"
+      (onFilter)="onFilterInput($event)"
+      (onLazyLoad)="onLazy($event)"
+      [emptyMessage]="'Sem resultados'"
+      [emptyFilterMessage]="'Sem resultados'"
       fluid
       filter
       display="chip"

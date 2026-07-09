@@ -9,6 +9,7 @@ import { Button } from 'primeng/button';
 import { Tooltip } from 'primeng/tooltip';
 import { ResolveFieldPipe } from '../../../../pipes/resolve-field-pipe';
 import { LoadStateEnum } from '../../../../enums/load-state-enum';
+import { FormButton } from '../../../../shared/components/forms/form-button/form-button';
 
 export interface Column {
   field: string;
@@ -20,7 +21,16 @@ export interface Column {
 
 @Component({
   selector: 'app-management-table',
-  imports: [TableModule, IconField, InputIcon, InputText, Button, Tooltip, ResolveFieldPipe],
+  imports: [
+    TableModule,
+    IconField,
+    InputIcon,
+    InputText,
+    Button,
+    Tooltip,
+    ResolveFieldPipe,
+    FormButton,
+  ],
   templateUrl: './management-table.html',
 })
 export class ManagementTable {

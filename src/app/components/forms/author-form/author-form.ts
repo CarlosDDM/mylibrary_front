@@ -28,9 +28,15 @@ export class AuthorForm extends BaseForm implements OnInit {
     this.authorService
       .getById(this.editId)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((author) => {
-        this.form.patchValue(author);
-        this.form.enable();
+      .subscribe({
+        next: (author) => {
+          this.form.patchValue(author);
+          this.form.enable();
+        },
+        error: (err) => {
+          this.form.enable();
+          this.notifyError(err, 'read');
+        },
       });
   }
 
