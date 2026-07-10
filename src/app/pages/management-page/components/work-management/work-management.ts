@@ -28,6 +28,10 @@ export class WorkManagement extends BaseManagementPage {
     {
       field: 'volume',
       header: 'Volume',
+      value: (row: WorkModel) =>
+        [row.volume !== null ? String(row.volume) : null, row.volumeName]
+          .filter(Boolean)
+          .join(' - '),
     },
     {
       field: 'price',

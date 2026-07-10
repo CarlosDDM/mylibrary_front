@@ -9,4 +9,5 @@ export interface SerieModel {
   works: WorkModel[] | null;
   status: OptionModel;
   franchise: FranchiseModel | null;
+  coverUrl: string | null;
 }

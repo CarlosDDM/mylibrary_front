@@ -20,4 +20,15 @@ export class WorkService extends BaseService<WorkRequestModel, WorkModel> {
       ...filter,
     });
   }
+
+  addCover(id: string, file: File, isSpecialEdition?: boolean): Observable<WorkModel> {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (isSpecialEdition !== undefined) formData.append('isSpecialEdition', String(isSpecialEdition));
+    return this.apiRequest.post<WorkModel>(`${this.path}/${id}/covers`, formData);
+  }
+
+  removeCover(id: string, coverId: string): Observable<WorkModel> {
+    return this.apiRequest.delete<WorkModel>(`${this.path}/${id}/covers/${coverId}`);
+  }
 }

@@ -1,6 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Chip } from '../../shared/components/chip/chip';
 import { CurrencyPipe } from '@angular/common';
+import { GalleriaModule } from 'primeng/galleria';
 import { AsyncResource } from '../../models/async-resource';
 import { LoadStateEnum } from '../../enums/load-state-enum';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
@@ -10,7 +11,7 @@ import { InfoBadge } from '../../shared/components/info-badge/info-badge';
 
 @Component({
   selector: 'app-works-detail',
-  imports: [Chip, CurrencyPipe, InfoBadge],
+  imports: [Chip, CurrencyPipe, InfoBadge, GalleriaModule],
   templateUrl: './works-detail.html',
 })
 export class WorksDetail implements OnInit {
@@ -22,6 +23,7 @@ export class WorksDetail implements OnInit {
   );
   protected readonly loadStateEnum = LoadStateEnum;
   protected readonly work = computed(() => this.resource().data);
+  protected readonly covers = computed(() => this.work().covers ?? []);
 
   ngOnInit(): void {
     this.config.data!.fetchData().subscribe({

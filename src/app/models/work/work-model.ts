@@ -1,4 +1,5 @@
 import { AuthorModel } from '../author-model';
+import { CoverModel } from '../cover-model';
 import { IllustratorModel } from '../illustrator-model';
 import { OptionModel } from '../option-model';
 import { SerieModel } from '../serie/serie-model';
@@ -16,4 +17,5 @@ export interface WorkModel {
   serie: SerieModel;
   authors: AuthorModel[];
   illustrators: IllustratorModel[] | null;
+  covers: CoverModel[];
 }

@@ -19,12 +19,12 @@ export class SerieCard {
   protected readonly statusDictionary = STATUS_TRANSLATION;
 
   private readonly colorPalette = [
-    { bg: 'bg-violet-200', icon: 'text-violet-400' },
-    { bg: 'bg-emerald-200', icon: 'text-emerald-400' },
-    { bg: 'bg-blue-200', icon: 'text-blue-400' },
-    { bg: 'bg-amber-200', icon: 'text-amber-400' },
-    { bg: 'bg-pink-200', icon: 'text-pink-400' },
-    { bg: 'bg-orange-200', icon: 'text-orange-400' },
+    { bg: 'bg-violet-100 dark:bg-violet-950/40', icon: 'text-violet-500 dark:text-violet-400' },
+    { bg: 'bg-emerald-100 dark:bg-emerald-950/40', icon: 'text-emerald-500 dark:text-emerald-400' },
+    { bg: 'bg-blue-100 dark:bg-blue-950/40', icon: 'text-blue-500 dark:text-blue-400' },
+    { bg: 'bg-amber-100 dark:bg-amber-950/40', icon: 'text-amber-500 dark:text-amber-400' },
+    { bg: 'bg-pink-100 dark:bg-pink-950/40', icon: 'text-pink-500 dark:text-pink-400' },
+    { bg: 'bg-orange-100 dark:bg-orange-950/40', icon: 'text-orange-500 dark:text-orange-400' },
   ];
 
   protected coverColor = computed(() => {

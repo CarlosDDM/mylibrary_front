@@ -4,6 +4,31 @@
   }
   @case (loadStateEnum.Success) {
     <div class="flex flex-col px-6">
+      @if (covers().length) {
+        <div class="pb-4">
+          <p-galleria
+            [value]="covers()"
+            [numVisible]="5"
+            [circular]="true"
+            [showThumbnails]="covers().length > 1"
+            [showItemNavigators]="covers().length > 1"
+            [showItemNavigatorsOnHover]="true"
+            [showIndicators]="false"
+            containerClass="w-full"
+          >
+            <ng-template #item let-cover>
+              <img
+                [src]="cover.url"
+                [alt]="work().name"
+                class="w-full max-h-[55vh] object-contain rounded-border"
+              />
+            </ng-template>
+            <ng-template #thumbnail let-cover>
+              <img [src]="cover.url" [alt]="work().name" class="h-14 w-14 object-cover rounded" />
+            </ng-template>
+          </p-galleria>
+        </div>
+      }
       <div class="pb-3">
         @if (work().isSpecialEdition) {
           <span

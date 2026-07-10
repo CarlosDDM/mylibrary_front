@@ -6,13 +6,14 @@
     (keydown.enter)="handleClick.emit(work().id)"
     (keydown.space)="handleClick.emit(work().id)"
   >
-    <div
-      [class]="
-        'shrink-0 w-20 h-26 rounded flex items-center justify-center overflow-hidden ' +
-        coverColor().bg
-      "
-    >
-      <i [class]="'pi pi-bookmark ' + coverColor().icon" style="font-size: 1.2rem"></i>
+    <div class="shrink-0 w-20 h-26 rounded flex items-center justify-center overflow-hidden">
+      @if (cover(); as coverUrl) {
+        <img [src]="coverUrl" [alt]="work().name" class="w-full h-full object-cover" />
+      } @else {
+        <div [class]="'w-full h-full flex items-center justify-center ' + coverColor().bg">
+          <i [class]="'pi pi-bookmark ' + coverColor().icon" style="font-size: 1.2rem"></i>
+        </div>
+      }
     </div>
     <div class="flex-1 min-w-0 flex flex-col gap-1">
       <span class="text-sm font-medium text-zinc-800 dark:text-zinc-100 truncate">

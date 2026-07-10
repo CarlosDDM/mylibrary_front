@@ -23,4 +23,6 @@ export class WorkCard {
     const index = (this.work().name?.charCodeAt(0) ?? 0) % this.colorPalette.length;
     return this.colorPalette[index];
   });
+
+  protected cover = computed(() => this.work().covers?.[0]?.url ?? null);
 }

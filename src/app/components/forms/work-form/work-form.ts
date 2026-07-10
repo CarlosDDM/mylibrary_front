@@ -6,7 +6,7 @@ import { SerieModel } from '../../../models/serie/serie-model';
 import { AuthorModel } from '../../../models/author-model';
 import { IllustratorModel } from '../../../models/illustrator-model';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { catchError, finalize, of } from 'rxjs';
+import { catchError, concat, finalize, last, of, switchMap } from 'rxjs';
 import { LazyOptions } from '../../../shared/utils/lazy-options';
 import { AuthorForm } from '../author-form/author-form';
 import { AsyncResource } from '../../../models/async-resource';
@@ -25,8 +25,10 @@ import { FormInputNumber } from '../../../shared/components/forms/form-input-num
 import { FormInputCounter } from '../../../shared/components/forms/form-input-counter/form-input-counter';
 import { FormButton } from '../../../shared/components/forms/form-button/form-button';
 import { FormInput } from '../../../shared/components/forms/form-input/form-input';
+import { FormInputCoverGallery } from '../../../shared/components/forms/form-input-cover-gallery/form-input-cover-gallery';
 import { BaseForm } from '../../../services/base/base-form';
 import { DialogService } from '../../../services/dialog/dialog-service';
+import { CoverModel } from '../../../models/cover-model';
 
 @Component({
   selector: 'app-work-form',
@@ -40,6 +42,7 @@ import { DialogService } from '../../../services/dialog/dialog-service';
     FormButton,
     FormInput,
     FormInputCheckbox,
+    FormInputCoverGallery,
   ],
   templateUrl: './work-form.html',
 })
@@ -52,6 +55,9 @@ export class WorkForm extends BaseForm implements OnInit {
   private readonly dialogService = inject(DialogService);
   override readonly entityKey = 'works';
   protected readonly workMediaTranslation = MEDIA_TRANSLATION;
+
+  protected readonly currentCovers = signal<CoverModel[]>([]);
+  private readonly removedCoverIds = signal<string[]>([]);
 
   languages = signal<AsyncResource<OptionModel[]>>(AsyncResource.loading([]));
   medias = signal<AsyncResource<OptionModel[]>>(AsyncResource.loading([]));
@@ -81,6 +87,7 @@ export class WorkForm extends BaseForm implements OnInit {
     isSpecialEdition: new FormControl(false),
     authors: new FormControl<string[] | null>([], Validators.required),
     illustrators: new FormControl<string[] | null>([]),
+    covers: new FormControl<File[]>([], { nonNullable: true }),
   });
 
   protected isSpecial = toSignal(this.form.get('isSpecialEdition')!.valueChanges, {
@@ -100,6 +107,7 @@ export class WorkForm extends BaseForm implements OnInit {
           this.seriesLoader.seed(work.serie ? [work.serie] : []);
           this.authorsLoader.seed(work.authors ?? []);
           this.illustratorsLoader.seed(work.illustrators ?? []);
+          this.currentCovers.set(work.covers ?? []);
           this.form.patchValue({
             ...work,
             serieId: work.serie?.id ?? null,
@@ -107,6 +115,7 @@ export class WorkForm extends BaseForm implements OnInit {
             mediaId: work.media?.id ?? null,
             authors: work.authors?.map((author) => author?.id),
             illustrators: work.illustrators?.map((illustrator) => illustrator?.id),
+            covers: [],
           });
           this.form.enable();
         },
@@ -221,18 +230,43 @@ export class WorkForm extends BaseForm implements OnInit {
     });
   }
 
+  onCoverRemoved(coverId: string) {
+    this.removedCoverIds.update((ids) => [...ids, coverId]);
+    this.form.markAsDirty();
+  }
+
   onSubmit() {
     if (this.form.invalid || this.form.pristine || this.isSubmitting()) return;
 
     this.isSubmitting.set(true);
 
-    const data = this.form.getRawValue() as WorkRequestModel;
+    const { covers, ...data } = this.form.getRawValue();
     const request = this.isEdit
-      ? this.workService.patch(this.editId!, data)
-      : this.workService.create(data);
+      ? this.workService.patch(this.editId!, data as WorkRequestModel)
+      : this.workService.create(data as WorkRequestModel);
 
     request
       .pipe(
+        switchMap((work) => {
+          if (!work) return of(work);
+
+          const ops = [
+            ...this.removedCoverIds().map((coverId) =>
+              this.workService.removeCover(work.id, coverId),
+            ),
+            ...covers.map((file) => this.workService.addCover(work.id, file)),
+          ];
+
+          if (!ops.length) return of(work);
+
+          return concat(...ops).pipe(
+            last(),
+            catchError(() => {
+              this.messageService.showWarn('Obra salva, mas houve erro ao atualizar as capas.');
+              return of(work);
+            }),
+          );
+        }),
         finalize(() => this.isSubmitting.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )

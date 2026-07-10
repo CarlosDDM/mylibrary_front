@@ -21,4 +21,14 @@ export class SerieService extends BaseService<SerieRequestModel, SerieModel> {
       ...filter,
     });
   }
+
+  setCover(id: string, file: File): Observable<SerieModel> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.apiRequest.put<SerieModel>(`${this.path}/${id}/cover`, formData);
+  }
+
+  removeCover(id: string): Observable<SerieModel> {
+    return this.apiRequest.delete<SerieModel>(`${this.path}/${id}/cover`);
+  }
 }

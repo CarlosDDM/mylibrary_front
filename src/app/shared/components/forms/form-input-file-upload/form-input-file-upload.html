@@ -1,0 +1,56 @@
+<div class="flex flex-col gap-2">
+  @if (label()) {
+    <label class="text-sm/tight text-muted-color">{{ label() }}</label>
+  }
+
+  @if (previewUrl()) {
+    <div
+      class="relative w-40 h-56 rounded-border overflow-hidden bg-surface-100 dark:bg-surface-800"
+    >
+      <img
+        [src]="previewUrl()"
+        alt="Pré-visualização"
+        class="w-full h-full object-cover"
+      />
+      <p-button
+        icon="pi pi-times"
+        severity="danger"
+        rounded
+        text
+        [disabled]="isDisabled()"
+        styleClass="absolute top-1 right-1"
+        (click)="remove()"
+      />
+    </div>
+  } @else {
+    <p-fileupload
+      mode="advanced"
+      name="file"
+      [multiple]="false"
+      [accept]="accept()"
+      [maxFileSize]="maxFileSize()"
+      [disabled]="isDisabled()"
+      [customUpload]="true"
+      [auto]="true"
+      [showUploadButton]="false"
+      [showCancelButton]="false"
+      (onSelect)="onSelect($event)"
+    >
+      <ng-template #header let-chooseCallback="chooseCallback">
+        <app-form-button
+          label="Escolher imagem"
+          icon="pi pi-image"
+          severity="secondary"
+          [fluid]="false"
+          [disabled]="isDisabled()"
+          (handleClick)="chooseCallback()"
+        />
+      </ng-template>
+      <ng-template #empty>
+        <div class="text-center text-muted-color text-sm/tight">
+          Arraste e solte uma imagem aqui ou clique em "Escolher imagem".
+        </div>
+      </ng-template>
+    </p-fileupload>
+  }
+</div>

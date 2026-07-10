@@ -17,8 +17,18 @@
             (keydown.enter)="workSelected.emit(work.id)"
             (keydown.space)="workSelected.emit(work.id)"
           >
-            <div [class]="'shrink-0 w-8 h-10 rounded flex items-center justify-center ' + coverColor(work.name).bg">
-              <i [class]="'pi pi-bookmark text-sm ' + coverColor(work.name).icon"></i>
+            <div class="shrink-0 w-8 h-10 rounded overflow-hidden flex items-center justify-center">
+              @if (work.covers[0]?.url; as coverUrl) {
+                <img [src]="coverUrl" [alt]="work.name" class="w-full h-full object-cover" />
+              } @else {
+                <div
+                  [class]="
+                    'w-full h-full flex items-center justify-center ' + coverColor(work.name).bg
+                  "
+                >
+                  <i [class]="'pi pi-bookmark text-sm ' + coverColor(work.name).icon"></i>
+                </div>
+              }
             </div>
             <div class="flex-1 min-w-0">
               <p class="text-sm font-medium text-zinc-800 dark:text-zinc-100 truncate">{{ work.name }}</p>
@@ -58,8 +68,18 @@
             (keydown.enter)="serieSelected.emit(serie.id)"
             (keydown.space)="serieSelected.emit(serie.id)"
           >
-            <div [class]="'shrink-0 w-8 h-10 rounded flex items-center justify-center ' + coverColor(serie.name).bg">
-              <i [class]="'pi pi-book text-sm ' + coverColor(serie.name).icon"></i>
+            <div class="shrink-0 w-8 h-10 rounded overflow-hidden flex items-center justify-center">
+              @if (serie.coverUrl) {
+                <img [src]="serie.coverUrl" [alt]="serie.name" class="w-full h-full object-cover" />
+              } @else {
+                <div
+                  [class]="
+                    'w-full h-full flex items-center justify-center ' + coverColor(serie.name).bg
+                  "
+                >
+                  <i [class]="'pi pi-book text-sm ' + coverColor(serie.name).icon"></i>
+                </div>
+              }
             </div>
             <div class="flex-1 min-w-0">
               <p class="text-sm font-medium text-zinc-800 dark:text-zinc-100 truncate">{{ serie.name }}</p>

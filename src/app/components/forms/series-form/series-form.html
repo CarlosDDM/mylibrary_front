@@ -1,6 +1,14 @@
 <form [formGroup]="form" class="flex flex-col gap-6 px-2 py-4 w-full" (ngSubmit)="onSubmit()">
   <app-form-input id="name" label="Nome da série" formControlName="name" />
 
+  <app-form-input-file-upload
+    formControlName="coverFile"
+    label="Capa da série"
+    [currentUrl]="currentCoverUrl()"
+    accept="image/*"
+    (removed)="coverRemoved.set($event)"
+  />
+
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
     <app-form-input-select
       formControlName="statusId"

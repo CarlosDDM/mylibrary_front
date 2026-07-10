@@ -1,0 +1,59 @@
+<div class="flex flex-col gap-2">
+  @if (label()) {
+    <label class="text-sm/tight text-muted-color">{{ label() }}</label>
+  }
+
+  <div class="flex flex-wrap gap-3">
+    @for (cover of visibleCovers(); track cover.id) {
+      <div
+        class="relative w-24 h-32 rounded-border overflow-hidden bg-surface-100 dark:bg-surface-800"
+      >
+        <img [src]="cover.url" alt="Capa" class="w-full h-full object-cover" />
+        <p-button
+          icon="pi pi-times"
+          severity="danger"
+          rounded
+          text
+          size="small"
+          [disabled]="isDisabled()"
+          styleClass="absolute top-0.5 right-0.5"
+          (click)="removeExisting(cover)"
+        />
+      </div>
+    }
+
+    @for (item of pending(); track item.preview; let i = $index) {
+      <div
+        class="relative w-24 h-32 rounded-border overflow-hidden bg-surface-100 dark:bg-surface-800 ring-2 ring-primary"
+      >
+        <img [src]="item.preview" alt="Nova capa" class="w-full h-full object-cover" />
+        <p-button
+          icon="pi pi-times"
+          severity="danger"
+          rounded
+          text
+          size="small"
+          [disabled]="isDisabled()"
+          styleClass="absolute top-0.5 right-0.5"
+          (click)="removePending(i)"
+        />
+      </div>
+    }
+
+    <p-fileupload
+      #uploader
+      mode="basic"
+      name="file"
+      [multiple]="true"
+      [accept]="accept()"
+      [maxFileSize]="maxFileSize()"
+      [disabled]="isDisabled()"
+      [auto]="true"
+      [customUpload]="true"
+      chooseIcon="pi pi-plus"
+      chooseLabel="Adicionar capa"
+      styleClass="w-24 h-32"
+      (onSelect)="onSelect($event, uploader)"
+    />
+  </div>
+</div>

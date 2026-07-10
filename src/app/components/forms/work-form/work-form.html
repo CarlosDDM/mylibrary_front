@@ -116,6 +116,14 @@
     (handleOnclick)="illustratorModal()"
   />
 
+  <app-form-input-cover-gallery
+    class="col-span-2"
+    label="Capas"
+    formControlName="covers"
+    [covers]="currentCovers()"
+    (coverRemoved)="onCoverRemoved($event)"
+  />
+
   <app-form-button
     class="col-span-2"
     type="submit"
