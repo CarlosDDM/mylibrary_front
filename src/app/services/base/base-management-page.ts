@@ -10,7 +10,8 @@ import { ConfirmService } from '../dialog/confirm-service';
 import { BaseNotifierService } from './base-notifier-service';
 import { ENTITY_CONFIRM } from '../../constants/confirm-message-constant';
 import { FacadeDialogService } from '../facades/facade-dialog-service';
-import { Observable } from 'rxjs';
+import { filter, Observable } from 'rxjs';
+import { RefreshService } from '../refresh/refresh-service';
 
 export abstract class BaseManagementPage extends BaseNotifierService {
   abstract cols: Column[];
@@ -18,8 +19,21 @@ export abstract class BaseManagementPage extends BaseNotifierService {
   readonly destroyRef = inject(DestroyRef);
   readonly confirmService = inject(ConfirmService);
   readonly formDialog = inject(FacadeDialogService);
+  private readonly refresh = inject(RefreshService);
 
   readonly defaultRows = 20;
+
+  private lastEvent: TableLazyLoadEvent = { first: 0, rows: this.defaultRows };
+
+  constructor() {
+    super();
+    this.refresh.created$
+      .pipe(
+        filter((entity) => entity === this.entityKey),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => this.reload());
+  }
 
   rawData: WritableSignal<AsyncResource<PaginatedResponse<unknown>>> = signal(
     AsyncResource.loading({
@@ -31,6 +45,7 @@ export abstract class BaseManagementPage extends BaseNotifierService {
   );
 
   load(event: TableLazyLoadEvent): void {
+    this.lastEvent = event;
     this.rawData.update((current) => AsyncResource.loading(current.data));
 
     const filter: DefaultFilter = {
@@ -53,6 +68,10 @@ export abstract class BaseManagementPage extends BaseNotifierService {
           this.notifyError(err, 'read');
         },
       });
+  }
+
+  reload(): void {
+    this.load(this.lastEvent);
   }
 
   abstract getFormDialog(id?: string): Observable<unknown>;

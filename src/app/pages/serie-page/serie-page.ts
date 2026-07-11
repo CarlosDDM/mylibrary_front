@@ -1,4 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AsyncResource } from '../../models/async-resource';
 import { PaginatedResponse } from '../../models/pagination-model';
@@ -14,6 +16,7 @@ import { Paginator } from 'primeng/paginator';
 import { DrawerModule } from 'primeng/drawer';
 import { SerieDialogService } from '../../services/serie/serie-dialog-service';
 import { BasePaginatedPage } from '../../services/base/base-paginated-page';
+import { RefreshService } from '../../services/refresh/refresh-service';
 import { FormButton } from '../../shared/components/forms/form-button/form-button';
 
 @Component({
@@ -26,6 +29,17 @@ export class SeriePage extends BasePaginatedPage<SerieModel, FilterSerieRequest>
   private readonly serieDialogService = inject(SerieDialogService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly refresh = inject(RefreshService);
+
+  constructor() {
+    super();
+    this.refresh.created$
+      .pipe(
+        filter((entity) => entity === 'series'),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => this.load());
+  }
 
   protected resource = signal<AsyncResource<PaginatedResponse<SerieModel>>>(
     AsyncResource.loading({ data: [], pages: 0, current_page: 1, total: 0 }),

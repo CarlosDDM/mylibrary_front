@@ -1,4 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaginatorModule } from 'primeng/paginator';
 import { DrawerModule } from 'primeng/drawer';
@@ -16,6 +18,7 @@ import { WorkFilterValue } from '../../models/filter/work/work-filter-model';
 import { FormButton } from '../../shared/components/forms/form-button/form-button';
 import { DEFAULT_PAGINATION_PARAMS } from '../../constants/pagination-params-constant';
 import { BasePaginatedPage } from '../../services/base/base-paginated-page';
+import { RefreshService } from '../../services/refresh/refresh-service';
 
 @Component({
   selector: 'app-work-page',
@@ -27,6 +30,17 @@ export class WorkPage extends BasePaginatedPage<WorkModel, FilterWorkRequest> im
   private readonly dialogService = inject(DialogService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly refresh = inject(RefreshService);
+
+  constructor() {
+    super();
+    this.refresh.created$
+      .pipe(
+        filter((entity) => entity === 'works'),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => this.load());
+  }
 
   protected readonly resource = signal<AsyncResource<PaginatedResponse<WorkModel>>>(
     AsyncResource.loading({ data: [], pages: 0, current_page: 1, total: 0 }),

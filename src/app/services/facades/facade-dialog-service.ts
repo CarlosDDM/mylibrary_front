@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { DialogService } from '../dialog/dialog-service';
+import { RefreshEntity, RefreshService } from '../refresh/refresh-service';
 import { WorkForm } from '../../components/forms/work-form/work-form';
 import { AuthorForm } from '../../components/forms/author-form/author-form';
 import { IllustratorForm } from '../../components/forms/illustrator-form/illustrator-form';
@@ -23,52 +24,72 @@ import { ManagementUser } from '../../components/management-user/management-user
 })
 export class FacadeDialogService {
   private readonly dialogService = inject(DialogService);
+  private readonly refresh = inject(RefreshService);
   private readonly config: DynamicDialogConfig = {
     styleClass: 'lg:w-[45vw]',
   };
 
+  /** Signals a create (no id) that closed with a result, so lists can reload. */
+  private notifyCreated<T>(onClose: Observable<T>, entity: RefreshEntity, id?: string): Observable<T> {
+    if (!id) {
+      onClose.pipe(take(1)).subscribe((result) => {
+        if (result) this.refresh.created(entity);
+      });
+    }
+    return onClose;
+  }
+
   openWorkForm(id?: string): Observable<WorkModel | undefined> {
-    return this.dialogService.show(WorkForm, {
+    const onClose = this.dialogService.show(WorkForm, {
       ...this.config,
       header: id ? 'Editar obra' : 'Criar obra',
       data: id,
-    }).onClose;
+    }).onClose as Observable<WorkModel | undefined>;
+    return this.notifyCreated(onClose, 'works', id);
   }
 
   openAuthorForm(id?: string): Observable<AuthorModel | undefined> {
-    return this.dialogService.show(AuthorForm, {
+    const onClose = this.dialogService.show(AuthorForm, {
       ...this.config,
       header: id ? 'Editar autor' : 'Criar autor',
       data: id,
-    }).onClose;
+    }).onClose as Observable<AuthorModel | undefined>;
+    return this.notifyCreated(onClose, 'authors', id);
   }
 
   openIllustratorForm(id?: string): Observable<IllustratorModel | undefined> {
-    return this.dialogService.show(IllustratorForm, {
+    const onClose = this.dialogService.show(IllustratorForm, {
       ...this.config,
       header: id ? 'Editar ilustrador' : 'Criar ilustrador',
       data: id,
-    }).onClose;
+    }).onClose as Observable<IllustratorModel | undefined>;
+    return this.notifyCreated(onClose, 'illustrators', id);
   }
 
   openSerieForm(id?: string): Observable<SerieModel | undefined> {
-    return this.dialogService.show(SeriesForm, {
+    const onClose = this.dialogService.show(SeriesForm, {
       ...this.config,
       header: id ? 'Editar série' : 'Criar série',
       data: id,
-    }).onClose;
+    }).onClose as Observable<SerieModel | undefined>;
+    return this.notifyCreated(onClose, 'series', id);
   }
 
   openFranchiseForm(id?: string): Observable<FranchiseModel | undefined> {
-    return this.dialogService.show(FranchiseForm, {
+    const onClose = this.dialogService.show(FranchiseForm, {
       ...this.config,
       header: id ? 'Editar franquia' : 'Criar franquia',
       data: id,
-    }).onClose;
+    }).onClose as Observable<FranchiseModel | undefined>;
+    return this.notifyCreated(onClose, 'franchises', id);
   }
 
   openUserForm(): Observable<UserModel | undefined> {
-    return this.dialogService.show(UserForm, { ...this.config, header: 'Criar usuário' }).onClose;
+    const onClose = this.dialogService.show(UserForm, {
+      ...this.config,
+      header: 'Criar usuário',
+    }).onClose as Observable<UserModel | undefined>;
+    return this.notifyCreated(onClose, 'users');
   }
 
   openChangePasswordForm(): Observable<void> {

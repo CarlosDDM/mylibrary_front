@@ -17,6 +17,7 @@ import { DashboardService } from '../../services/dashboard/dashboard-service';
 import { DashboardStatsModel } from '../../models/dashboard/dashboard-stats-model';
 import { WorkDialogService } from '../../services/works/work-dialog-service';
 import { SerieDialogService } from '../../services/serie/serie-dialog-service';
+import { RefreshService } from '../../services/refresh/refresh-service';
 
 @Component({
   selector: 'app-home',
@@ -31,7 +32,14 @@ export class HomePage implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly workDialogService = inject(WorkDialogService);
   private readonly serieDialogSerivce = inject(SerieDialogService);
+  private readonly refresh = inject(RefreshService);
   protected readonly loadStateEnum = LoadStateEnum;
+
+  constructor() {
+    this.refresh.created$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.loadAll());
+  }
 
   dashboardStats = signal<AsyncResource<DashboardStatsModel>>(
     AsyncResource.loading({} as DashboardStatsModel),
