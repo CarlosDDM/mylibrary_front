@@ -1,0 +1,32 @@
+<div class="flex flex-col px-6">
+  <div class="pb-4 flex flex-col gap-2">
+    <p-skeleton height="45vh" borderRadius="6px" />
+    <div class="flex gap-2">
+      @for (thumb of [1, 2, 3, 4, 5]; track thumb) {
+        <p-skeleton width="3.5rem" height="3.5rem" borderRadius="4px" />
+      }
+    </div>
+  </div>
+  <div class="pb-3 flex flex-col gap-2">
+    <p-skeleton width="60%" height="1.5rem" />
+    <p-skeleton width="40%" height="0.875rem" />
+  </div>
+  <hr class="border-zinc-700 mb-4" />
+  <div class="flex gap-2 flex-wrap mb-4">
+    <p-skeleton width="5rem" height="1.75rem" borderRadius="6px" />
+    <p-skeleton width="6.5rem" height="1.75rem" borderRadius="6px" />
+    <p-skeleton width="4.5rem" height="1.75rem" borderRadius="6px" />
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4">
+    <p-skeleton height="3rem" borderRadius="8px" />
+    <p-skeleton height="3rem" borderRadius="8px" />
+  </div>
+  <hr class="border-zinc-700 mb-4" />
+  <div class="mb-3.5 flex flex-col gap-2">
+    <p-skeleton width="4rem" height="0.75rem" />
+    <div class="flex gap-1.5 flex-wrap">
+      <p-skeleton width="6rem" height="1.75rem" borderRadius="6px" />
+      <p-skeleton width="5rem" height="1.75rem" borderRadius="6px" />
+    </div>
+  </div>
+</div>

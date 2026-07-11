@@ -8,10 +8,11 @@ import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { WorkModel } from '../../models/work/work-model';
 import { Observable } from 'rxjs';
 import { InfoBadge } from '../../shared/components/info-badge/info-badge';
+import { WorksDetailSkeleton } from '../../shared/skeletons/works-detail-skeleton/works-detail-skeleton';
 
 @Component({
   selector: 'app-works-detail',
-  imports: [Chip, CurrencyPipe, InfoBadge, GalleriaModule],
+  imports: [Chip, CurrencyPipe, InfoBadge, GalleriaModule, WorksDetailSkeleton],
   templateUrl: './works-detail.html',
 })
 export class WorksDetail implements OnInit {

@@ -1,9 +1,12 @@
 <form class="flex flex-col p-2 gap-6" [formGroup]="form" (ngSubmit)="onSubmit()">
   <app-form-input id="name" label="Nome" formControlName="name" />
-  <app-form-button
-    type="submit"
-    label="Salvar"
-    [disabled]="form.invalid || form.disabled || isSubmitting()"
-    size="large"
-  />
+  <div class="flex justify-end gap-4 w-full">
+    <app-form-button label="Cancelar" severity="danger" size="large" (handleClick)="handleClick()" />
+    <app-form-button
+      type="submit"
+      label="Salvar"
+      [disabled]="form.invalid || form.disabled || isSubmitting()"
+      size="large"
+    />
+  </div>
 </form>

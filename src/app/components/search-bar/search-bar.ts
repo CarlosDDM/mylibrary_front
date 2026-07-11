@@ -47,7 +47,7 @@ export class SearchBar {
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((name) => {
-        if (name.trim().length < 3) {
+        if (name.trim().length < 1) {
           this.results.set(AsyncResource.idle({} as SearchResultModel));
           return EMPTY;
         }

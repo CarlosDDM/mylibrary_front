@@ -14,7 +14,7 @@ export interface WorkModel {
   isSpecialEdition: boolean;
   media: OptionModel;
   language: OptionModel;
-  serie: SerieModel;
+  serie: SerieModel | null;
   authors: AuthorModel[];
   illustrators: IllustratorModel[] | null;
   covers: CoverModel[];

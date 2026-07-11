@@ -60,11 +60,13 @@
     />
   </div>
 
-  <app-form-button
-    type="submit"
-    label="Salvar"
-    [disabled]="form.invalid || form.disabled || isSubmitting()"
-    size="large"
-    class="mt-1"
-  />
+  <div class="flex justify-end gap-4 w-full mt-1">
+    <app-form-button label="Cancelar" severity="danger" size="large" (handleClick)="handleClick()" />
+    <app-form-button
+      type="submit"
+      label="Salvar"
+      [disabled]="form.invalid || form.disabled || isSubmitting()"
+      size="large"
+    />
+  </div>
 </form>

@@ -10,14 +10,12 @@
       class="relative w-full h-26 flex items-center justify-center overflow-hidden bg-zinc-100 dark:bg-zinc-900"
     >
       @if (serie().coverUrl) {
-        <!-- fundo borrado: mesma URL, o browser cacheia -->
         <img
           [src]="serie().coverUrl"
           aria-hidden="true"
           class="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-60"
           [alt]="serie().name"
         />
-        <!-- capa nítida, travada pela altura -> aparece inteira -->
         <img
           [src]="serie().coverUrl"
           [alt]="serie().name"

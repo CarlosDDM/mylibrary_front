@@ -1,6 +1,6 @@
 @switch (resource().state) {
   @case (loadStateEnum.Loading) {
-    <!-- skeleton -->
+    <app-works-detail-skeleton />
   }
   @case (loadStateEnum.Success) {
     <div class="flex flex-col px-6">
@@ -47,13 +47,19 @@
       <hr class="border-zinc-700 mb-4" />
       <div class="flex gap-2 flex-wrap mb-4">
         <app-chip [label]="work().media.type" />
-        @if (work().volume !== null) {
-          <app-chip [label]="'Vol. ' + work().volume" />
+        @if (work().volume !== null || work().volumeName) {
+          <app-chip
+            [label]="
+              (work().volume !== null ? 'Vol. ' + work().volume : '') +
+              (work().volume !== null && work().volumeName ? ' · ' : '') +
+              (work().volumeName ?? '')
+            "
+          />
         }
         <app-chip [label]="work().language.type" />
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4">
-        <app-info-badge label="Série" [value]="work().serie.name" />
+        <app-info-badge label="Série" [value]="work().serie?.name ?? '—'" />
         <app-info-badge
           label="Preço"
           [value]="work().price | currency: 'BRL' : 'symbol' : '1.2-2'"

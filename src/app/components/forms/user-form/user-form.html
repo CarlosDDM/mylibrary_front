@@ -33,10 +33,13 @@
     [invalid]="isInvalid('password')"
   />
 
-  <app-form-button
-    type="submit"
-    label="Salvar"
-    size="large"
-    [disabled]="form.invalid || form.disabled || isSubmitting()"
-  />
+  <div class="flex justify-end gap-4 w-full">
+    <app-form-button label="Cancelar" severity="danger" size="large" (handleClick)="handleClick()" />
+    <app-form-button
+      type="submit"
+      label="Salvar"
+      size="large"
+      [disabled]="form.invalid || form.disabled || isSubmitting()"
+    />
+  </div>
 </form>

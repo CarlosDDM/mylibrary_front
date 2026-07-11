@@ -51,7 +51,8 @@
       [auto]="true"
       [customUpload]="true"
       chooseIcon="pi pi-plus"
-      chooseLabel="Adicionar capa"
+      chooseLabel="Capa"
+      [chooseButtonProps]="{ severity: 'secondary' }"
       styleClass="w-24 h-32"
       (onSelect)="onSelect($event, uploader)"
     />
