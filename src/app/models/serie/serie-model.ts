@@ -6,6 +6,7 @@ export interface SerieModel {
   id: string;
   name: string;
   serieVolumes: number | null;
+  worksCount: number;
   works: WorkModel[] | null;
   status: OptionModel;
   franchise: FranchiseModel | null;

@@ -32,7 +32,7 @@
         {{ serie().name }}
       </span>
       <span [class]="volumesClass()">
-        {{ serie().works?.length ?? 0 }} / {{ serie().serieVolumes }} vol.
+        {{ serie().worksCount }} / {{ serie().serieVolumes }} vol.
       </span>
       @if (serie().status) {
         <app-chip

@@ -34,8 +34,8 @@ export class SerieCard {
 
   protected volumesClass = computed(() =>
     clsx('text-xs', {
-      'text-emerald-500': this.serie().works?.length === this.serie().serieVolumes,
-      'text-zinc-400 dark:text-zinc-500': this.serie().works?.length !== this.serie().serieVolumes,
+      'text-emerald-500': this.serie().worksCount === this.serie().serieVolumes,
+      'text-zinc-400 dark:text-zinc-500': this.serie().worksCount !== this.serie().serieVolumes,
     }),
   );
 }
