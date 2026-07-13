@@ -5,6 +5,10 @@
 @import "primeicons/primeicons.css";
 
 @layer base {
+  /* Aplica no html tambem para evitar flash de cor antes do Angular renderizar */
+  html {
+    @apply bg-slate-50 dark:bg-slate-950;
+  }
   body {
     /* Fundo slate-950 para o modo escuro e texto slate-200 */
     @apply bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 antialiased;
