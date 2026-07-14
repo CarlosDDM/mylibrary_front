@@ -13,7 +13,7 @@ import { WorkModel } from '../../models/work/work-model';
 })
 export class BookshelfBrowser {
   resource = input.required<AsyncResource<WorkModel[]>>();
-  pageSize = input<number>(6);
+  pageSize = input<number>(8);
   showButtons = input<boolean>(true);
   cardClick = output<string>();
   retry = output<void>();

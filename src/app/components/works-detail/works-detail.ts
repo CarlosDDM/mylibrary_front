@@ -9,10 +9,12 @@ import { WorkModel } from '../../models/work/work-model';
 import { Observable } from 'rxjs';
 import { InfoBadge } from '../../shared/components/info-badge/info-badge';
 import { WorksDetailSkeleton } from '../../shared/skeletons/works-detail-skeleton/works-detail-skeleton';
+import { TranslatePipe } from '../../pipes/translate-pipe';
+import { MEDIA_TRANSLATION } from '../../constants/media-translation-constant';
 
 @Component({
   selector: 'app-works-detail',
-  imports: [Chip, CurrencyPipe, InfoBadge, GalleriaModule, WorksDetailSkeleton],
+  imports: [Chip, CurrencyPipe, InfoBadge, GalleriaModule, WorksDetailSkeleton, TranslatePipe],
   templateUrl: './works-detail.html',
 })
 export class WorksDetail implements OnInit {
@@ -23,6 +25,7 @@ export class WorksDetail implements OnInit {
     AsyncResource.loading({} as WorkModel),
   );
   protected readonly loadStateEnum = LoadStateEnum;
+  protected readonly mediaDictionary = MEDIA_TRANSLATION;
   protected readonly work = computed(() => this.resource().data);
   protected readonly covers = computed(() => this.work().covers ?? []);
 
