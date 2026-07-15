@@ -2,13 +2,16 @@
 
 Front-end da MyLibrary: uma aplicação para catalogar e gerenciar uma biblioteca pessoal — **séries**, **obras**, **franquias**, **autores**, **ilustradores** e **usuários**. É uma SPA em Angular, instalável como **PWA** (web manifest + ícones, modo `standalone`).
 
+## Backend
+
+A API consumida por este front fica em um repositório separado: **[CarlosDDM/mylibrary_back](https://github.com/CarlosDDM/mylibrary_back)**. Suba o backend e aponte o `apiUrl` para ele (ver seção **Configuração de ambiente**).
+
 ## Stack
 
 - **Angular 21** (componentes standalone + signals, lazy loading por rota)
 - **PrimeNG 21** + `@primeuix/themes`
 - **Tailwind CSS 4** (`tailwindcss-primeui`)
 - **RxJS** / **TypeScript**
-- **Vitest** (+ jsdom) para testes, **ESLint** para lint
 - **Docker** + **nginx** para servir em produção
 
 ## Estrutura / páginas
@@ -57,13 +60,6 @@ Campos:
 
 ```bash
 npm run build   # gera dist/mylibrary_front/browser (build de produção por padrão)
-```
-
-## Testes e lint
-
-```bash
-npm test   # Vitest
-npm run lint   # ESLint
 ```
 
 ## Deploy (Docker + nginx)
