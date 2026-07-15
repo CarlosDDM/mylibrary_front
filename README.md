@@ -1,16 +1,39 @@
-# MylibraryFront
+# MyLibrary — Front
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.9.
+Front-end da MyLibrary: uma aplicação para catalogar e gerenciar uma biblioteca pessoal — **séries**, **obras**, **franquias**, **autores**, **ilustradores** e **usuários**. É uma SPA em Angular, instalável como **PWA** (web manifest + ícones, modo `standalone`).
 
-## Development server
+## Stack
 
-To start a local development server, run:
+- **Angular 21** (componentes standalone + signals, lazy loading por rota)
+- **PrimeNG 21** + `@primeuix/themes`
+- **Tailwind CSS 4** (`tailwindcss-primeui`)
+- **RxJS** / **TypeScript**
+- **Vitest** (+ jsdom) para testes, **ESLint** para lint
+- **Docker** + **nginx** para servir em produção
+
+## Estrutura / páginas
+
+Rotas protegidas por guards (`authGuard`, `guestGuard`, `adminGuard`):
+
+- `/home` — dashboard com estatísticas e destaques de séries e obras
+- `/series` — listagem paginada de séries com filtros
+- `/works` — listagem paginada de obras com filtros
+- `/management` — CRUD administrativo (obras, séries, franquias, autores, ilustradores, usuários) — **somente admin**
+- `/auth/login` — login
+
+## Requisitos
+
+- Node.js 22+
+- npm 11+
+
+## Desenvolvimento
 
 ```bash
-ng serve
+npm install
+npm start   # ng serve -> http://localhost:4200/
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+O app recarrega automaticamente ao editar os arquivos.
 
 ## Configuração de ambiente
 
@@ -30,48 +53,31 @@ Campos:
 
 > **Antes do deploy:** troque o `apiUrl` de `environment.ts` (hoje `https://api.seusite.com`) pela URL real da sua API de produção. Use HTTPS — se o front for servido por HTTPS e a API por HTTP, o navegador bloqueia por *mixed content*.
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Build
 
 ```bash
-ng generate component component-name
+npm run build   # gera dist/mylibrary_front/browser (build de produção por padrão)
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Testes e lint
 
 ```bash
-ng generate --help
+npm test   # Vitest
+npm run lint   # ESLint
 ```
 
-## Building
+## Deploy (Docker + nginx)
 
-To build the project run:
+O projeto já vem com **`Dockerfile`** (multi-stage: build em Node, serve em nginx) e **`nginx.conf`** prontos — a config do nginx já está preparada para o PWA:
+
+- fallback de SPA (`try_files ... /index.html`) para o roteamento do Angular
+- `site.webmanifest` servido com `Content-Type: application/manifest+json`
+- `index.html` sem cache; assets versionados com cache longo (`immutable`)
+- gzip habilitado
 
 ```bash
-ng build
+docker build -t mylibrary-front .
+docker run -p 8080:80 mylibrary-front   # http://localhost:8080/
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+> Lembre de ajustar o `apiUrl` de produção (ver seção **Configuração de ambiente**) antes de gerar a imagem.
