@@ -12,6 +12,24 @@ ng serve
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
+## Configuração de ambiente
+
+A configuração de build fica em `src/environments/`. Estes arquivos são **compilados dentro do bundle JavaScript** que vai para o navegador, então só coloque aqui valores públicos (URL do backend, flags). **Nunca coloque segredos** (chaves privadas, tokens, senhas) — eles ficariam visíveis para qualquer usuário no DevTools. Segredos ficam no backend.
+
+| Arquivo | Usado em | Descrição |
+| --- | --- | --- |
+| `environment.development.ts` | `ng serve` / build de desenvolvimento | Aponta para a API local (`http://localhost:3000`). |
+| `environment.ts` | build de produção (`ng build`) | Aponta para a API de produção. |
+
+A troca entre os arquivos é feita automaticamente pelo `fileReplacements` no `angular.json` conforme a configuração do build.
+
+Campos:
+
+- `production`: `true` no build de produção, `false` em desenvolvimento.
+- `apiUrl`: URL base do backend, consumida pelo `ApiService` em todas as requisições HTTP.
+
+> **Antes do deploy:** troque o `apiUrl` de `environment.ts` (hoje `https://api.seusite.com`) pela URL real da sua API de produção. Use HTTPS — se o front for servido por HTTPS e a API por HTTP, o navegador bloqueia por *mixed content*.
+
 ## Code scaffolding
 
 Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
