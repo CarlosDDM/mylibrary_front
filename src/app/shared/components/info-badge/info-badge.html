@@ -1,11 +1,20 @@
-<div
-  [title]="value() ?? '—'"
-  class="bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-transparent rounded-lg p-3 flex flex-col justify-between h-20"
->
-  <span class="text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-300">
-    {{ label() }}
+@if (severity()) {
+  <span
+    class="inline-flex w-fit items-center rounded-md px-2 py-0.5 text-xs font-medium"
+    [class]="severityClass()"
+  >
+    <ng-content />
   </span>
-  <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
-    {{ value() ?? '—' }}
-  </span>
-</div>
+} @else {
+  <div
+    [title]="value() ?? '—'"
+    class="bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-transparent rounded-lg p-3 flex flex-col justify-between h-20"
+  >
+    <span class="text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-300">
+      {{ label() }}
+    </span>
+    <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+      {{ value() ?? '—' }}
+    </span>
+  </div>
+}

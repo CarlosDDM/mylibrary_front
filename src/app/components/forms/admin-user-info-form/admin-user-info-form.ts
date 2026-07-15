@@ -24,6 +24,7 @@ export class AdminUserInfoForm extends BaseNotifierService implements OnInit {
 
   editId = input.required<string>();
   saved = output<UserResponseModel>();
+  loaded = output<UserResponseModel>();
   handleCancel = output<void>();
 
   protected readonly isSubmitting = signal(false);
@@ -41,6 +42,7 @@ export class AdminUserInfoForm extends BaseNotifierService implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (user) => {
+          this.loaded.emit(user);
           this.form.patchValue(user);
           this.form.get('name')?.enable();
           this.form.get('email')?.enable();

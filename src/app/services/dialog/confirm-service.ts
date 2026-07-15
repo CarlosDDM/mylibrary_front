@@ -1,4 +1,5 @@
 import { inject, Injectable } from '@angular/core';
+import { ButtonSeverity } from 'primeng/button';
 import { ConfirmationService } from 'primeng/api';
 
 @Injectable({
@@ -11,10 +12,14 @@ export class ConfirmService {
     message,
     header,
     accept,
+    acceptLabel = 'Excluir',
+    acceptSeverity = 'danger',
   }: {
     message: string;
     header: string;
     accept: () => void;
+    acceptLabel?: string;
+    acceptSeverity?: ButtonSeverity;
   }) {
     this.confirmService.confirm({
       message,
@@ -27,8 +32,8 @@ export class ConfirmService {
         outlined: true,
       },
       acceptButtonProps: {
-        label: 'Excluir',
-        severity: 'danger',
+        label: acceptLabel,
+        severity: acceptSeverity,
       },
       accept,
     });

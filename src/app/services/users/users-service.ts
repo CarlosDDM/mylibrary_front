@@ -25,4 +25,12 @@ export class UsersService extends BaseService<UserModel, UserResponseModel, User
   changePasswordFromAdmin(id: string, password: UserChangePasswordAdminModel): Observable<void> {
     return this.apiRequest.patch(`${this.path}/${id}/password/admin`, password);
   }
+
+  promoteUser(id: string): Observable<void> {
+    return this.apiRequest.post<void>(`${this.path}/${id}/promote`, null);
+  }
+
+  demoteUser(id: string): Observable<void> {
+    return this.apiRequest.post<void>(`${this.path}/${id}/demote`, null);
+  }
 }

@@ -51,3 +51,9 @@ export const ENTITY_ERROR = {
 export const ACCOUNT_ERROR = {
   changePassword: 'Erro ao alterar a senha',
 } as const;
+
+// Ações de cargo (admin sobre um usuário) — não são CRUD de entidade.
+export const USER_ROLE_ERROR = {
+  promote: 'Erro ao promover o usuário',
+  demote: 'Erro ao rebaixar o usuário',
+} as const;

@@ -6,9 +6,49 @@
     @if (editId) {
       <app-admin-user-info-form
         [editId]="editId"
+        (loaded)="onLoaded($event)"
         (saved)="onSaved($event)"
         (handleCancel)="close()"
       />
+    }
+  </section>
+
+  <p-divider />
+
+  <section class="flex flex-col gap-3 px-4">
+    <div class="flex flex-col gap-1">
+      <h2 class="text-lg font-semibold text-surface-900 dark:text-surface-0">Permissões</h2>
+      <p class="text-sm text-surface-500 dark:text-surface-400">
+        Promova ou rebaixe o nível de acesso deste usuário.
+      </p>
+    </div>
+
+    @if (role(); as role) {
+      <div class="flex flex-col gap-1">
+        <span class="text-xs text-zinc-400">Cargo atual</span>
+        <app-info-badge [severity]="roleSeverity(role)">
+          {{ roleLabel(role) }}
+        </app-info-badge>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <app-form-button
+          icon="pi pi-arrow-up"
+          label="Promover a administrador"
+          severity="success"
+          [fluid]="false"
+          [disabled]="isAdmin() || isChangingRole()"
+          (handleClick)="promote()"
+        />
+        <app-form-button
+          icon="pi pi-arrow-down"
+          label="Rebaixar para usuário"
+          severity="secondary"
+          [fluid]="false"
+          [disabled]="!isAdmin() || isChangingRole()"
+          (handleClick)="demote()"
+        />
+      </div>
     }
   </section>
 

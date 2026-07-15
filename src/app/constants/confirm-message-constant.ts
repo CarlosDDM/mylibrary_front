@@ -10,3 +10,9 @@ export const ENTITY_CONFIRM = {
   series: { delete: 'Tem certeza que deseja excluir esta série?' },
   users: { delete: 'Tem certeza que deseja excluir este usuário?' },
 } satisfies Record<string, ConfirmMessages>;
+
+// Confirmações de mudança de cargo (admin sobre um usuário).
+export const USER_ROLE_CONFIRM = {
+  promote: 'Tem certeza que deseja promover este usuário a administrador?',
+  demote: 'Tem certeza que deseja rebaixar este usuário para usuário comum?',
+} as const;

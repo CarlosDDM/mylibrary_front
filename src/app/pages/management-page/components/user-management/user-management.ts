@@ -23,6 +23,10 @@ export class UserManagement extends BaseManagementPage {
       field: 'email',
       header: 'E-mail',
     },
+    {
+      field: 'role',
+      header: 'Cargo'
+    }
   ];
   override service = inject(UsersService);
 

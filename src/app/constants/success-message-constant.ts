@@ -38,3 +38,9 @@ export const ENTITY_SUCCESS = {
 export const ACCOUNT_SUCCESS = {
   changePassword: 'Senha alterada com sucesso',
 } as const;
+
+// Ações de cargo (admin sobre um usuário) — não são CRUD de entidade.
+export const USER_ROLE_SUCCESS = {
+  promote: 'Usuário promovido a administrador',
+  demote: 'Usuário rebaixado para usuário comum',
+} as const;
